@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Edukasi &amp; Pembelajaran LENTERA - Wisata Desa</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4bee2b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#132210",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .carousel-slide {
+            transition: opacity 0.7s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .carousel-slide.active-slide {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 antialiased min-h-screen">
+    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white">lightbulb</span>
+                </div>
+                <span class="text-2xl font-800 tracking-tight text-slate-900 dark:text-white uppercase"></span>
+            </div>
+            <div class="hidden lg:flex items-center gap-8">
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Home.html">Home</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Catalog.html">Catalog</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Location.html">Location</a>
+                <a class="text-sm font-bold text-primary relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-primary"
+                    href="Education.html">Education</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Navigation.html">Navigation</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="E-resource.html">E-Resource</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Sponsor.html">Sponsor</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Profile.html">Profil</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <button
+                    class="p-2.5 rounded-full hover:bg-primary/10 transition-colors text-slate-600 dark:text-slate-300 lg:hidden"
+                    id="mobile-menu-button">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <button id="cart-button"
+                    class="p-2.5 rounded-full hover:bg-primary/10 transition-colors text-slate-600 dark:text-slate-300 relative">
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                    <span id="cart-count"
+                        class="absolute top-1 right-1 w-4 h-4 bg-primary text-[10px] text-slate-900 font-bold rounded-full flex items-center justify-center">0</span>
+                </button>
+                <div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
+                <button
+                    class="flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <div
+                        class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
+                        <span class="material-symbols-outlined text-slate-500">account_circle</span>
+                    </div>
+                    <span class="text-sm font-bold text-slate-700 dark:text-slate-200 hidden sm:inline">User</span>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div class="lg:hidden hidden border-t border-primary/10 bg-white dark:bg-background-dark px-6 py-4 space-y-4"
+            id="mobile-menu">
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Home.html">Home</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Catalog.html">Catalog</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Location.html">Location</a>
+            <a class="block text-sm font-bold text-primary" href="Education.html">Education</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Navigation.html">Navigation</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="E-resource.html">E-Resource</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Sponsor.html">Sponsor</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Profile.html">Profil</a>
+        </div>
+    </nav>
+
+    <!-- Cart Sidebar/Drawer -->
+    <div id="cart-drawer"
+        class="fixed inset-y-0 right-0 w-full sm:w-96 bg-white dark:bg-background-dark shadow-2xl z-[60] transform translate-x-full transition-transform duration-300 ease-in-out border-l border-primary/10">
+        <div class="flex flex-col h-full">
+            <div class="p-6 border-b border-primary/10 flex items-center justify-between bg-primary/5">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary">shopping_basket</span>
+                    <h2 class="text-xl font-bold">Keranjang Belanja</h2>
+                </div>
+                <button id="close-cart" class="p-2 hover:bg-primary/10 rounded-full transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- Cart items will be injected here -->
+                <div id="empty-cart-msg"
+                    class="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-50">
+                    <span class="material-symbols-outlined text-6xl">shopping_cart_off</span>
+                    <p class="font-medium text-slate-500">Keranjang Anda masih kosong</p>
+                    <button id="start-shopping" class="text-primary font-bold text-sm hover:underline">Mulai Belanja
+                        Sekarang</button>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-primary/10 bg-slate-50 dark:bg-slate-900/50">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-slate-500 font-medium">Total Pembayaran</span>
+                    <span id="cart-total" class="text-2xl font-800 text-primary">Rp 0</span>
+                </div>
+                <button
+                    class="w-full bg-primary text-slate-900 font-800 py-4 rounded-2xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    Lanjutkan Pembayaran
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+                <p class="text-[10px] text-center text-slate-400 mt-4 font-medium uppercase tracking-widest">Aman •
+                    Terpercaya • Produk Lokal</p>
+            </div>
+        </div>
+    </div>
+    <div id="cart-overlay"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[55] hidden opacity-0 transition-opacity duration-300">
+    </div>
+
+    <main class="max-w-7xl mx-auto px-6 py-4">
+        <nav class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-500 mb-6">
+            <a class="hover:text-primary" href="#">LENTERA</a>
+            <span class="material-icons text-[12px]">chevron_right</span>
+            <span class="text-primary">Wisata Edukasi</span>
+        </nav>
+        <!-- Educational Carousel Banner -->
+        <section class="relative bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-primary/10 mb-16 h-[600px] mt-6" id="education-carousel">
+            <!-- Carousel Slides Wrapper -->
+            <div class="relative w-full h-full overflow-hidden">
+                <!-- Slide 1: Coffee -->
+                <div class="carousel-slide absolute inset-0 active-slide flex items-center">
+                    <div class="absolute inset-0 z-0">
+                        <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=1200" alt="Kebun Kopi Arabika Kucur" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-transparent"></div>
+                    </div>
+                    <div class="relative z-10 max-w-2xl px-8 md:px-16 text-white space-y-4 md:space-y-6">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/40 text-primary text-xs font-bold uppercase tracking-wider">
+                            Kopi Kucur
+                        </span>
+                        <h2 class="text-3xl md:text-5xl font-extrabold leading-tight text-white">
+                            Kebun Kopi Arabika Kucur
+                        </h2>
+                        <p class="text-sm md:text-base text-slate-300 font-medium leading-relaxed">
+                            Ditanam di lereng pegunungan Kawi pada ketinggian 1.200 mdpl. Nikmati pembelajaran langsung mengenai teknik pembudidayaan organik terpadu hingga pemrosesan pasca-panen tradisional.
+                        </p>
+                        <button onclick="openEduModal('kopi')" class="px-6 py-3.5 bg-primary hover:bg-primary/95 text-slate-900 font-extrabold rounded-xl shadow-lg shadow-primary/25 transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 uppercase text-xs tracking-wider">
+                            Pelajari Modul
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Slide 2: Oranges -->
+                <div class="carousel-slide absolute inset-0 flex items-center">
+                    <div class="absolute inset-0 z-0">
+                        <img src="https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?auto=format&fit=crop&q=80&w=1200" alt="Kebun Jeruk Kucur" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-transparent"></div>
+                    </div>
+                    <div class="relative z-10 max-w-2xl px-8 md:px-16 text-white space-y-4 md:space-y-6">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-500/20 border border-orange-500/40 text-orange-400 text-xs font-bold uppercase tracking-wider">
+                            Jeruk Organik
+                        </span>
+                        <h2 class="text-3xl md:text-5xl font-extrabold leading-tight text-white">
+                            Perkebunan Jeruk Kucur
+                        </h2>
+                        <p class="text-sm md:text-base text-slate-300 font-medium leading-relaxed">
+                            Sentra budidaya jeruk unggulan bebas bahan kimia. Pelajari bagaimana sistem pertanian presisi ramah lingkungan mampu melestarikan hara tanah dan memproduksi buah manis berkualitas tinggi.
+                        </p>
+                        <button onclick="openEduModal('produksi')" class="px-6 py-3.5 bg-[#FFA500] hover:bg-[#FFA500]/95 text-slate-900 font-extrabold rounded-xl shadow-lg shadow-orange-500/25 transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 uppercase text-xs tracking-wider">
+                            Mulai Tur
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Slide 3: Bamboo -->
+                <div class="carousel-slide absolute inset-0 flex items-center">
+                    <div class="absolute inset-0 z-0">
+                        <img src="https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&q=80&w=1200" alt="Hutan Bambu Lestari" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-transparent"></div>
+                    </div>
+                    <div class="relative z-10 max-w-2xl px-8 md:px-16 text-white space-y-4 md:space-y-6">
+                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-400 text-xs font-bold uppercase tracking-wider">
+                            Hutan Bambu
+                        </span>
+                        <h2 class="text-3xl md:text-5xl font-extrabold leading-tight text-white">
+                            Ekowisata Hutan Bambu Lestari
+                        </h2>
+                        <p class="text-sm md:text-base text-slate-300 font-medium leading-relaxed">
+                            Kawasan konservasi seluas puluhan hektar yang dikelola mandiri oleh Karang Taruna. Berfungsi menjaga stabilitas mata air desa serta menyediakan material utama kriya anyaman bambu kreatif.
+                        </p>
+                        <button onclick="openEduModal('tani')" class="px-6 py-3.5 bg-blue-500 hover:bg-blue-600 text-white font-extrabold rounded-xl shadow-lg shadow-blue-500/25 transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 uppercase text-xs tracking-wider">
+                            Kenali Warga
+                            <span class="material-icons text-sm">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls Left/Right -->
+            <button id="carousel-prev" class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 dark:bg-black/20 hover:bg-white/25 dark:hover:bg-black/40 backdrop-blur-md border border-white/20 text-white rounded-full flex items-center justify-center transition-colors z-20">
+                <span class="material-icons">chevron_left</span>
+            </button>
+            <button id="carousel-next" class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/10 dark:bg-black/20 hover:bg-white/25 dark:hover:bg-black/40 backdrop-blur-md border border-white/20 text-white rounded-full flex items-center justify-center transition-colors z-20">
+                <span class="material-icons">chevron_right</span>
+            </button>
+
+            <!-- Bottom Indicators -->
+            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2.5 z-20" id="carousel-indicators">
+                <button class="carousel-dot h-2 w-8 bg-primary rounded-full transition-all duration-300" data-slide="0"></button>
+                <button class="carousel-dot h-2 w-2 bg-white/50 hover:bg-white/80 rounded-full transition-all duration-300" data-slide="1"></button>
+                <button class="carousel-dot h-2 w-2 bg-white/50 hover:bg-white/80 rounded-full transition-all duration-300" data-slide="2"></button>
+            </div>
+        </section>
+
+
+        <section class="mb-20">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-800 text-slate-900 dark:text-white">Katalog Edukasi</h2>
+                    <p class="text-slate-500 mt-1 font-medium">Pelajari lebih dalam kearifan pertanian lokal</p>
+                </div>
+                <div class="flex gap-2">
+                    <button
+                        class="px-4 py-2 bg-primary/20 text-slate-900 dark:text-white text-sm font-bold rounded-lg border border-primary/30">Semua
+                        Modul</button>
+                    <button
+                        class="px-4 py-2 bg-white dark:bg-slate-800 text-slate-500 text-sm font-bold rounded-lg border border-slate-200 dark:border-slate-700">Kopi</button>
+                    <button
+                        class="px-4 py-2 bg-white dark:bg-slate-800 text-slate-500 text-sm font-bold rounded-lg border border-slate-200 dark:border-slate-700">Jeruk</button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8" id="edu-modules-list">
+                <!-- Dynamic modules loaded here -->
+            </div>
+        </section>
+        <!-- Featured Packages Section -->
+        <section class="mb-24">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary text-xs font-bold uppercase tracking-wider mb-4">
+                    Paket Pilihan
+                </span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white leading-tight">
+                    Paket Wisata & Edukasi Unggulan
+                </h2>
+                <p class="text-slate-500 dark:text-slate-400 mt-3 font-semibold text-sm leading-relaxed">
+                    Pilih paket pengalaman terbaik untuk merasakan kehidupan desa yang sesungguhnya dan belajar langsung dari warga Desa Kucur.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto" id="edu-packages-list">
+                <!-- Dynamic packages loaded here -->
+            </div>
+        </section>
+
+        <section class="bg-primary/5 dark:bg-primary/5 border border-primary/20 rounded-xl p-8 md:p-12 mb-16">
+            <div class="flex flex-col md:flex-row gap-12 items-center">
+                <div class="w-full md:w-1/2">
+                    <span
+                        class="inline-block px-3 py-1 bg-primary text-slate-900 text-[10px] font-800 uppercase rounded-full mb-6">Sorotan
+                        Edukasi</span>
+                    <h2 class="text-4xl font-800 text-slate-900 dark:text-white mb-6">Dari Biji ke Cangkir:
+                        <br />Keahlian Penyangraian
+                    </h2>
+                    <p class="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
+                        Penyangraian adalah tempat keajaiban terjadi. Roastery komunitas kami menggunakan perpaduan
+                        keahlian tradisional dan presisi modern untuk membuka catatan floral unik dari biji Arabika desa
+                        kami. Bergabunglah dengan ahli sangrai kami dalam workshop virtual atau fisik.
+                    </p>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-primary">check_circle</span>
+                            <span class="font-semibold text-sm">Optimalisasi kurva suhu</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-primary">check_circle</span>
+                            <span class="font-semibold text-sm">Analisis sensorik &amp; cupping</span>
+                        </li>
+                    </ul>
+                    <button id="watch-video-btn"
+                        class="px-8 py-4 bg-slate-900 dark:bg-primary text-white dark:text-slate-900 font-800 rounded-lg flex items-center gap-2 hover:scale-105 transition-transform">
+                        Tonton Dokumenter <span class="material-icons">play_circle</span>
+                    </button>
+                </div>
+                <div class="w-full md:w-1/2 grid grid-cols-2 gap-4">
+                    <img alt="Barista menuangkan air saat sesi cupping"
+                        class="rounded-lg shadow-lg aspect-square object-cover"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRixJs14FdJ36YmsXezTJM38tyL1xK5PSlHl2Y4WLCEQLzEYdgepIsXyvywtqkMr4zE5dkohunK5VD00hlm6Xo-ra5_E72CNw17ipZmehpnE24I0APlI9yLyH5D73uWKAuKrghpmGoiwsvWIfEOdB2nXFUi8SbetILMlsPPB3HW73Q4m72CHTuI-sq2lbOuR14sruYUZPR9gv3DSezmg2TS0mJA18yvDRcQxDbGZ1yHLsO6AuLi2ky1ukAPRz5IP3NcQMTJJMXi8U" />
+                    <img alt="Jus jeruk segar diperas di bawah sinar matahari"
+                        class="rounded-lg shadow-lg aspect-square object-cover mt-8"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPasuJhgYlYeciLeA0jdluAE5CdWK-J7Nvjqa1CwKt18GnDv7smq-fIyZ4GfZ5nCa6zWRC3FnxU0pznYR9ZeBrwHE7cRmWxcH5N8rRG-nJBT6Xf0sL34FAVrNGfLLcrtviXKX0Ow4G79IGqZOxhShqwTm8vEHf7MTSrm2RR69avOo6fIPz41YdN1Xnps4EjC9XU-Jow-AEkxXJxCxoue5CBR1hTjCfftGCm4XZVyaHgX4bkQetqGGqkUJGOqaEmHIov5DyPujCoMg" />
+                </div>
+            </div>
+        </section>
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-8 py-12 border-y border-primary/10 mb-24">
+            <div class="text-center">
+                <div class="text-4xl font-800 text-primary mb-1">150+</div>
+                <div class="text-xs font-bold uppercase tracking-widest text-slate-500">Petani Lokal</div>
+            </div>
+            <div class="text-center">
+                <div class="text-4xl font-800 text-primary mb-1">1.2k</div>
+                <div class="text-xs font-bold uppercase tracking-widest text-slate-500">Luas Lahan</div>
+            </div>
+            <div class="text-center">
+                <div class="text-4xl font-800 text-primary mb-1">45</div>
+                <div class="text-xs font-bold uppercase tracking-widest text-slate-500">Modul Pembelajaran</div>
+            </div>
+            <div class="text-center">
+                <div class="text-4xl font-800 text-primary mb-1">98%</div>
+                <div class="text-xs font-bold uppercase tracking-widest text-slate-500">Tingkat Keberlanjutan</div>
+            </div>
+        </section>
+    </main>
+    <footer class="bg-white dark:bg-slate-900 border-t border-primary/10 py-16">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white text-sm">lightbulb</span>
+                        </div>
+                        <span
+                            class="text-xl font-800 tracking-tight text-slate-900 dark:text-white uppercase"></span>
+                    </div>
+                    <p class="text-sm text-slate-500 leading-relaxed">
+                        Memberdayakan komunitas desa melalui pariwisata berbasis edukasi dan praktik pertanian
+                        berkelanjutan.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-800 text-slate-900 dark:text-white mb-6 uppercase tracking-widest text-xs">Navigasi
+                    </h4>
+                    <ul class="space-y-4 text-sm font-semibold text-slate-500">
+                        <li><a class="hover:text-primary" href="#">Peta Perkebunan</a></li>
+                        <li><a class="hover:text-primary" href="#">Modul Edukasi</a></li>
+                        <li><a class="hover:text-primary" href="#">Paket Wisata</a></li>
+                        <li><a class="hover:text-primary" href="#">Cerita Komunitas</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-800 text-slate-900 dark:text-white mb-6 uppercase tracking-widest text-xs">Dukungan
+                    </h4>
+                    <ul class="space-y-4 text-sm font-semibold text-slate-500">
+                        <li><a class="hover:text-primary" href="#">Pusat Bantuan</a></li>
+                        <li><a class="hover:text-primary" href="#">Portal Petani</a></li>
+                        <li><a class="hover:text-primary" href="#">Hubungi Kami</a></li>
+                        <li><a class="hover:text-primary" href="#">Kebijakan Privasi</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-800 text-slate-900 dark:text-white mb-6 uppercase tracking-widest text-xs">Buletin
+                    </h4>
+                    <p class="text-xs text-slate-500 mb-4">Dapatkan info musim panen dan workshop terbaru.</p>
+                    <div class="flex gap-2">
+                        <input
+                            class="flex-1 bg-slate-100 dark:bg-slate-800 border-none rounded-lg text-sm px-4 focus:ring-1 focus:ring-primary"
+                            placeholder="Email" type="email" />
+                        <button class="p-2 bg-primary text-slate-900 rounded-lg">
+                            <span class="material-icons">send</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="pt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs font-bold text-slate-400">© 2024 Edukasi Desa. Seluruh hak cipta dilindungi.
+                </p>
+                <div class="flex gap-6">
+                    <a class="text-slate-400 hover:text-primary" href="#"><span
+                            class="material-icons">facebook</span></a>
+                    <a class="text-slate-400 hover:text-primary" href="#"><span
+                            class="material-icons">camera_alt</span></a>
+                    <a class="text-slate-400 hover:text-primary" href="#"><span
+                            class="material-icons">language</span></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="video-modal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[70] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4">
+        <div class="relative w-full max-w-4xl aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl scale-95 transition-transform duration-300"
+            id="video-container">
+            <button id="close-video"
+                class="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/80 text-white rounded-full transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <iframe id="video-iframe" class="w-full h-full" src="" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- Edu Detail Modal -->
+    <div id="edu-modal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-md z-[75] hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]"
+            id="edu-modal-content">
+            <!-- Modal Header -->
+            <div class="relative h-48 sm:h-64 flex-shrink-0">
+                <img id="edu-modal-img" src="" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent"></div>
+                <button id="close-edu-modal"
+                    class="absolute top-4 right-4 z-10 p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors backdrop-blur-md">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+                <div class="absolute bottom-6 left-8">
+                    <span id="edu-modal-tag"
+                        class="px-3 py-1 bg-primary text-slate-900 text-[10px] font-800 uppercase rounded-full mb-2 inline-block">Category</span>
+                    <h2 id="edu-modal-title" class="text-2xl sm:text-3xl font-800 text-white leading-tight">Detail Title
+                    </h2>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-8 overflow-y-auto custom-scrollbar flex-1">
+                <div id="edu-modal-body" class="prose dark:prose-invert max-w-none text-slate-600 dark:text-slate-400">
+                    <!-- Content will be injected here -->
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div
+                class="p-6 border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 flex-shrink-0">
+                <button id="edu-action-btn"
+                    class="w-full bg-primary text-slate-900 font-800 py-4 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    Mulai Belajar Sekarang
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // --- Cart Functionality ---
+        let cart = JSON.parse(localStorage.getItem('lentera_cart')) || [];
+        const cartDrawer = document.getElementById('cart-drawer');
+        const cartOverlay = document.getElementById('cart-overlay');
+        const cartButton = document.getElementById('cart-button');
+        const closeCart = document.getElementById('close-cart');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartCountBadge = document.getElementById('cart-count');
+        const cartTotalDisplay = document.getElementById('cart-total');
+        const emptyCartMsg = document.getElementById('empty-cart-msg');
+
+        function saveCart() {
+            localStorage.setItem('lentera_cart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function toggleCart() {
+            const isOpen = !cartDrawer.classList.contains('translate-x-full');
+            if (isOpen) {
+                cartDrawer.classList.add('translate-x-full');
+                cartOverlay.classList.add('hidden');
+                cartOverlay.classList.remove('opacity-100');
+            } else {
+                cartDrawer.classList.remove('translate-x-full');
+                cartOverlay.classList.remove('hidden');
+                setTimeout(() => cartOverlay.classList.add('opacity-100'), 10);
+                updateCartUI();
+            }
+        }
+
+        cartButton?.addEventListener('click', toggleCart);
+        closeCart?.addEventListener('click', toggleCart);
+        cartOverlay?.addEventListener('click', toggleCart);
+        document.getElementById('start-shopping')?.addEventListener('click', toggleCart);
+
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', () => {
+                const card = button.closest('.product-card');
+                const product = {
+                    id: card.dataset.id,
+                    name: card.dataset.name,
+                    price: parseInt(card.dataset.price),
+                    img: card.dataset.img,
+                    qty: 1
+                };
+
+                const existingItem = cart.find(item => item.id === product.id);
+                if (existingItem) {
+                    existingItem.qty++;
+                } else {
+                    cart.push(product);
+                }
+
+                saveCart();
+                if (cartDrawer.classList.contains('translate-x-full')) toggleCart();
+            });
+        });
+
+        function updateCartUI() {
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            if (cartCountBadge) {
+                cartCountBadge.innerText = totalQty;
+                cartCountBadge.classList.toggle('hidden', totalQty === 0);
+            }
+
+            if (!cartItemsContainer) return;
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '';
+                cartItemsContainer.appendChild(emptyCartMsg);
+                cartTotalDisplay.innerText = 'Rp 0';
+                return;
+            }
+
+            if (emptyCartMsg && emptyCartMsg.parentNode) emptyCartMsg.remove();
+
+            cartItemsContainer.innerHTML = cart.map(item => `
+                <div class="flex gap-4 group">
+                    <div class="w-20 h-20 rounded-xl overflow-hidden border border-slate-100 flex-shrink-0">
+                        <img src="${item.img}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-1">${item.name}</h4>
+                        <p class="text-primary font-bold text-sm mb-3">Rp ${(item.price * item.qty / 1000).toLocaleString()}rb</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                                <button onclick="updateQty('${item.id}', -1)" class="px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500">-</button>
+                                <span class="px-3 py-1 text-xs font-bold border-x border-slate-200 dark:border-slate-700">${item.qty}</span>
+                                <button onclick="updateQty('${item.id}', 1)" class="px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500">+</button>
+                            </div>
+                            <button onclick="removeFromCart('${item.id}')" class="text-slate-400 hover:text-red-500 transition-colors">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            if (cartTotalDisplay) cartTotalDisplay.innerText = `Rp ${(total / 1000).toLocaleString()}rb`;
+        }
+
+        window.updateQty = (id, change) => {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.qty += change;
+                if (item.qty <= 0) {
+                    removeFromCart(id);
+                } else {
+                    saveCart();
+                }
+            }
+        };
+
+        window.removeFromCart = (id) => {
+            cart = cart.filter(item => item.id !== id);
+            saveCart();
+        };
+
+        updateCartUI();
+
+        // --- Video Modal Functionality ---
+        const watchVideoBtn = document.getElementById('watch-video-btn');
+        const videoModal = document.getElementById('video-modal');
+        const videoContainer = document.getElementById('video-container');
+        const closeVideo = document.getElementById('close-video');
+        const videoIframe = document.getElementById('video-iframe');
+        const videoUrl = "https://www.youtube.com/embed/9No-FiE9Gwc"; // Education/Nature video
+
+        function openVideo() {
+            videoIframe.src = `${videoUrl}?autoplay=1`;
+            videoModal.classList.remove('hidden');
+            setTimeout(() => {
+                videoModal.classList.add('opacity-100');
+                videoContainer.classList.remove('scale-95');
+                videoContainer.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeVideoModal() {
+            videoModal.classList.remove('opacity-100');
+            videoContainer.classList.add('scale-95');
+            videoContainer.classList.remove('scale-100');
+            setTimeout(() => {
+                videoModal.classList.add('hidden');
+                videoIframe.src = ""; // Stop video
+            }, 300);
+        }
+
+        watchVideoBtn?.addEventListener('click', openVideo);
+        closeVideo?.addEventListener('click', closeVideoModal);
+        videoModal?.addEventListener('click', (e) => {
+            if (e.target === videoModal) closeVideoModal();
+        });
+
+        // Close on ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !videoModal.classList.contains('hidden')) {
+                closeVideoModal();
+            }
+        });
+
+        // --- Edu Detail Modal Functionality ---
+        const eduModal = document.getElementById('edu-modal');
+        const eduModalContent = document.getElementById('edu-modal-content');
+        const closeEduModal = document.getElementById('close-edu-modal');
+        const eduModalImg = document.getElementById('edu-modal-img');
+        const eduModalTag = document.getElementById('edu-modal-tag');
+        const eduModalTitle = document.getElementById('edu-modal-title');
+        const eduModalBody = document.getElementById('edu-modal-body');
+        const eduActionBtn = document.getElementById('edu-action-btn');
+
+        const eduData = {};
+        const defaultEduData = {
+            kopi: {
+                tag: 'Sejarah & Asal',
+                title: 'Pengetahuan Kopi',
+                img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAruYLfsN1zsSoe6ASC2YZFOyLR1YxR7hs8nYOLNogdcaoFg8blRnrHEFf-IdaefgS36taueiAIljEKrxb42H7LHMOZCZbK6jkikz_iiJs4DWDhA8XA4rFwO6M_vXtLI9h2lPxtgYO0FmMCloTTiEoHY6BAkg4aJh19FBnCcm8TlTMp82hEXr0Fih8MnF7CuoRTc0GBdSuZR1gpaJFcyWDSnzResbI2KQRi4RW8axud9P7vtMg96SPx_WM8ZjmiXTbFQc_Od8453a8',
+                body: `
+                    <p class="mb-4">Kopi di Desa Kucur memiliki sejarah panjang yang bermula dari era kolonial. Terletak di lereng Gunung Kawi dengan ketinggian 800-1200 mdpl, tanah vulkanik kami memberikan nutrisi sempurna untuk biji kopi Arabika dan Robusta.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-white mb-2">Apa yang akan Anda pelajari:</h4>
+                    <ul class="list-disc pl-5 space-y-2 mb-4">
+                        <li>Perbedaan profil rasa Arabika Kucur vs daerah lain.</li>
+                        <li>Siklus hidup pohon kopi dari bibit hingga panen.</li>
+                        <li>Pentingnya ekosistem hutan penyangga untuk kualitas biji.</li>
+                    </ul>
+                    <p>Modul ini mencakup 12 materi mendalam dengan panduan video dari ahli agronomi lokal.</p>
+                `,
+                btnText: 'Pelajari Modul Kopi'
+            },
+            tani: {
+                tag: 'Pahlawan Lokal',
+                title: 'Kelompok Tani Desa',
+                img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBWQf4oUNapHWIsyItERnNvFSj7i2kcurfQTbOIlclRujNloH16iJri2lKD5_sB4aK1Eo44dmX-4djPG8f9mk0C05eCqWuazg51CkUnQMQTTS1gHuywIkToXymnxJvyUIG2EoAMvGKuLHKiBr-_pSAzKM8K9VxR9mpdJqjUZGTH0CS5j5RRgQc1pKmfgAEnl6u6EzuKkG_dm78jzzBzt75e8hMFxXcH27-9CXH9QM2sp8JJ4SoS__wnj_Eo-wT27dERZcfcQEkSe9U',
+                body: `
+                    <p class="mb-4">Keberhasilan Desa Kucur terletak pada semangat gotong royong 15 kelompok tani kami. Setiap kelompok mengelola blok perkebunan tertentu dengan standar keberlanjutan yang ketat.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-white mb-2">Dampak Sosial Kami:</h4>
+                    <ul class="list-disc pl-5 space-y-2 mb-4">
+                        <li>Sistem bagi hasil yang adil untuk seluruh anggota koperasi.</li>
+                        <li>Program beasiswa untuk anak-anak petani dari dana CSR.</li>
+                        <li>Pelatihan teknologi pertanian modern bagi pemuda desa.</li>
+                    </ul>
+                    <p>Kenali wajah-wajah di balik cangkir kopi Anda dan kontribusi mereka terhadap kelestarian alam.</p>
+                `,
+                btnText: 'Lihat Daftar Kelompok'
+            },
+            produksi: {
+                tag: 'Perjalanan Interaktif',
+                title: 'Proses Produksi',
+                img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAZZRZ0sKiCtTbb_2y0PCevIbWGLQBKYwYPtyLKnepjt4ay0lDlEADSKAt8gk6p1CMnVXJCAH0qO9GnBF5G0KP2Z3oj2Z0oBBmoBdoGoYCEzRZg4qoA2JRcgMo2b10LwBR1P1VfIdmbh37cLRgEWkYK7pSkLcHT1I9KSI0D3c0I0WWQVvVBkfyti7RFDoDVa5x7PNNo0QPgzlwo_NsBdvpWVVVh79Oyve7h3o3tJx0tAJF69XKxTgrtyGuKQaQMVpIEZzhXVxax3wo',
+                body: `
+                    <p class="mb-4">Dari pohon hingga ke rak, setiap langkah diproses dengan presisi. Kami menggabungkan kearifan tradisional dengan mesin pengolahan modern untuk memastikan standar kualitas ekspor.</p>
+                    <h4 class="font-bold text-slate-900 dark:text-white mb-2">Tahapan Tur Produksi:</h4>
+                    <ol class="list-decimal pl-5 space-y-2 mb-4">
+                        <li><strong>Pemetikan Selektif:</strong> Hanya buah merah (cherry) yang dipetik.</li>
+                        <li><strong>Fermentasi:</strong> Proses pencucian untuk mengembangkan aroma.</li>
+                        <li><strong>Pengeringan:</strong> Menggunakan dome tenaga surya untuk kadar air stabil.</li>
+                        <li><strong>Roasting:</strong> Penyangraian tingkat menengah untuk menjaga karakter floral.</li>
+                    </ol>
+                    <p>Ikuti tur virtual 360° untuk melihat fasilitas pengolahan kami secara langsung.</p>
+                `,
+                btnText: 'Mulai Tur Virtual'
+            }
+        };
+
+        function updateEduData() {
+            const storedModules = JSON.parse(localStorage.getItem('lentera_education_modules')) || [];
+            if (storedModules.length > 0) {
+                for (const key in eduData) delete eduData[key];
+                storedModules.forEach(m => {
+                    eduData[m.id] = {
+                        tag: m.category,
+                        title: m.title,
+                        img: m.img,
+                        body: m.body,
+                        btnText: m.btnText
+                    };
+                });
+            } else {
+                for (const key in eduData) delete eduData[key];
+                Object.assign(eduData, defaultEduData);
+            }
+        }
+        updateEduData();
+
+        function openEduModal(type) {
+            const data = eduData[type];
+            if (!data) return;
+
+            eduModalImg.src = data.img;
+            eduModalTag.innerText = data.tag;
+            eduModalTitle.innerText = data.title;
+            eduModalBody.innerHTML = data.body;
+            eduActionBtn.innerHTML = `${data.btnText} <span class="material-symbols-outlined">arrow_forward</span>`;
+
+            eduModal.classList.remove('hidden');
+            setTimeout(() => {
+                eduModal.classList.add('opacity-100');
+                eduModalContent.classList.remove('scale-95');
+                eduModalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeEduModalFunc() {
+            eduModal.classList.remove('opacity-100');
+            eduModalContent.classList.add('scale-95');
+            eduModalContent.classList.remove('scale-100');
+            setTimeout(() => {
+                eduModal.classList.add('hidden');
+            }, 300);
+        }
+
+        document.querySelectorAll('.edu-detail-btn').forEach(btn => {
+            btn.addEventListener('click', () => openEduModal(btn.dataset.eduType));
+        });
+
+        closeEduModal?.addEventListener('click', closeEduModalFunc);
+        eduModal?.addEventListener('click', (e) => {
+            if (e.target === eduModal) closeEduModalFunc();
+        });
+
+        // Extend ESC listener
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !eduModal.classList.contains('hidden')) {
+                closeEduModalFunc();
+            }
+        });
+
+        // --- Carousel / Slider Functionality ---
+        const slides = document.querySelectorAll('.carousel-slide');
+        const dots = document.querySelectorAll('.carousel-dot');
+        const prevBtn = document.getElementById('carousel-prev');
+        const nextBtn = document.getElementById('carousel-next');
+        const carousel = document.getElementById('education-carousel');
+        let currentSlide = 0;
+        let slideInterval;
+
+        function showSlide(index) {
+            slides[currentSlide].classList.remove('active-slide');
+            dots[currentSlide].classList.remove('w-8', 'bg-primary');
+            dots[currentSlide].classList.add('w-2', 'bg-white/50');
+
+            currentSlide = (index + slides.length) % slides.length;
+
+            slides[currentSlide].classList.add('active-slide');
+            dots[currentSlide].classList.remove('w-2', 'bg-white/50');
+            dots[currentSlide].classList.add('w-8', 'bg-primary');
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function startAutoPlay() {
+            slideInterval = setInterval(nextSlide, 5000);
+        }
+
+        function stopAutoPlay() {
+            clearInterval(slideInterval);
+        }
+
+        prevBtn?.addEventListener('click', () => {
+            prevSlide();
+            stopAutoPlay();
+            startAutoPlay(); // Reset timer
+        });
+
+        nextBtn?.addEventListener('click', () => {
+            nextSlide();
+            stopAutoPlay();
+            startAutoPlay(); // Reset timer
+        });
+
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                showSlide(index);
+                stopAutoPlay();
+                startAutoPlay(); // Reset timer
+            });
+        });
+
+        carousel?.addEventListener('mouseenter', stopAutoPlay);
+        carousel?.addEventListener('mouseleave', startAutoPlay);
+
+        function renderModulesUI() {
+            const container = document.getElementById('edu-modules-list');
+            if (!container) return;
+
+            const storedModules = JSON.parse(localStorage.getItem('lentera_education_modules')) || [];
+            
+            const defaultModules = [
+                {
+                    id: 'kopi',
+                    title: 'Pengetahuan Kopi',
+                    category: 'Sejarah & Asal',
+                    description: 'Pelajari sejarah 200 tahun budidaya kopi di tanah vulkanik kami dan sains di balik profil rasa.',
+                    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAruYLfsN1zsSoe6ASC2YZFOyLR1YxR7hs8nYOLNogdcaoFg8blRnrHEFf-IdaefgS36taueiAIljEKrxb42H7LHMOZCZbK6jkikz_iiJs4DWDhA8XA4rFwO6M_vXtLI9h2lPxtgYO0FmMCloTTiEoHY6BAkg4aJh19FBnCcm8TlTMp82hEXr0Fih8MnF7CuoRTc0GBdSuZR1gpaJFcyWDSnzResbI2KQRi4RW8axud9P7vtMg96SPx_WM8ZjmiXTbFQc_Od8453a8',
+                    icon: 'menu_book',
+                    meta: '12 Modul'
+                },
+                {
+                    id: 'tani',
+                    title: 'Kelompok Tani',
+                    category: 'Pahlawan Lokal',
+                    description: 'Temui 15 kelompok koperasi yang mengelola perkebunan berkelanjutan kami. Transparansi dari tanah hingga rak.',
+                    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBWQf4oUNapHWIsyItERnNvFSj7i2kcurfQTbOIlclRujNloH16iJri2lKD5_sB4aK1Eo44dmX-4djPG8f9mk0C05eCqWuazg51CkUnQMQTTS1gHuywIkToXymnxJvyUIG2EoAMvGKuLHKiBr-_pSAzKM8K9VxR9mpdJqjUZGTH0CS5j5RRgQc1pKmfgAEnl6u6EzuKkG_dm78jzzBzt75e8hMFxXcH27-9CXH9QM2sp8JJ4SoS__wnj_Eo-wT27dERZcfcQEkSe9U',
+                    icon: 'groups',
+                    meta: '15 Kelompok'
+                },
+                {
+                    id: 'produksi',
+                    title: 'Proses Produksi',
+                    category: 'Perjalanan Interaktif',
+                    description: 'Perjalanan interaktif langkah demi langkah melalui teknik pencucian, fermentasi, pengeringan, dan penyangraian.',
+                    img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAZZRZ0sKiCtTbb_2y0PCevIbWGLQBKYwYPtyLKnepjt4ay0lDlEADSKAt8gk6p1CMnVXJCAH0qO9GnBF5G0KP2Z3oj2Z0oBBmoBdoGoYCEzRZg4qoA2JRcgMo2b10LwBR1P1VfIdmbh37cLRgEWkYK7pSkLcHT1I9KSI0D3c0I0WWQVvVBkfyti7RFDoDVa5x7PNNo0QPgzlwo_NsBdvpWVVVh79Oyve7h3o3tJx0tAJF69XKxTgrtyGuKQaQMVpIEZzhXVxax3wo',
+                    icon: 'psychology',
+                    meta: 'Interaktif'
+                }
+            ];
+
+            const list = storedModules.length > 0 ? storedModules : defaultModules;
+            
+            container.innerHTML = list.map(m => `
+                <div class="group bg-white dark:bg-slate-900 rounded-xl overflow-hidden shadow-sm border border-slate-100 dark:border-slate-800 hover:shadow-xl transition-all hover:-translate-y-1">
+                    <div class="relative h-48">
+                        <img alt="${m.title}" class="w-full h-full object-cover" src="${m.img}" />
+                        <div class="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur rounded text-[10px] font-800 uppercase text-slate-900">
+                            ${m.category}
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-800 mb-2 group-hover:text-primary transition-colors">${m.title}</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed mb-6">${m.description}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="flex items-center gap-2 text-xs font-bold text-slate-400">
+                                <span class="material-icons text-[16px]">${m.icon}</span> ${m.meta}
+                            </span>
+                            <button onclick="openEduModal('${m.id}')" class="flex items-center gap-1 text-primary text-sm font-bold uppercase tracking-wider">
+                                Jelajahi <span class="material-icons text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderPackagesUI() {
+            const container = document.getElementById('edu-packages-list');
+            if (!container) return;
+
+            const storedPackages = JSON.parse(localStorage.getItem('lentera_education_packages')) || [];
+            
+            const defaultPackages = [
+                {
+                    id: 'pkg_live_in',
+                    title: 'Live In Desa Kucur',
+                    tag: 'Pengalaman Autentik',
+                    description: 'Rasakan pengalaman berharga tinggal langsung di rumah warga setempat (homestay). Ikuti aktivitas keseharian mereka secara autentik seperti bertani, memasak makanan tradisional desa, dan berinteraksi erat dengan komunitas lokal Kucur.',
+                    price: 350000,
+                    unit: 'malam',
+                    img: 'https://images.unsplash.com/photo-1505843513577-22bb7d21e455?auto=format&fit=crop&q=80&w=600',
+                    phone: '628123456789',
+                    features: 'Homestay Warga, Makan Bersama, Aktivitas Harian Desa'
+                },
+                {
+                    id: 'pkg_tani_cilik',
+                    title: 'Paket Edu-Tani Cilik',
+                    tag: 'Edu-Agrowisata',
+                    description: 'Paket edukasi luar ruangan interaktif yang dirancang khusus untuk anak-anak dan keluarga. Belajar teknik bercocok tanam padi di sawah terasering secara organik, merawat kebun, serta memetik buah jeruk segar langsung dari pohon.',
+                    price: 75000,
+                    unit: 'pax',
+                    img: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=600',
+                    phone: '628123456789',
+                    features: 'Petik Jeruk Organik, Tanam Padi Sawah, Merawat Kebun'
+                }
+            ];
+
+            const list = storedPackages.length > 0 ? storedPackages : defaultPackages;
+
+            container.innerHTML = list.map(p => `
+                <div class="group bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800 rounded-3xl overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="${p.img}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur rounded-lg text-[10px] font-800 uppercase text-slate-900">
+                            ${p.tag}
+                        </div>
+                    </div>
+                    <div class="p-8 flex-1 flex flex-col justify-between space-y-6">
+                        <div class="space-y-4">
+                            <h3 class="text-2xl font-extrabold text-slate-900 dark:text-white group-hover:text-primary transition-colors">
+                                ${p.title}
+                            </h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+                                ${p.description}
+                            </p>
+                            <div class="flex flex-wrap gap-2 pt-2">
+                                ${p.features.split(',').map(f => `<span class="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-semibold">${f.trim()}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                            <div>
+                                <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">Harga</span>
+                                <span class="text-xl font-extrabold text-primary">Rp ${parseInt(p.price).toLocaleString('id-ID')}<span class="text-xs text-slate-500 font-semibold uppercase tracking-normal"> / ${p.unit}</span></span>
+                            </div>
+                            <a href="https://wa.me/${p.phone}?text=Halo%20Admin%20LENTERA,%20saya%20tertarik%20untuk%20memesan%20paket%20%22${encodeURIComponent(p.title)}%22.%20Mohon%20informasi%20ketersediaan%20dan%20prosedur%20pemesanan%20selanjutnya.%20Terima%20kasih!" target="_blank" class="px-5 py-3 bg-primary hover:bg-primary/90 text-slate-900 font-extrabold rounded-xl text-xs uppercase tracking-wider transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-md shadow-primary/20 flex items-center justify-center gap-1.5">
+                                <span class="material-icons text-sm">chat</span> Hubungi Admin
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize
+        renderModulesUI();
+        renderPackagesUI();
+        startAutoPlay();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Detail Produk - LENTERA</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4bee2b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#132210",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb { background: rgba(100,116,139,.35); border-radius: 999px; }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 antialiased min-h-screen">
+
+    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white">lightbulb</span>
+                </div>
+                <span class="text-2xl font-800 tracking-tight text-slate-900 dark:text-white uppercase"></span>
+            </div>
+            <div class="hidden lg:flex items-center gap-8">
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Home.html">Home</a>
+                <a class="text-sm font-bold text-primary relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-primary"
+                    href="Catalog.html">Catalog</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Location.html">Location</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Education.html">Education</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Navigation.html">Navigation</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="E-resource.html">E-Resource</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Sponsor.html">Sponsor</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Profile.html">Profil</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <button class="p-2.5 rounded-full hover:bg-primary/10 transition-colors text-slate-600 dark:text-slate-300 relative">
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                    <span class="absolute top-1 right-1 w-4 h-4 bg-primary text-[10px] text-slate-900 font-bold rounded-full flex items-center justify-center">2</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="max-w-7xl mx-auto px-6 py-6">
+        <div class="flex items-center gap-2 text-sm font-semibold text-slate-500">
+            <a href="Home.html" class="hover:text-primary transition-colors">Home</a>
+            <span class="material-icons text-sm">chevron_right</span>
+            <a href="Catalog.html" class="hover:text-primary transition-colors">Katalog UMKM</a>
+            <span class="material-icons text-sm">chevron_right</span>
+            <span class="text-slate-900 dark:text-white">Kerajinan</span>
+        </div>
+    </div>
+
+    <!-- Product Section -->
+    <main class="max-w-7xl mx-auto px-6 pb-20">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 lg:p-10 shadow-sm flex flex-col lg:flex-row gap-10">
+            
+            <!-- Left: Images Gallery -->
+            <div class="w-full lg:w-5/12 space-y-4">
+                <div class="aspect-square rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 relative group cursor-zoom-in">
+                    <img id="main-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-0zMYhdXGCIaSNsvekoS0DeSPXakM11lU5mhdD1yV035Xf582Dbex40DsC1Cpv7zJ3VAD-pH_hE8weRdqRdtdD_hrW36LCD2vdnHiEmxn2GO78F2J_I8wNmBdizXBxoOWaH7Vi_FTC2FAH3E3btNzEOiU4D-lVV7-vAvdcuIyZJ54MPoGRYSP4ji7BxJTpvZmrdksvjIU3XE928J3UPr8kJ8VTLnCWjpf-ZwKnSRYnfGFkArfT7x2UW6i4rLb5BqpEPteEMNAezI" alt="Product" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                </div>
+                <!-- Thumbnails -->
+                <div class="grid grid-cols-4 gap-4">
+                    <button class="aspect-square rounded-xl overflow-hidden border-2 border-primary" onclick="changeImage(this, 'https://lh3.googleusercontent.com/aida-public/AB6AXuB-0zMYhdXGCIaSNsvekoS0DeSPXakM11lU5mhdD1yV035Xf582Dbex40DsC1Cpv7zJ3VAD-pH_hE8weRdqRdtdD_hrW36LCD2vdnHiEmxn2GO78F2J_I8wNmBdizXBxoOWaH7Vi_FTC2FAH3E3btNzEOiU4D-lVV7-vAvdcuIyZJ54MPoGRYSP4ji7BxJTpvZmrdksvjIU3XE928J3UPr8kJ8VTLnCWjpf-ZwKnSRYnfGFkArfT7x2UW6i4rLb5BqpEPteEMNAezI')">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-0zMYhdXGCIaSNsvekoS0DeSPXakM11lU5mhdD1yV035Xf582Dbex40DsC1Cpv7zJ3VAD-pH_hE8weRdqRdtdD_hrW36LCD2vdnHiEmxn2GO78F2J_I8wNmBdizXBxoOWaH7Vi_FTC2FAH3E3btNzEOiU4D-lVV7-vAvdcuIyZJ54MPoGRYSP4ji7BxJTpvZmrdksvjIU3XE928J3UPr8kJ8VTLnCWjpf-ZwKnSRYnfGFkArfT7x2UW6i4rLb5BqpEPteEMNAezI" class="w-full h-full object-cover">
+                    </button>
+                    <button class="aspect-square rounded-xl overflow-hidden border-2 border-transparent hover:border-primary/50" onclick="changeImage(this, 'https://lh3.googleusercontent.com/aida-public/AB6AXuA2wB8B1z-e2LwHnI7k9aFzE6K_yT_mZ_08XUj5aV8q_VzM3rD_I5wR_00oTz_T3d7sUaJg3j9kE2wB8B1z-e2LwHnI7k9aFzE6K_yT_mZ_08XUj5aV8q_VzM3rD_I5wR_00oTz_T3d7sUaJg3j9kE2wB8B1z')">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuArlh0B_bfk0KryglnmV14CskIsx2Dg80kMeKWJyxacBYxz-gA7yZJ5M9mb6l7I2vF8vKXPRSeMJQchH4iHyAhH3HYtsYjfEVDnPBwpgu68KmLmMLhkGZb08uST1pRXXm9itaGRJqLOayMBMGqHX4ibgqQQBXSG0NS2CARPF8ZWkcP35C2k449CqV2wfq1nPZ0jwKIkab38z7Enj-rtTMETJnQZgwivXhEZ-keUImAt9lIlG-XNAtXrrTaHKj5Idxiogpjy38O98zE" class="w-full h-full object-cover">
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right: Product Info -->
+            <div class="flex-1 flex flex-col">
+                <div class="mb-6">
+                    <span class="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full mb-3 uppercase tracking-widest">Toko Kriya Makmur</span>
+                    <h1 class="text-3xl md:text-4xl font-800 text-slate-900 dark:text-white leading-tight">Keranjang Anyaman Bambu Tradisional Asli Kucur</h1>
+                    
+                    <div class="flex items-center gap-4 mt-4 text-sm font-semibold text-slate-500">
+                        <div class="flex items-center text-orange-500">
+                            <span class="material-icons text-base">star</span>
+                            <span class="material-icons text-base">star</span>
+                            <span class="material-icons text-base">star</span>
+                            <span class="material-icons text-base">star</span>
+                            <span class="material-icons text-base">star_half</span>
+                            <span class="ml-1 text-slate-600 dark:text-slate-300">4.8</span>
+                        </div>
+                        <div class="w-1 h-1 rounded-full bg-slate-300"></div>
+                        <span>124 Terjual</span>
+                        <div class="w-1 h-1 rounded-full bg-slate-300"></div>
+                        <span class="flex items-center gap-1"><span class="material-icons text-base text-primary">verified</span> Ori Desa</span>
+                    </div>
+                </div>
+
+                <div class="mb-8 p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <div class="text-3xl font-800 text-primary mb-2">Rp 350.000</div>
+                    <div class="text-sm font-semibold text-slate-500 line-through">Rp 400.000 (Diskon 12%)</div>
+                </div>
+
+                <!-- Variations / Stock -->
+                <div class="mb-8">
+                    <div class="flex items-center gap-4 mb-4">
+                        <span class="w-20 text-sm font-bold text-slate-500 uppercase tracking-widest">Ukuran</span>
+                        <div class="flex gap-2">
+                            <button class="px-4 py-2 border-2 border-primary text-primary font-bold rounded-lg text-sm bg-primary/5">Sedang (M)</button>
+                            <button class="px-4 py-2 border-2 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-lg text-sm hover:border-primary/50 transition-colors">Besar (L)</button>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="w-20 text-sm font-bold text-slate-500 uppercase tracking-widest">Jumlah</span>
+                        <div class="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                            <button class="w-10 h-10 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors">-</button>
+                            <input type="text" value="1" class="w-12 h-10 border-x border-slate-200 dark:border-slate-700 border-y-0 text-center font-bold text-slate-900 dark:text-white bg-transparent focus:ring-0">
+                            <button class="w-10 h-10 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors">+</button>
+                        </div>
+                        <span class="text-sm font-semibold text-slate-500">Tersisa 15 buah</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-3 mt-auto pt-6 border-t border-slate-200 dark:border-slate-800">
+                    <button class="flex-1 px-6 py-4 border-2 border-primary text-primary font-800 rounded-xl hover:bg-primary/10 transition-colors flex items-center justify-center gap-2">
+                        <span class="material-icons">add_shopping_cart</span>
+                        Masukkan Keranjang
+                    </button>
+                    <a href="Checkout.html" class="flex-1 px-6 py-4 bg-primary text-slate-900 font-800 rounded-xl hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2">
+                        Beli Langsung
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description & Reviews Tabs -->
+        <div class="mt-10">
+            <!-- Tab Headers -->
+            <div class="flex gap-8 border-b border-slate-200 dark:border-slate-800">
+                <button class="pb-4 text-primary font-800 border-b-2 border-primary text-lg" id="tab-desc" onclick="switchTab('desc')">Deskripsi Produk</button>
+                <button class="pb-4 text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 font-bold border-b-2 border-transparent transition-colors text-lg" id="tab-review" onclick="switchTab('review')">Ulasan (24)</button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="py-8 bg-white dark:bg-slate-900 rounded-b-3xl" id="content-desc">
+                <div class="prose prose-slate dark:prose-invert max-w-none">
+                    <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">Keranjang anyaman bambu asli buatan tangan pengrajin Desa Kucur. Terbuat dari bambu apus pilihan yang sudah melalui proses perendaman dan pengeringan alami sehingga tahan terhadap rayap dan cuaca.</p>
+                    <h4 class="text-slate-900 dark:text-white font-bold mt-6 mb-2">Spesifikasi:</h4>
+                    <ul class="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-300 font-medium">
+                        <li>Material: 100% Bambu Apus Lokal</li>
+                        <li>Dimensi: Diameter 30cm, Tinggi 35cm (Ukuran M)</li>
+                        <li>Finishing: Natural non-toxic clear coat</li>
+                        <li>Ketahanan: Mampu menahan beban hingga 10 kg</li>
+                    </ul>
+                    <p class="text-slate-600 dark:text-slate-300 mt-6 leading-relaxed font-medium text-sm italic">Catatan: Karena ini adalah produk buatan tangan (handmade), ukuran dan warna bambu mungkin sedikit bervariasi antara satu produk dengan produk lainnya.</p>
+                </div>
+            </div>
+
+            <div class="py-8 bg-white dark:bg-slate-900 rounded-b-3xl hidden space-y-6" id="content-review">
+                <!-- Review Summary -->
+                <div class="flex items-center gap-6 p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+                    <div class="text-center">
+                        <div class="text-4xl font-800 text-slate-900 dark:text-white">4.8</div>
+                        <div class="flex text-orange-500 mt-1">
+                            <span class="material-icons text-sm">star</span>
+                            <span class="material-icons text-sm">star</span>
+                            <span class="material-icons text-sm">star</span>
+                            <span class="material-icons text-sm">star</span>
+                            <span class="material-icons text-sm">star_half</span>
+                        </div>
+                        <div class="text-xs font-bold text-slate-500 mt-1">Dari 24 ulasan</div>
+                    </div>
+                    <div class="flex-1 space-y-1 border-l border-slate-200 dark:border-slate-700 pl-6">
+                        <!-- Progress bars omitted for brevity, representing rating distribution -->
+                        <div class="flex items-center gap-2 text-xs font-bold text-slate-500">
+                            <span>5</span><span class="material-icons text-[10px] text-orange-500">star</span>
+                            <div class="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden"><div class="w-[85%] h-full bg-primary"></div></div>
+                            <span class="w-4">20</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs font-bold text-slate-500">
+                            <span>4</span><span class="material-icons text-[10px] text-orange-500">star</span>
+                            <div class="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden"><div class="w-[10%] h-full bg-primary"></div></div>
+                            <span class="w-4">3</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs font-bold text-slate-500">
+                            <span>3</span><span class="material-icons text-[10px] text-orange-500">star</span>
+                            <div class="flex-1 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden"><div class="w-[5%] h-full bg-primary"></div></div>
+                            <span class="w-4">1</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Individual Reviews -->
+                <div class="space-y-6 pt-4">
+                    <div class="border-b border-slate-200 dark:border-slate-800 pb-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center">
+                                    <span class="material-icons text-slate-500">person</span>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-sm text-slate-900 dark:text-white">Anita R.</h5>
+                                    <div class="text-orange-500 flex"><span class="material-icons text-xs">star</span><span class="material-icons text-xs">star</span><span class="material-icons text-xs">star</span><span class="material-icons text-xs">star</span><span class="material-icons text-xs">star</span></div>
+                                </div>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500">2 hari yang lalu</span>
+                        </div>
+                        <p class="text-sm font-medium text-slate-600 dark:text-slate-300 mt-3">Anyamannya rapi sekali, kuat, dan warnanya natural. Pengiriman juga cepat dilayani langsung oleh kurir desa. Puas banget belanja produk lokal yang berkualitas seperti ini!</p>
+                    </div>
+
+                    <div class="border-b border-slate-200 dark:border-slate-800 pb-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center">
+                                    <span class="material-icons text-slate-500">person</span>
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-sm text-slate-900 dark:text-white">Bayu Dwi</h5>
+                                    <div class="text-orange-500 flex"><span class="material-icons text-xs">star</span><span class="material-icons text-xs">star</span><span class="material-icons text-xs">star</span><span class="material-icons text-xs">star</span><span class="material-icons text-xs text-slate-300">star</span></div>
+                                </div>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-500">1 minggu yang lalu</span>
+                        </div>
+                        <p class="text-sm font-medium text-slate-600 dark:text-slate-300 mt-3">Bagus untuk dekorasi rumah. Sayangnya ukurannya sedikit lebih besar dari bayangan saya, tapi tetap sangat berguna.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function changeImage(btn, src) {
+            document.getElementById('main-image').src = src;
+            // Update active state on thumbnails
+            document.querySelectorAll('.grid > button').forEach(b => {
+                b.classList.remove('border-primary');
+                b.classList.add('border-transparent');
+            });
+            btn.classList.remove('border-transparent');
+            btn.classList.add('border-primary');
+        }
+
+        function switchTab(tabId) {
+            const btnDesc = document.getElementById('tab-desc');
+            const btnReview = document.getElementById('tab-review');
+            const contentDesc = document.getElementById('content-desc');
+            const contentReview = document.getElementById('content-review');
+
+            if (tabId === 'desc') {
+                btnDesc.classList.add('text-primary', 'border-primary');
+                btnDesc.classList.remove('text-slate-500', 'border-transparent');
+                
+                btnReview.classList.remove('text-primary', 'border-primary');
+                btnReview.classList.add('text-slate-500', 'border-transparent');
+
+                contentDesc.classList.remove('hidden');
+                contentReview.classList.add('hidden');
+            } else {
+                btnReview.classList.add('text-primary', 'border-primary');
+                btnReview.classList.remove('text-slate-500', 'border-transparent');
+                
+                btnDesc.classList.remove('text-primary', 'border-primary');
+                btnDesc.classList.add('text-slate-500', 'border-transparent');
+
+                contentReview.classList.remove('hidden');
+                contentDesc.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

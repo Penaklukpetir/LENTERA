@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Navigasi &amp; Rute LENTERA</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4bee2b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#132210",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 antialiased min-h-screen">
+    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white">lightbulb</span>
+                </div>
+                <span class="text-2xl font-800 tracking-tight text-slate-900 dark:text-white uppercase"></span>
+            </div>
+            <div class="hidden lg:flex items-center gap-8">
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Home.html">Home</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Catalog.html">Catalog</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Location.html">Location</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Education.html">Education</a>
+                <a class="text-sm font-bold text-primary relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-primary"
+                    href="Navigation.html">Navigation</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="E-resource.html">E-Resource</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Sponsor.html">Sponsor</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Profile.html">Profil</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <button
+                    class="p-2.5 rounded-full hover:bg-primary/10 transition-colors text-slate-600 dark:text-slate-300 lg:hidden"
+                    id="mobile-menu-button">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <button id="cart-button"
+                    class="p-2.5 rounded-full hover:bg-primary/10 transition-colors text-slate-600 dark:text-slate-300 relative">
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                    <span id="cart-count"
+                        class="absolute top-1 right-1 w-4 h-4 bg-primary text-[10px] text-slate-900 font-bold rounded-full flex items-center justify-center">0</span>
+                </button>
+                <div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
+                <button
+                    class="flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <div
+                        class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
+                        <span class="material-symbols-outlined text-slate-500">account_circle</span>
+                    </div>
+                    <span class="text-sm font-bold text-slate-700 dark:text-slate-200 hidden sm:inline">User</span>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div class="lg:hidden hidden border-t border-primary/10 bg-white dark:bg-background-dark px-6 py-4 space-y-4"
+            id="mobile-menu">
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Home.html">Home</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Catalog.html">Catalog</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Location.html">Location</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Education.html">Education</a>
+            <a class="block text-sm font-bold text-primary" href="Navigation.html">Navigation</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="E-resource.html">E-Resource</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Sponsor.html">Sponsor</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Profile.html">Profil</a>
+        </div>
+    </nav>
+
+    <!-- Cart Sidebar/Drawer -->
+    <div id="cart-drawer"
+        class="fixed inset-y-0 right-0 w-full sm:w-96 bg-white dark:bg-background-dark shadow-2xl z-[60] transform translate-x-full transition-transform duration-300 ease-in-out border-l border-primary/10">
+        <div class="flex flex-col h-full">
+            <div class="p-6 border-b border-primary/10 flex items-center justify-between bg-primary/5">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary">shopping_basket</span>
+                    <h2 class="text-xl font-bold">Keranjang Belanja</h2>
+                </div>
+                <button id="close-cart" class="p-2 hover:bg-primary/10 rounded-full transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- Cart items will be injected here -->
+                <div id="empty-cart-msg"
+                    class="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-50">
+                    <span class="material-symbols-outlined text-6xl">shopping_cart_off</span>
+                    <p class="font-medium text-slate-500">Keranjang Anda masih kosong</p>
+                    <button id="start-shopping" class="text-primary font-bold text-sm hover:underline">Mulai Belanja
+                        Sekarang</button>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-primary/10 bg-slate-50 dark:bg-slate-900/50">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-slate-500 font-medium">Total Pembayaran</span>
+                    <span id="cart-total" class="text-2xl font-800 text-primary">Rp 0</span>
+                </div>
+                <button
+                    class="w-full bg-primary text-slate-900 font-800 py-4 rounded-2xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    Lanjutkan Pembayaran
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+                <p class="text-[10px] text-center text-slate-400 mt-4 font-medium uppercase tracking-widest">Aman •
+                    Terpercaya • Produk Lokal</p>
+            </div>
+        </div>
+    </div>
+    <div id="cart-overlay"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[55] hidden opacity-0 transition-opacity duration-300">
+    </div>
+
+    <main class="flex-1 flex overflow-hidden">
+        <aside class="w-80 md:w-96 bg-white border-r border-primary/10 flex flex-col z-20 shadow-xl">
+            <div class="p-6 space-y-4">
+                <div class="relative">
+                    <span
+                        class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-lg">search</span>
+                    <input
+                        class="w-full pl-10 pr-4 py-3 bg-neutral-light border-none rounded-xl focus:ring-2 focus:ring-primary text-sm font-medium"
+                        placeholder="Cari destinasi..." type="text" />
+                </div>
+                <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+                    <button class="px-4 py-2 bg-primary text-white rounded-full text-xs font-bold flex-shrink-0">Semua
+                        Titik</button>
+                    <button
+                        class="px-4 py-2 bg-neutral-light text-text-muted hover:bg-primary/10 rounded-full text-xs font-bold flex-shrink-0 transition-colors">Alam</button>
+                    <button
+                        class="px-4 py-2 bg-neutral-light text-text-muted hover:bg-primary/10 rounded-full text-xs font-bold flex-shrink-0 transition-colors">Edukasi</button>
+                    <button
+                        class="px-4 py-2 bg-neutral-light text-text-muted hover:bg-primary/10 rounded-full text-xs font-bold flex-shrink-0 transition-colors">Budaya</button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto custom-scrollbar px-6 pb-6 space-y-4">
+                <h3 class="text-xs font-bold text-text-muted uppercase tracking-wider">Tujuan Terdekat</h3>
+                <div
+                    class="group bg-neutral-light/50 border border-transparent hover:border-primary/30 hover:bg-white rounded-xl p-3 cursor-pointer transition-all">
+                    <div class="flex gap-4">
+                        <img alt="Terasering hijau" class="w-20 h-20 rounded-lg object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeEHgaVUnpFxVGFYExMUiWT-nGAVTrTXqKNYYmI_bjzifk4b4RAazUH4GI78EAvdaatlVfhi3U-ddOQjcac5DUGk_GveQmSyUvpi78KZhp9FRNq3Yk66aVL2tMqa4TumUFsOnUw5o-Cb_fTo_WwYzZp2W1sivAohNyiHdYyhuJl-QXqI2vKWnYeJCqy0CM63uIipx2VOWZhG2JNt9IaQQWqXDBlncsAhyp73MeHGlboLpUPq6feTE7fk_-IUHwYMO3C5OK6HifJRI" />
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-sm truncate">Terasering Zamrud</h4>
+                                <span class="flex items-center gap-0.5 text-orange-500 text-xs font-bold">
+                                    <span class="material-icons text-[14px]">star</span> 4.8
+                                </span>
+                            </div>
+                            <span
+                                class="inline-block px-2 py-0.5 bg-primary/20 text-primary text-[10px] font-bold rounded mt-1">ALAM</span>
+                            <p class="text-[11px] text-text-muted mt-2 line-clamp-2 leading-relaxed">Pemandangan
+                                panorama menakjubkan dari sistem irigasi tradisional.</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-primary/5 flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-text-muted flex items-center gap-1">
+                            <span class="material-icons text-sm text-primary">directions_walk</span> Jarak 400m
+                        </span>
+                        <button class="text-[11px] font-bold text-primary group-hover:underline">Lihat Detail</button>
+                    </div>
+                </div>
+                <div
+                    class="group bg-neutral-light/50 border border-transparent hover:border-primary/30 hover:bg-white rounded-xl p-3 cursor-pointer transition-all">
+                    <div class="flex gap-4">
+                        <img alt="Pusat kerajinan" class="w-20 h-20 rounded-lg object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuArlh0B_bfk0KryglnmV14CskIsx2Dg80kMeKWJyxacBYxz-gA7yZJ5M9mb6l7I2vF8vKXPRSeMJQchH4iHyAhH3HYtsYjfEVDnPBwpgu68KmLmMLhkGZb08uST1pRXXm9itaGRJqLOayMBMGqHX4ibgqQQBXSG0NS2CARPF8ZWkcP35C2k449CqV2wfq1nPZ0jwKIkab38z7Enj-rtTMETJnQZgwivXhEZ-keUImAt9lIlG-XNAtXrrTaHKj5Idxiogpjy38O98zE" />
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-sm truncate">Pusat Kriya Lentera</h4>
+                                <span class="flex items-center gap-0.5 text-orange-500 text-xs font-bold">
+                                    <span class="material-icons text-[14px]">star</span> 4.9
+                                </span>
+                            </div>
+                            <span
+                                class="inline-block px-2 py-0.5 bg-blue-100 text-blue-600 text-[10px] font-bold rounded mt-1">EDUKASI</span>
+                            <p class="text-[11px] text-text-muted mt-2 line-clamp-2 leading-relaxed">Belajar menenun dan
+                                tembikar tradisional dari pengrajin ahli.</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-primary/5 flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-text-muted flex items-center gap-1">
+                            <span class="material-icons text-sm text-primary">directions_car</span> Jarak 1.2km
+                        </span>
+                        <button class="text-[11px] font-bold text-primary group-hover:underline">Lihat Detail</button>
+                    </div>
+                </div>
+                <div
+                    class="group bg-neutral-light/50 border border-transparent hover:border-primary/30 hover:bg-white rounded-xl p-3 cursor-pointer transition-all">
+                    <div class="flex gap-4">
+                        <img alt="Kuil bambu tradisional" class="w-20 h-20 rounded-lg object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAt5UoM5aU4Hx_PJGjX4iHUxRquX5ycDUvPFFZL-4Q5oIe6c1bRZGzsxQrScuih8qYuam1RXUw7SUlVsuOklVyCUo42y8a0a5ZGs6nH08DqAYlbUx8CXUqst4pSwO7yHbVTlnzfKUfsRdpw01m0e5M7mRw3z_6ST1GsWZ5D-HA2FYcMnfMC7hpNsmWIeQtoufel-IEyK4_lKbSy2bxjvtGp88NuqY2MtXq_bJ6WFi3ZLLl2IprcTFzu4eIWLvRSiXbLa4PDYQ71S-A" />
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-sm truncate">Pura Beringin Kuno</h4>
+                                <span class="flex items-center gap-0.5 text-orange-500 text-xs font-bold">
+                                    <span class="material-icons text-[14px]">star</span> 4.7
+                                </span>
+                            </div>
+                            <span
+                                class="inline-block px-2 py-0.5 bg-purple-100 text-purple-600 text-[10px] font-bold rounded mt-1">BUDAYA</span>
+                            <p class="text-[11px] text-text-muted mt-2 line-clamp-2 leading-relaxed">Situs kuno berusia
+                                200 tahun yang dikelilingi pohon-pohon raksasa.</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-primary/5 flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-text-muted flex items-center gap-1">
+                            <span class="material-icons text-sm text-primary">directions_walk</span> Jarak 850m
+                        </span>
+                        <button class="text-[11px] font-bold text-primary group-hover:underline">Lihat Detail</button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        <section class="flex-1 relative bg-[#e5e9e4] overflow-hidden map-grid">
+            <div id="nav-map" class="absolute inset-0 z-0"></div>
+
+            <!-- Detail "Tujuan Aktif" Panel -->
+            <div id="active-dest-panel"
+                class="absolute top-10 right-10 w-72 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/50 p-5 z-20 hidden transform translate-x-10 opacity-0 transition-all duration-300">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-primary uppercase tracking-widest">Tujuan Aktif</p>
+                        <h2 id="dest-title" class="text-lg font-bold mt-0.5">---</h2>
+                    </div>
+                    <button id="close-dest-panel" class="p-1.5 hover:bg-slate-100 rounded-lg">
+                        <span class="material-icons text-slate-400">close</span>
+                    </button>
+                </div>
+                <div class="mt-6 flex items-center justify-between p-4 bg-primary rounded-xl text-white">
+                    <div class="text-center flex-1">
+                        <p class="text-[10px] opacity-80 uppercase font-bold">Estimasi</p>
+                        <p id="dest-time" class="text-xl font-bold">--</p>
+                    </div>
+                    <div class="h-8 w-px bg-white/20"></div>
+                    <div class="text-center flex-1">
+                        <p class="text-[10px] opacity-80 uppercase font-bold">Jarak</p>
+                        <p id="dest-distance" class="text-xl font-bold">--</p>
+                    </div>
+                </div>
+                <div class="mt-4 space-y-3">
+                    <div class="flex items-center gap-3 text-sm font-medium text-slate-600">
+                        <span class="material-icons text-primary text-lg">payments</span>
+                        <span id="dest-price">--</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm font-medium text-slate-600">
+                        <span class="material-icons text-primary text-lg">schedule</span>
+                        <span id="dest-hours">--</span>
+                    </div>
+                </div>
+                <button id="start-nav-btn"
+                    class="w-full mt-6 py-3 bg-primary text-slate-900 rounded-xl font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 uppercase tracking-wide">
+                    <span class="material-icons">navigation</span>
+                    Mulai Navigasi
+                </button>
+            </div>
+
+            <div class="absolute bottom-10 left-10 flex flex-col gap-2 z-20">
+                <button id="zoom-in"
+                    class="w-12 h-12 bg-white rounded-xl shadow-lg flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
+                    <span class="material-icons">add</span>
+                </button>
+                <button id="zoom-out"
+                    class="w-12 h-12 bg-white rounded-xl shadow-lg flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
+                    <span class="material-icons">remove</span>
+                </button>
+                <button id="recenter-map"
+                    class="w-12 h-12 bg-white rounded-xl shadow-lg flex items-center justify-center text-primary mt-4">
+                    <span class="material-icons">my_location</span>
+                </button>
+            </div>
+            <div class="absolute bottom-10 right-10 z-30">
+                <button onclick="openSosModal()" class="flex items-center gap-3 bg-red-600 text-white px-6 py-4 rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all group animate-bounce">
+                    <div class="flex flex-col items-end">
+                        <span class="text-[10px] font-bold opacity-80 uppercase leading-none tracking-wider">Kedaruratan</span>
+                        <span class="text-sm font-bold">SOS Bantuan</span>
+                    </div>
+                    <div class="w-8 h-8 flex items-center justify-center bg-white rounded-full text-red-600">
+                        <span class="material-icons font-bold text-xl">warning</span>
+                    </div>
+                </button>
+            </div>
+        </section>
+    </main>
+    <footer
+        class="bg-white border-t border-primary/10 px-8 py-2.5 flex items-center justify-between text-[10px] font-bold text-text-muted z-30 tracking-wider">
+        <div class="flex items-center gap-6">
+            <span class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-primary rounded-full animate-pulse shadow-sm shadow-primary"></span>
+                SISTEM ONLINE
+            </span>
+            <span class="flex items-center gap-2">
+                <span class="material-icons text-[14px] text-primary">signal_cellular_alt</span>
+                KONEKSI STABIL
+            </span>
+        </div>
+        <div class="flex items-center gap-6">
+            <span>DATA PETA © 2024 PROJECT</span>
+            <span class="text-primary/60">LAT: -7.2504 / LONG: 112.7688</span>
+        </div>
+    </footer>
+
+    <!-- SOS Modal -->
+    <div id="sos-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4 opacity-0 transition-opacity duration-300">
+        <div id="sos-card" class="w-full max-w-md bg-white dark:bg-slate-900 rounded-[2rem] overflow-hidden shadow-2xl border border-red-500/20 scale-95 transition-transform duration-300">
+            <div class="bg-red-600 p-8 text-center text-white relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/20 rounded-full blur-xl"></div>
+                <div class="w-16 h-16 bg-white rounded-full mx-auto flex items-center justify-center mb-4 shadow-lg text-red-600 animate-pulse">
+                    <span class="material-icons text-3xl font-bold">sos</span>
+                </div>
+                <h3 class="text-2xl font-800 mb-1">Butuh Bantuan?</h3>
+                <p class="text-sm font-semibold opacity-90">Kirim koordinat Anda ke Satgas Desa</p>
+            </div>
+            
+            <div class="p-8">
+                <form class="space-y-4" onsubmit="event.preventDefault(); window.open('https://wa.me/628123456789?text=Darurat!%20Tolong%20bantu%20saya%20di%20koordinat%20LAT:%20-7.2504,%20LONG:%20112.7688.%20Catatan:%20' + document.getElementById('sos-notes').value, '_blank'); closeSosModal();">
+                    <div class="bg-red-50 dark:bg-red-900/20 rounded-2xl p-4 border border-red-200 dark:border-red-800/50 flex items-center gap-4">
+                        <span class="material-icons text-red-500">my_location</span>
+                        <div>
+                            <p class="text-[10px] font-bold text-red-500 uppercase tracking-widest">Lokasi Terdeteksi</p>
+                            <p class="font-bold text-slate-900 dark:text-white font-mono text-sm">LAT: -7.2504 / LONG: 112.7688</p>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Keterangan (Opsional)</label>
+                        <textarea id="sos-notes" rows="2" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all text-sm font-semibold" placeholder="Contoh: Tersesat di hutan bambu, ban bocor, dsb..."></textarea>
+                    </div>
+                    
+                    <div class="mt-8 flex flex-col gap-3">
+                        <button type="submit" class="w-full px-4 py-4 bg-red-600 text-white font-800 rounded-xl text-center hover:bg-red-700 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-red-500/20">
+                            <span class="material-icons text-sm">send</span> Kirim Laporan Darurat
+                        </button>
+                        <button type="button" onclick="closeSosModal()" class="w-full px-4 py-3 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold rounded-xl text-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                            Batal
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <script>
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // SOS Modal Logic
+        const sosModal = document.getElementById('sos-modal');
+        const sosCard = document.getElementById('sos-card');
+
+        window.openSosModal = function() {
+            sosModal.classList.remove('hidden');
+            sosModal.classList.add('flex');
+            setTimeout(() => {
+                sosModal.classList.add('opacity-100');
+                sosCard.classList.remove('scale-95');
+                sosCard.classList.add('scale-100');
+            }, 10);
+        };
+
+        window.closeSosModal = function() {
+            sosModal.classList.remove('opacity-100');
+            sosCard.classList.remove('scale-100');
+            sosCard.classList.add('scale-95');
+            setTimeout(() => {
+                sosModal.classList.add('hidden');
+                sosModal.classList.remove('flex');
+            }, 300);
+        };
+
+        // --- Cart Functionality ---
+        let cart = JSON.parse(localStorage.getItem('lentera_cart')) || [];
+        const cartDrawer = document.getElementById('cart-drawer');
+        const cartOverlay = document.getElementById('cart-overlay');
+        const cartButton = document.getElementById('cart-button');
+        const closeCart = document.getElementById('close-cart');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartCountBadge = document.getElementById('cart-count');
+        const cartTotalDisplay = document.getElementById('cart-total');
+        const emptyCartMsg = document.getElementById('empty-cart-msg');
+
+        function saveCart() {
+            localStorage.setItem('lentera_cart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function toggleCart() {
+            const isOpen = !cartDrawer.classList.contains('translate-x-full');
+            if (isOpen) {
+                cartDrawer.classList.add('translate-x-full');
+                cartOverlay.classList.add('hidden');
+                cartOverlay.classList.remove('opacity-100');
+            } else {
+                cartDrawer.classList.remove('translate-x-full');
+                cartOverlay.classList.remove('hidden');
+                setTimeout(() => cartOverlay.classList.add('opacity-100'), 10);
+                updateCartUI();
+            }
+        }
+
+        cartButton?.addEventListener('click', toggleCart);
+        closeCart?.addEventListener('click', toggleCart);
+        cartOverlay?.addEventListener('click', toggleCart);
+        document.getElementById('start-shopping')?.addEventListener('click', toggleCart);
+
+        function updateCartUI() {
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            if (cartCountBadge) {
+                cartCountBadge.innerText = totalQty;
+                cartCountBadge.classList.toggle('hidden', totalQty === 0);
+            }
+
+            if (!cartItemsContainer) return;
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '';
+                cartItemsContainer.appendChild(emptyCartMsg);
+                cartTotalDisplay.innerText = 'Rp 0';
+                return;
+            }
+
+            if (emptyCartMsg && emptyCartMsg.parentNode) emptyCartMsg.remove();
+
+            cartItemsContainer.innerHTML = cart.map(item => `
+                <div class="flex gap-4 group">
+                    <div class="w-20 h-20 rounded-xl overflow-hidden border border-slate-100 flex-shrink-0">
+                        <img src="${item.img}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-1">${item.name}</h4>
+                        <p class="text-primary font-bold text-sm mb-3">Rp ${(item.price * item.qty / 1000).toLocaleString()}rb</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                                <button onclick="updateQty('${item.id}', -1)" class="px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500">-</button>
+                                <span class="px-3 py-1 text-xs font-bold border-x border-slate-200 dark:border-slate-700">${item.qty}</span>
+                                <button onclick="updateQty('${item.id}', 1)" class="px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500">+</button>
+                            </div>
+                            <button onclick="removeFromCart('${item.id}')" class="text-slate-400 hover:text-red-500 transition-colors">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            if (cartTotalDisplay) cartTotalDisplay.innerText = `Rp ${(total / 1000).toLocaleString()}rb`;
+        }
+
+        window.updateQty = (id, change) => {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.qty += change;
+                if (item.qty <= 0) {
+                    removeFromCart(id);
+                } else {
+                    saveCart();
+                }
+            }
+        };
+
+        window.removeFromCart = (id) => {
+            cart = cart.filter(item => item.id !== id);
+            saveCart();
+        };
+
+        updateCartUI();
+
+        // --- Leaflet Map Logic ---
+        const map = L.map('nav-map', {
+            zoomControl: false,
+            attributionControl: false
+        }).setView([-7.9135, 112.5250], 15); // Focus on Desa Kucur
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            maxZoom: 20
+        }).addTo(map);
+
+        // Custom Marker Icon Function
+        const createCustomIcon = (bg, icon) => L.divIcon({
+            className: 'custom-div-icon',
+            html: `
+                <div class="relative flex flex-col items-center group">
+                    <div class="w-10 h-10 ${bg} rounded-full flex items-center justify-center shadow-xl border-2 border-white transition-transform group-hover:scale-110">
+                        <span class="material-icons text-white text-xl">${icon}</span>
+                    </div>
+                    <div class="w-0.5 h-3 ${bg.replace('bg-', 'bg-')}"></div>
+                </div>`,
+            iconSize: [40, 50],
+            iconAnchor: [20, 50]
+        });
+
+        // "Anda di sini" Marker
+        const userPos = [-7.9150, 112.5230];
+        const userIcon = L.divIcon({
+            className: 'user-location-icon',
+            html: `
+                <div class="relative">
+                    <div class="absolute inset-0 bg-blue-500 rounded-full animate-ping opacity-25 scale-150"></div>
+                    <div class="relative w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                        <div class="w-2.5 h-2.5 bg-blue-500 rounded-full"></div>
+                    </div>
+                </div>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+        });
+        L.marker(userPos, { icon: userIcon }).addTo(map);
+
+        // Village Assets Data
+        const destinations = [
+            {
+                id: 1,
+                name: 'Terasering Zamrud',
+                pos: [-7.9120, 112.5270],
+                bg: 'bg-primary',
+                icon: 'landscape',
+                time: '5 Menit',
+                distance: '400m',
+                price: 'Rp 15.000 / orang',
+                hours: '08:00 - 18:00'
+            },
+            {
+                id: 2,
+                name: 'Edukasi Kopi Kucur',
+                pos: [-7.9140, 112.5285],
+                bg: 'bg-orange-500',
+                icon: 'coffee',
+                time: '8 Menit',
+                distance: '1.2km',
+                price: 'Gratis (Kunjungan)',
+                hours: '09:00 - 17:00'
+            },
+            {
+                id: 3,
+                name: 'Sentra UMKM Lokal',
+                pos: [-7.9165, 112.5260],
+                bg: 'bg-blue-500',
+                icon: 'storefront',
+                time: '3 Menit',
+                distance: '250m',
+                price: 'Gratis',
+                hours: '08:00 - 20:00'
+            }
+        ];
+
+        const activeDestPanel = document.getElementById('active-dest-panel');
+        const destTitle = document.getElementById('dest-title');
+        const destTime = document.getElementById('dest-time');
+        const destDistance = document.getElementById('dest-distance');
+        const destPrice = document.getElementById('dest-price');
+        const destHours = document.getElementById('dest-hours');
+        const closeDestPanel = document.getElementById('close-dest-panel');
+        const startNavBtn = document.getElementById('start-nav-btn');
+
+        let currentRoute = null;
+        let selectedDest = null;
+
+        function clearRoute() {
+            if (currentRoute) {
+                map.removeLayer(currentRoute);
+                currentRoute = null;
+            }
+        }
+
+        function drawRoute(destPos) {
+            clearRoute();
+
+            // Simple route logic: straight line with slight curvature or dashed effect
+            // For better "route" look, we can use multiple points if we had them, 
+            // but for now, we'll draw a dashed line from user to destination.
+            const routePoints = [userPos, destPos];
+
+            currentRoute = L.polyline(routePoints, {
+                color: '#4bee2b',
+                weight: 6,
+                opacity: 0.8,
+                dashArray: '10, 20', // Creates dashed line
+                lineJoin: 'round'
+            }).addTo(map);
+
+            // Animate the dash offset for movement effect
+            let offset = 0;
+            const animateRoute = () => {
+                if (!currentRoute) return;
+                offset = (offset - 2) % 30;
+                currentRoute.setStyle({ dashOffset: offset });
+                requestAnimationFrame(animateRoute);
+            };
+            animateRoute();
+
+            // Fit map to show both points
+            const group = new L.featureGroup([
+                L.marker(userPos),
+                L.marker(destPos)
+            ]);
+            map.fitBounds(group.getBounds(), { padding: [50, 50] });
+        }
+
+        function showDestination(dest) {
+            selectedDest = dest;
+            destTitle.innerText = dest.name;
+            destTime.innerText = dest.time;
+            destDistance.innerText = dest.distance;
+            destPrice.innerText = `Biaya: ${dest.price}`;
+            destHours.innerText = `Buka: ${dest.hours}`;
+
+            activeDestPanel.classList.remove('hidden');
+            setTimeout(() => {
+                activeDestPanel.classList.remove('translate-x-10', 'opacity-0');
+            }, 10);
+
+            clearRoute();
+            map.flyTo(dest.pos, 17);
+        }
+
+        destinations.forEach(dest => {
+            L.marker(dest.pos, { icon: createCustomIcon(dest.bg, dest.icon) })
+                .addTo(map)
+                .on('click', () => showDestination(dest));
+        });
+
+        startNavBtn.addEventListener('click', () => {
+            if (selectedDest) {
+                drawRoute(selectedDest.pos);
+                startNavBtn.innerHTML = `
+                    <span class="material-icons animate-spin text-sm">sync</span>
+                    Navigasi Aktif...
+                `;
+                startNavBtn.classList.replace('bg-primary', 'bg-slate-900');
+                startNavBtn.classList.replace('text-slate-900', 'text-white');
+            }
+        });
+
+        closeDestPanel.addEventListener('click', () => {
+            activeDestPanel.classList.add('translate-x-10', 'opacity-0');
+            setTimeout(() => {
+                activeDestPanel.classList.add('hidden');
+                startNavBtn.innerHTML = `
+                    <span class="material-icons">navigation</span>
+                    Mulai Navigasi
+                `;
+                startNavBtn.classList.replace('bg-slate-900', 'bg-primary');
+                startNavBtn.classList.replace('text-white', 'text-slate-900');
+            }, 300);
+            clearRoute();
+            selectedDest = null;
+        });
+
+        // Map Controls
+        document.getElementById('zoom-in').addEventListener('click', () => map.zoomIn());
+        document.getElementById('zoom-out').addEventListener('click', () => map.zoomOut());
+        document.getElementById('recenter-map').addEventListener('click', () => {
+            map.flyTo([-7.9135, 112.5250], 15);
+        });
+    </script>
+</body>
+
+</html>

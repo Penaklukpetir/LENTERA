@@ -1,0 +1,2021 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Dashboard Perangkat Desa • LENTERA</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4bee2b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#132210",
+                    },
+                    fontFamily: { "display": ["Plus Jakarta Sans"] },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 450, 'GRAD' 0, 'opsz' 24; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .custom-scrollbar::-webkit-scrollbar { width: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(100,116,139,.35); border-radius: 999px; border: 3px solid transparent; background-clip: content-box; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 antialiased min-h-screen">
+    <div class="min-h-screen flex">
+        <aside class="w-80 bg-white dark:bg-slate-950 border-r border-primary/10 flex flex-col sticky top-0 h-screen">
+            <div class="p-6 border-b border-primary/10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white">shield_person</span>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Perangkat Desa</div>
+                        <div class="text-xl font-800 tracking-tight text-slate-900 dark:text-white truncate">Dashboard
+                            LENTERA</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 space-y-2">
+                <button data-view="dashboard"
+                    class="view-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-bold bg-primary/10 text-primary">
+                    <span class="material-icons">dashboard</span>
+                    Dashboard
+                </button>
+                <button data-view="eresource"
+                    class="view-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-bold hover:bg-primary/10 text-slate-700 dark:text-slate-200 transition-colors">
+                    <span class="material-icons">folder_shared</span>
+                    E-Resource
+                </button>
+                <button data-view="education"
+                    class="view-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-bold hover:bg-primary/10 text-slate-700 dark:text-slate-200 transition-colors">
+                    <span class="material-icons">school</span>
+                    Kelola Edukasi
+                </button>
+                <button data-view="accounts"
+                    class="view-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-bold hover:bg-primary/10 text-slate-700 dark:text-slate-200 transition-colors">
+                    <span class="material-icons">manage_accounts</span>
+                    Setting Akun
+                </button>
+                <button data-view="sponsorship"
+                    class="view-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-bold hover:bg-primary/10 text-slate-700 dark:text-slate-200 transition-colors">
+                    <span class="material-icons">handshake</span>
+                    Sponsorship
+                    <span id="sponsor-badge"
+                        class="ml-auto inline-flex items-center justify-center min-w-6 h-6 px-2 bg-primary text-slate-900 text-[10px] font-800 rounded-full hidden">0</span>
+                </button>
+                <button data-view="settings"
+                    class="view-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-bold hover:bg-primary/10 text-slate-700 dark:text-slate-200 transition-colors">
+                    <span class="material-icons">settings</span>
+                    Pengaturan Desa
+                </button>
+                <a href="../Profile.html"
+                    class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-bold hover:bg-primary/10 text-slate-700 dark:text-slate-200 transition-colors">
+                    <span class="material-icons">groups</span>
+                    Profil Software House
+                </a>
+            </div>
+
+            <div class="mt-auto p-6 border-t border-primary/10 space-y-3">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+                        <span class="material-symbols-outlined text-slate-500">account_circle</span>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="text-sm font-bold text-slate-900 dark:text-white truncate">Akun Perangkat Desa</div>
+                        <div class="text-xs text-slate-500 truncate">Eksekutif • Pemantau Sistem</div>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button id="toggle-theme"
+                        class="flex-1 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        Mode
+                    </button>
+                    <a href="../Home.html"
+                        class="flex-1 px-4 py-2 rounded-xl bg-primary text-slate-900 font-800 text-sm text-center hover:scale-[1.02] active:scale-[0.98] transition-all">
+                        Ke Publik
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1 min-w-0">
+            <header
+                class="sticky top-0 z-40 bg-white/85 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10">
+                <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                    <div class="min-w-0">
+                        <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Monitoring & Approval
+                        </div>
+                        <h1 id="page-title" class="text-2xl font-800 text-slate-900 dark:text-white truncate">Dashboard
+                        </h1>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="hidden sm:flex items-center gap-2 px-3 py-2 rounded-full bg-slate-100 dark:bg-slate-800">
+                            <span class="material-icons text-slate-400 text-base">schedule</span>
+                            <span id="now-text" class="text-xs font-bold text-slate-600 dark:text-slate-200">--</span>
+                        </div>
+                        <button id="seed-demo"
+                            class="px-4 py-2 rounded-xl bg-primary text-slate-900 font-800 text-sm hover:scale-[1.02] active:scale-[0.98] transition-all">
+                            Isi Data Demo
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="max-w-7xl mx-auto px-6 py-8 space-y-10">
+                <section data-section="dashboard" class="view-section space-y-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-5">
+                            <div class="flex items-center justify-between">
+                                <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">SDA</div>
+                                <span class="material-icons text-primary">forest</span>
+                            </div>
+                            <div class="mt-4 text-3xl font-800 text-slate-900 dark:text-white" id="kpi-sda">--</div>
+                            <div class="mt-1 text-xs text-slate-500 font-semibold">Kategori terdata</div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-5">
+                            <div class="flex items-center justify-between">
+                                <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">UMKM</div>
+                                <span class="material-icons text-primary">storefront</span>
+                            </div>
+                            <div class="mt-4 text-3xl font-800 text-slate-900 dark:text-white" id="kpi-umkm">--</div>
+                            <div class="mt-1 text-xs text-slate-500 font-semibold">Pelaku aktif</div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-5">
+                            <div class="flex items-center justify-between">
+                                <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Transaksi</div>
+                                <span class="material-icons text-primary">paid</span>
+                            </div>
+                            <div class="mt-4 text-3xl font-800 text-slate-900 dark:text-white" id="kpi-tx">--</div>
+                            <div class="mt-1 text-xs text-slate-500 font-semibold">Masuk (hari ini)</div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-5">
+                            <div class="flex items-center justify-between">
+                                <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Sponsor</div>
+                                <span class="material-icons text-primary">notifications</span>
+                            </div>
+                            <div class="mt-4 text-3xl font-800 text-slate-900 dark:text-white" id="kpi-sponsor">--</div>
+                            <div class="mt-1 text-xs text-slate-500 font-semibold">Pending</div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Grafik</div>
+                                    <div class="text-lg font-800 text-slate-900 dark:text-white mt-1">Ringkasan
+                                        Sumberdaya & Transaksi</div>
+                                </div>
+                                <div class="text-xs font-bold text-slate-500">7 Hari</div>
+                            </div>
+                            <div class="mt-6 h-52 flex items-end gap-3">
+                                <div class="flex-1 flex flex-col items-center gap-2">
+                                    <div class="w-full rounded-xl bg-primary/10 overflow-hidden">
+                                        <div class="h-32 bg-primary rounded-xl" style="width:100%"></div>
+                                    </div>
+                                    <div class="text-[10px] font-bold text-slate-500">Sen</div>
+                                </div>
+                                <div class="flex-1 flex flex-col items-center gap-2">
+                                    <div class="w-full rounded-xl bg-primary/10 overflow-hidden">
+                                        <div class="h-20 bg-primary rounded-xl" style="width:100%"></div>
+                                    </div>
+                                    <div class="text-[10px] font-bold text-slate-500">Sel</div>
+                                </div>
+                                <div class="flex-1 flex flex-col items-center gap-2">
+                                    <div class="w-full rounded-xl bg-primary/10 overflow-hidden">
+                                        <div class="h-40 bg-primary rounded-xl" style="width:100%"></div>
+                                    </div>
+                                    <div class="text-[10px] font-bold text-slate-500">Rab</div>
+                                </div>
+                                <div class="flex-1 flex flex-col items-center gap-2">
+                                    <div class="w-full rounded-xl bg-primary/10 overflow-hidden">
+                                        <div class="h-28 bg-primary rounded-xl" style="width:100%"></div>
+                                    </div>
+                                    <div class="text-[10px] font-bold text-slate-500">Kam</div>
+                                </div>
+                                <div class="flex-1 flex flex-col items-center gap-2">
+                                    <div class="w-full rounded-xl bg-primary/10 overflow-hidden">
+                                        <div class="h-36 bg-primary rounded-xl" style="width:100%"></div>
+                                    </div>
+                                    <div class="text-[10px] font-bold text-slate-500">Jum</div>
+                                </div>
+                                <div class="flex-1 flex flex-col items-center gap-2">
+                                    <div class="w-full rounded-xl bg-primary/10 overflow-hidden">
+                                        <div class="h-24 bg-primary rounded-xl" style="width:100%"></div>
+                                    </div>
+                                    <div class="text-[10px] font-bold text-slate-500">Sab</div>
+                                </div>
+                                <div class="flex-1 flex flex-col items-center gap-2">
+                                    <div class="w-full rounded-xl bg-primary/10 overflow-hidden">
+                                        <div class="h-44 bg-primary rounded-xl" style="width:100%"></div>
+                                    </div>
+                                    <div class="text-[10px] font-bold text-slate-500">Min</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Status</div>
+                                    <div class="text-lg font-800 text-slate-900 dark:text-white mt-1">Approval</div>
+                                </div>
+                                <span class="material-icons text-primary">verified</span>
+                            </div>
+                            <div class="mt-6 grid grid-cols-2 gap-4">
+                                <div class="rounded-2xl p-5 bg-slate-50 dark:bg-slate-900/60 border border-primary/10">
+                                    <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Sponsor
+                                    </div>
+                                    <div class="mt-3 text-3xl font-800 text-slate-900 dark:text-white"
+                                        id="appr-sponsor">--</div>
+                                    <div class="text-xs text-slate-500 font-semibold mt-1">Menunggu</div>
+                                </div>
+                                <div class="rounded-2xl p-5 bg-slate-50 dark:bg-slate-900/60 border border-primary/10">
+                                    <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                                        E-Resource</div>
+                                    <div class="mt-3 text-3xl font-800 text-slate-900 dark:text-white" id="appr-eres">--
+                                    </div>
+                                    <div class="text-xs text-slate-500 font-semibold mt-1">Aktif</div>
+                                </div>
+                            </div>
+                            <button data-view="sponsorship"
+                                class="view-shortcut mt-6 w-full px-4 py-3 rounded-xl bg-primary text-slate-900 font-800 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                Buka Sponsorship
+                                <span class="material-symbols-outlined">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <section data-section="eresource" class="view-section hidden space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                        <div class="lg:col-span-2 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Unggah</div>
+                                    <div class="text-lg font-800 text-slate-900 dark:text-white mt-1">Tambah Informasi
+                                        Desa</div>
+                                </div>
+                                <span class="material-icons text-primary">upload</span>
+                            </div>
+
+                            <form id="eres-form" class="mt-6 space-y-4">
+                                <div>
+                                    <label
+                                        class="text-xs font-bold text-slate-500 uppercase tracking-widest">Judul</label>
+                                    <input id="eres-title" required
+                                        class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary"
+                                        placeholder="Contoh: Jadwal Pasar Minggu, Pengumuman, dll" />
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label
+                                            class="text-xs font-bold text-slate-500 uppercase tracking-widest">Tipe</label>
+                                        <select id="eres-type"
+                                            class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary">
+                                            <option value="text">Text</option>
+                                            <option value="foto">Foto (URL)</option>
+                                            <option value="video">Video (URL)</option>
+                                            <option value="pdf">PDF (URL)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="text-xs font-bold text-slate-500 uppercase tracking-widest">Status</label>
+                                        <select id="eres-enabled"
+                                            class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary">
+                                            <option value="true">Aktif</option>
+                                            <option value="false">Nonaktif</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div id="eres-text-wrap">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Isi
+                                        Text</label>
+                                    <textarea id="eres-text" rows="6"
+                                        class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary"
+                                        placeholder="Tulis informasi umum desa..."></textarea>
+                                </div>
+                                <div id="eres-url-wrap" class="hidden">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Link
+                                        Media</label>
+                                    <input id="eres-url"
+                                        class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary"
+                                        placeholder="https://..." />
+                                </div>
+                                <div class="flex gap-2">
+                                    <button type="submit"
+                                        class="flex-1 px-4 py-3 rounded-xl bg-primary text-slate-900 font-800 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                                        Simpan
+                                    </button>
+                                    <button id="eres-reset" type="button"
+                                        class="px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                                        Reset
+                                    </button>
+                                </div>
+                                <input type="hidden" id="eres-edit-id" value="" />
+                            </form>
+                        </div>
+
+                        <div class="lg:col-span-3 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">List</div>
+                                    <div class="text-lg font-800 text-slate-900 dark:text-white mt-1">Daftar E-Resource
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="material-icons text-primary">view_list</span>
+                                    <span id="eres-count" class="text-xs font-bold text-slate-500">0</span>
+                                </div>
+                            </div>
+                            <div class="mt-6">
+                                <div
+                                    class="flex items-center gap-2 bg-slate-50 dark:bg-slate-900 border border-primary/10 rounded-xl px-4 py-3">
+                                    <span class="material-icons text-slate-400">search</span>
+                                    <input id="eres-search"
+                                        class="w-full bg-transparent border-none focus:ring-0 text-sm font-semibold"
+                                        placeholder="Cari judul..." />
+                                </div>
+                            </div>
+                            <div id="eres-list" class="mt-6 space-y-3 max-h-[560px] overflow-y-auto custom-scrollbar">
+                            </div>
+                            <div id="eres-empty"
+                                class="mt-10 text-center text-slate-500 text-sm font-semibold opacity-70 hidden">
+                                Belum ada e-resource. Gunakan form di kiri untuk menambah.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Preview</div>
+                                <div class="text-lg font-800 text-slate-900 dark:text-white mt-1">Lihat Preview Unggahan
+                                </div>
+                            </div>
+                            <span class="material-icons text-primary">preview</span>
+                        </div>
+                        <div id="eres-preview"
+                            class="mt-6 bg-slate-50 dark:bg-slate-900 border border-primary/10 rounded-2xl p-6 min-h-32">
+                            <div class="text-sm text-slate-500 font-semibold">Pilih salah satu item di daftar untuk
+                                preview.</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section data-section="education" class="view-section hidden space-y-6">
+                    <!-- Tab Selector -->
+                    <div class="flex border-b border-primary/10">
+                        <button id="edu-tab-pkg" class="px-6 py-3 font-extrabold text-sm border-b-2 border-primary text-primary transition-all">
+                            Kelola Paket Wisata
+                        </button>
+                        <button id="edu-tab-mod" class="px-6 py-3 font-bold text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-all">
+                            Kelola Modul Edukasi
+                        </button>
+                    </div>
+
+                    <!-- Paket Wisata Tab Panel -->
+                    <div id="edu-panel-pkg" class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                        <!-- Left: Form -->
+                        <div class="lg:col-span-2 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Form Paket</div>
+                                    <div class="text-lg font-800 text-slate-900 dark:text-white mt-1">Tambah/Ubah Paket</div>
+                                </div>
+                                <span class="material-icons text-primary">add_box</span>
+                            </div>
+                            <form id="pkg-form" class="mt-6 space-y-4">
+                                <div>
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Nama Paket</label>
+                                    <input id="pkg-title" required class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="Contoh: Live In Desa Kucur" />
+                                </div>
+                                <div>
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Tag / Kicker</label>
+                                    <input id="pkg-tag" required class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="Contoh: Pengalaman Autentik" />
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Harga (Rp)</label>
+                                        <input id="pkg-price" type="number" required class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="350000" />
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Satuan Unit</label>
+                                        <input id="pkg-unit" required class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="malam / pax" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Image URL</label>
+                                    <input id="pkg-img" required class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="https://images.unsplash.com/..." />
+                                </div>
+                                <div>
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Nomor WhatsApp Admin</label>
+                                    <input id="pkg-phone" required class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="628123456789" />
+                                </div>
+                                <div>
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Fitur Unggulan (Pisahkan Koma)</label>
+                                    <input id="pkg-features" class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="Homestay Warga, Makan Bersama, Aktivitas Desa" />
+                                </div>
+                                <div>
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Deskripsi Paket</label>
+                                    <textarea id="pkg-desc" rows="4" required class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="Tulis deskripsi paket secara rinci..."></textarea>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button type="submit" class="flex-1 px-4 py-3 rounded-xl bg-primary text-slate-900 font-800 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                                        Simpan Paket
+                                    </button>
+                                    <button id="pkg-reset" type="button" class="px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                                        Reset
+                                    </button>
+                                </div>
+                                <input type="hidden" id="pkg-edit-id" value="" />
+                            </form>
+                        </div>
+
+                        <!-- Right: List -->
+                        <div class="lg:col-span-3 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Daftar Paket</div>
+                                    <div class="text-lg font-800 text-slate-900 dark:text-white mt-1">Paket Wisata Aktif</div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="material-icons text-primary">card_membership</span>
+                                    <span id="pkg-count" class="text-xs font-bold text-slate-500">0</span>
+                                </div>
+                            </div>
+                            <div id="pkg-list" class="mt-6 space-y-3 max-h-[560px] overflow-y-auto custom-scrollbar">
+                            </div>
+                            <div id="pkg-empty" class="mt-10 text-center text-slate-500 text-sm font-semibold opacity-70 hidden">
+                                Belum ada paket wisata. Gunakan form di kiri untuk menambahkan.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modul Edukasi Tab Panel -->
+                    <div id="edu-panel-mod" class="grid grid-cols-1 lg:grid-cols-5 gap-6 hidden">
+                        <!-- Left: Form -->
+                        <div class="lg:col-span-2 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Form Modul</div>
+                                    <div class="text-lg font-800 text-slate-900 dark:text-white mt-1">Tambah/Ubah Modul</div>
+                                </div>
+                                <span class="material-icons text-primary">library_books</span>
+                            </div>
+                            <form id="mod-form" class="mt-6 space-y-4">
+                                <div>
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Slug / ID Unik (Alfanumerik saja, kecil)</label>
+                                    <input id="mod-id" required class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="contoh: kopi, tani, jeruk" />
+                                </div>
+                                <div>
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Judul Modul</label>
+                                    <input id="mod-title" required class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="Contoh: Pengetahuan Kopi" />
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Kategori</label>
+                                        <input id="mod-category" required class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="Contoh: Sejarah & Asal" />
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Sub-info / Meta</label>
+                                        <input id="mod-meta" required class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="Contoh: 12 Modul" />
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Icon (Material Icon Name)</label>
+                                        <input id="mod-icon" required class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="menu_book, groups, psychology" />
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Label Tombol</label>
+                                        <input id="mod-btntext" required class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="Pelajari Modul Kopi" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Image URL</label>
+                                    <input id="mod-img" required class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="https://images.unsplash.com/..." />
+                                </div>
+                                <div>
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Ringkasan Deskripsi (Di Card)</label>
+                                    <input id="mod-desc" required class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="Pelajari sejarah 200 tahun budidaya..." />
+                                </div>
+                                <div>
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Detail Konten / Body (HTML Diperbolehkan)</label>
+                                    <textarea id="mod-body" rows="6" required class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary" placeholder="&lt;p class='mb-4'&gt;Tulis detail materi...&lt;/p&gt;"></textarea>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button type="submit" class="flex-1 px-4 py-3 rounded-xl bg-primary text-slate-900 font-800 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                                        Simpan Modul
+                                    </button>
+                                    <button id="mod-reset" type="button" class="px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                                        Reset
+                                    </button>
+                                </div>
+                                <input type="hidden" id="mod-edit-id" value="" />
+                            </form>
+                        </div>
+
+                        <!-- Right: List -->
+                        <div class="lg:col-span-3 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Daftar Modul</div>
+                                    <div class="text-lg font-800 text-slate-900 dark:text-white mt-1">Katalog Modul Aktif</div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="material-icons text-primary">chrome_reader_mode</span>
+                                    <span id="mod-count" class="text-xs font-bold text-slate-500">0</span>
+                                </div>
+                            </div>
+                            <div id="mod-list" class="mt-6 space-y-3 max-h-[560px] overflow-y-auto custom-scrollbar">
+                            </div>
+                            <div id="mod-empty" class="mt-10 text-center text-slate-500 text-sm font-semibold opacity-70 hidden">
+                                Belum ada modul edukasi. Gunakan form di kiri untuk menambahkan.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section data-section="accounts" class="view-section hidden space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                        <div class="lg:col-span-2 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Admin</div>
+                                    <div class="text-lg font-800 text-slate-900 dark:text-white mt-1">Buat Akun Admin
+                                    </div>
+                                </div>
+                                <span class="material-icons text-primary">person_add</span>
+                            </div>
+                            <form id="admin-form" class="mt-6 space-y-4">
+                                <div>
+                                    <label
+                                        class="text-xs font-bold text-slate-500 uppercase tracking-widest">Nama</label>
+                                    <input id="admin-name" required
+                                        class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary"
+                                        placeholder="Nama admin" />
+                                </div>
+                                <div>
+                                    <label
+                                        class="text-xs font-bold text-slate-500 uppercase tracking-widest">Email</label>
+                                    <input id="admin-email" required type="email"
+                                        class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary"
+                                        placeholder="admin@desa.id" />
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label
+                                            class="text-xs font-bold text-slate-500 uppercase tracking-widest">Role</label>
+                                        <select id="admin-role"
+                                            class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary">
+                                            <option value="desa">Admin Desa</option>
+                                            <option value="karangtaruna">Admin Karang Taruna</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="text-xs font-bold text-slate-500 uppercase tracking-widest">Status</label>
+                                        <select id="admin-active"
+                                            class="mt-2 w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 focus:ring-primary">
+                                            <option value="true">Aktif</option>
+                                            <option value="false">Nonaktif</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button type="submit"
+                                        class="flex-1 px-4 py-3 rounded-xl bg-primary text-slate-900 font-800 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                                        Simpan
+                                    </button>
+                                    <button id="admin-reset" type="button"
+                                        class="px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                                        Reset
+                                    </button>
+                                </div>
+                                <input type="hidden" id="admin-edit-id" value="" />
+                            </form>
+                        </div>
+
+                        <div class="lg:col-span-3 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Data</div>
+                                    <div class="text-lg font-800 text-slate-900 dark:text-white mt-1">Daftar Admin</div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="material-icons text-primary">groups</span>
+                                    <span id="admin-count" class="text-xs font-bold text-slate-500">0</span>
+                                </div>
+                            </div>
+                            <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <div
+                                    class="sm:col-span-2 flex items-center gap-2 bg-slate-50 dark:bg-slate-900 border border-primary/10 rounded-xl px-4 py-3">
+                                    <span class="material-icons text-slate-400">search</span>
+                                    <input id="admin-search"
+                                        class="w-full bg-transparent border-none focus:ring-0 text-sm font-semibold"
+                                        placeholder="Cari nama/email..." />
+                                </div>
+                                <select id="admin-filter-role"
+                                    class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 font-semibold text-sm focus:ring-primary">
+                                    <option value="all">Semua Role</option>
+                                    <option value="desa">Admin Desa</option>
+                                    <option value="karangtaruna">Admin Karang Taruna</option>
+                                </select>
+                            </div>
+                            <div id="admin-list" class="mt-6 space-y-3 max-h-[560px] overflow-y-auto custom-scrollbar">
+                            </div>
+                            <div id="admin-empty"
+                                class="mt-10 text-center text-slate-500 text-sm font-semibold opacity-70 hidden">
+                                Belum ada akun admin. Gunakan form di kiri untuk menambah.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section data-section="sponsorship" class="view-section hidden space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Notifikasi
+                                    </div>
+                                    <div class="text-lg font-800 text-slate-900 dark:text-white mt-1">Sponsor Masuk
+                                    </div>
+                                </div>
+                                <span class="material-icons text-primary">notifications_active</span>
+                            </div>
+                            <div
+                                class="mt-6 flex items-center gap-2 bg-slate-50 dark:bg-slate-900 border border-primary/10 rounded-xl px-4 py-3">
+                                <span class="material-icons text-slate-400">search</span>
+                                <input id="sponsor-search"
+                                    class="w-full bg-transparent border-none focus:ring-0 text-sm font-semibold"
+                                    placeholder="Cari nama perusahaan..." />
+                            </div>
+                            <div id="sponsor-list"
+                                class="mt-6 space-y-3 max-h-[640px] overflow-y-auto custom-scrollbar"></div>
+                            <div id="sponsor-empty"
+                                class="mt-10 text-center text-slate-500 text-sm font-semibold opacity-70 hidden">
+                                Belum ada permohonan sponsor/investor.
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Approval
+                                    </div>
+                                    <div class="text-lg font-800 text-slate-900 dark:text-white mt-1">Ringkasan</div>
+                                </div>
+                                <span class="material-icons text-primary">task_alt</span>
+                            </div>
+                            <div class="mt-6 space-y-3">
+                                <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-primary/10">
+                                    <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Pending
+                                    </div>
+                                    <div id="sponsor-pending"
+                                        class="mt-2 text-3xl font-800 text-slate-900 dark:text-white">0</div>
+                                </div>
+                                <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-primary/10">
+                                    <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Approved
+                                    </div>
+                                    <div id="sponsor-approved"
+                                        class="mt-2 text-3xl font-800 text-slate-900 dark:text-white">0</div>
+                                </div>
+                                <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-primary/10">
+                                    <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Rejected
+                                    </div>
+                                    <div id="sponsor-rejected"
+                                        class="mt-2 text-3xl font-800 text-slate-900 dark:text-white">0</div>
+                                </div>
+                            </div>
+                            <button id="add-sponsor-demo"
+                                class="mt-6 w-full px-4 py-3 rounded-xl bg-primary text-slate-900 font-800 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                Tambah 1 Sponsor Demo
+                                <span class="material-symbols-outlined">add</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <section data-section="settings" class="view-section hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Setting</div>
+                                <div class="text-lg font-800 text-slate-900 dark:text-white mt-1">Admin Karang Taruna
+                                </div>
+                            </div>
+                            <span class="material-icons text-primary">admin_panel_settings</span>
+                        </div>
+                        <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-slate-50 dark:bg-slate-900 border border-primary/10 rounded-2xl p-6">
+                                <div class="text-sm font-800 text-slate-900 dark:text-white">Penetapan Admin Aktif</div>
+                                <div class="text-xs font-semibold text-slate-500 mt-1">Pilih admin karang taruna yang
+                                    bertugas mengelola kegiatan dan pembaruan konten.</div>
+                                <div class="mt-6">
+                                    <label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Admin
+                                        Karang Taruna</label>
+                                    <select id="karangtaruna-admin-select"
+                                        class="mt-2 w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-950 border border-primary/10 font-semibold text-sm focus:ring-primary">
+                                        <option value="">Belum Dipilih</option>
+                                    </select>
+                                </div>
+                                <button id="save-settings"
+                                    class="mt-6 w-full px-4 py-3 rounded-xl bg-primary text-slate-900 font-800 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                                    Simpan Pengaturan
+                                </button>
+                                <div id="settings-toast"
+                                    class="mt-4 hidden px-4 py-3 rounded-xl bg-primary/10 border border-primary/20 text-sm font-bold text-primary">
+                                    Pengaturan tersimpan.
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 dark:bg-slate-900 border border-primary/10 rounded-2xl p-6">
+                                <div class="text-sm font-800 text-slate-900 dark:text-white">Ringkasan Sistem</div>
+                                <div class="text-xs font-semibold text-slate-500 mt-1">Kontrol cepat untuk pemantauan
+                                    eksekutif.</div>
+                                <div class="mt-6 space-y-3">
+                                    <div
+                                        class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-slate-950 border border-primary/10">
+                                        <div class="flex items-center gap-3">
+                                            <span class="material-icons text-primary">sync</span>
+                                            <div>
+                                                <div class="text-sm font-bold text-slate-900 dark:text-white">Sinkron
+                                                    Data</div>
+                                                <div class="text-xs text-slate-500 font-semibold">Refresh data local
+                                                    demo</div>
+                                            </div>
+                                        </div>
+                                        <button id="refresh-all"
+                                            class="px-3 py-2 rounded-xl bg-primary text-slate-900 font-800 text-xs hover:scale-[1.02] active:scale-[0.98] transition-all">
+                                            Refresh
+                                        </button>
+                                    </div>
+                                    <div
+                                        class="flex items-center justify-between p-4 rounded-xl bg-white dark:bg-slate-950 border border-primary/10">
+                                        <div class="flex items-center gap-3">
+                                            <span class="material-icons text-primary">delete_forever</span>
+                                            <div>
+                                                <div class="text-sm font-bold text-slate-900 dark:text-white">Reset Demo
+                                                </div>
+                                                <div class="text-xs text-slate-500 font-semibold">Hapus data dashboard
+                                                    (local)</div>
+                                            </div>
+                                        </div>
+                                        <button id="clear-storage"
+                                            class="px-3 py-2 rounded-xl bg-slate-900 text-white font-800 text-xs hover:scale-[1.02] active:scale-[0.98] transition-all">
+                                            Reset
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="modal"
+        class="fixed inset-0 z-[80] hidden items-center justify-center bg-black/60 backdrop-blur-sm p-4 opacity-0 transition-opacity duration-300">
+        <div id="modal-card"
+            class="w-full max-w-xl bg-white dark:bg-slate-950 rounded-3xl overflow-hidden shadow-2xl border border-primary/10 scale-95 transition-transform duration-300">
+            <div class="p-6 border-b border-primary/10 flex items-start justify-between">
+                <div>
+                    <div id="modal-kicker" class="text-xs font-bold text-slate-500 uppercase tracking-widest">Detail
+                    </div>
+                    <div id="modal-title" class="text-xl font-800 text-slate-900 dark:text-white mt-1">--</div>
+                </div>
+                <button id="modal-close" class="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div id="modal-body" class="p-6"></div>
+            <div id="modal-actions" class="p-6 border-t border-primary/10 bg-slate-50 dark:bg-slate-900/50 flex gap-2">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE = {
+            ERESOURCE: 'lentera_admin_eresource',
+            ADMINS: 'lentera_admin_accounts',
+            SPONSOR: 'lentera_sponsorship_requests',
+            SETTINGS: 'lentera_admin_settings',
+            THEME: 'lentera_admin_theme'
+        };
+
+        const $ = (sel) => document.querySelector(sel);
+        const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+        function uid(prefix = 'id') {
+            return `${prefix}_${Math.random().toString(16).slice(2)}_${Date.now().toString(16)}`;
+        }
+
+        function load(key, fallback) {
+            try {
+                const raw = localStorage.getItem(key);
+                return raw ? JSON.parse(raw) : fallback;
+            } catch {
+                return fallback;
+            }
+        }
+
+        function save(key, value) {
+            localStorage.setItem(key, JSON.stringify(value));
+        }
+
+        function formatDate(ts) {
+            try {
+                return new Date(ts).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            } catch {
+                return '--';
+            }
+        }
+
+        function setNowText() {
+            const el = $('#now-text');
+            if (!el) return;
+            el.innerText = new Date().toLocaleString('id-ID', { weekday: 'short', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+        }
+
+        setNowText();
+        setInterval(setNowText, 30000);
+
+        function applyThemeFromStorage() {
+            const theme = localStorage.getItem(STORAGE.THEME) || 'light';
+            document.documentElement.classList.toggle('dark', theme === 'dark');
+        }
+
+        applyThemeFromStorage();
+
+        $('#toggle-theme')?.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem(STORAGE.THEME, isDark ? 'light' : 'dark');
+            applyThemeFromStorage();
+        });
+
+        const pageTitle = $('#page-title');
+        const sections = $$('.view-section');
+        const viewButtons = $$('.view-btn');
+
+        function setView(view) {
+            sections.forEach(s => s.classList.toggle('hidden', s.dataset.section !== view));
+            viewButtons.forEach(b => {
+                const active = b.dataset.view === view;
+                b.classList.toggle('bg-primary/10', active);
+                b.classList.toggle('text-primary', active);
+            });
+            if (pageTitle) {
+                const title = ({
+                    dashboard: 'Dashboard',
+                    eresource: 'E-Resource',
+                    education: 'Kelola Edukasi',
+                    accounts: 'Setting Akun',
+                    sponsorship: 'Sponsorship',
+                    settings: 'Pengaturan Desa'
+                })[view] || 'Dashboard';
+                pageTitle.innerText = title;
+            }
+            renderAll();
+        }
+
+        viewButtons.forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
+        $$('.view-shortcut').forEach(btn => btn.addEventListener('click', () => setView(btn.dataset.view)));
+
+        const modal = $('#modal');
+        const modalCard = $('#modal-card');
+        const modalTitle = $('#modal-title');
+        const modalKicker = $('#modal-kicker');
+        const modalBody = $('#modal-body');
+        const modalActions = $('#modal-actions');
+
+        function openModal({ kicker, title, bodyHtml, actions = [] }) {
+            if (modalKicker) modalKicker.innerText = kicker || 'Detail';
+            if (modalTitle) modalTitle.innerText = title || '--';
+            if (modalBody) modalBody.innerHTML = bodyHtml || '';
+            if (modalActions) modalActions.innerHTML = actions.map(a => `
+                <button data-action="${a.id}" class="${a.className}">${a.label}</button>
+            `).join('');
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.add('opacity-100');
+                modalCard.classList.remove('scale-95');
+                modalCard.classList.add('scale-100');
+            }, 10);
+
+            actions.forEach(a => {
+                const btn = modalActions.querySelector(`[data-action="${a.id}"]`);
+                btn?.addEventListener('click', a.onClick);
+            });
+        }
+
+        function closeModal() {
+            modal.classList.remove('opacity-100');
+            modalCard.classList.add('scale-95');
+            modalCard.classList.remove('scale-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                if (modalBody) modalBody.innerHTML = '';
+                if (modalActions) modalActions.innerHTML = '';
+            }, 300);
+        }
+
+        $('#modal-close')?.addEventListener('click', closeModal);
+        modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal(); });
+
+        function seedDemoData() {
+            const admins = load(STORAGE.ADMINS, []);
+            const ers = load(STORAGE.ERESOURCE, []);
+            const sponsors = load(STORAGE.SPONSOR, []);
+
+            if (admins.length === 0) {
+                save(STORAGE.ADMINS, [
+                    { id: uid('adm'), name: 'Admin Desa Kucur', email: 'desa@kucur.id', role: 'desa', active: true, createdAt: Date.now() - 86400000 * 5 },
+                    { id: uid('adm'), name: 'Karang Taruna Kucur', email: 'karangtaruna@kucur.id', role: 'karangtaruna', active: true, createdAt: Date.now() - 86400000 * 2 }
+                ]);
+            }
+
+            if (ers.length === 0) {
+                save(STORAGE.ERESOURCE, [
+                    { id: uid('res'), title: 'Pengumuman Kerja Bakti', type: 'text', text: 'Kerja bakti minggu ini pukul 07:00 WIB. Titik kumpul balai desa.', url: '', enabled: true, createdAt: Date.now() - 86400000 },
+                    { id: uid('res'), title: 'Dokumen Profil Desa (PDF)', type: 'pdf', text: '', url: 'https://example.com/profil-desa.pdf', enabled: true, createdAt: Date.now() - 86400000 * 3 },
+                    { id: uid('res'), title: 'Video Edukasi Kopi', type: 'video', text: '', url: 'https://www.youtube.com/watch?v=7X8II6J-6mU', enabled: false, createdAt: Date.now() - 86400000 * 2 }
+                ]);
+            }
+
+            if (sponsors.length === 0) {
+                save(STORAGE.SPONSOR, [
+                    { id: uid('sps'), org: 'PT Hijau Lestari', contact: 'Rina', phone: '081234567890', proposal: 'Paket sponsor event wisata + umkm', amount: 25000000, status: 'pending', createdAt: Date.now() - 3600000 * 6 },
+                    { id: uid('sps'), org: 'CV Kopi Nusantara', contact: 'Bagus', phone: '082222222222', proposal: 'Investasi mesin roasting', amount: 50000000, status: 'pending', createdAt: Date.now() - 3600000 * 22 }
+                ]);
+            }
+
+            const edPackages = load('lentera_education_packages', []);
+            if (edPackages.length === 0) {
+                save('lentera_education_packages', [
+                    {
+                        id: 'pkg_live_in',
+                        title: 'Live In Desa Kucur',
+                        tag: 'Pengalaman Autentik',
+                        description: 'Rasakan pengalaman berharga tinggal langsung di rumah warga setempat (homestay). Ikuti aktivitas keseharian mereka secara autentik seperti bertani, memasak makanan tradisional desa, dan berinteraksi erat dengan komunitas lokal Kucur.',
+                        price: 350000,
+                        unit: 'malam',
+                        img: 'https://images.unsplash.com/photo-1505843513577-22bb7d21e455?auto=format&fit=crop&q=80&w=600',
+                        phone: '628123456789',
+                        features: 'Homestay Warga, Makan Bersama, Aktivitas Harian Desa',
+                        createdAt: Date.now() - 86400000
+                    },
+                    {
+                        id: 'pkg_tani_cilik',
+                        title: 'Paket Edu-Tani Cilik',
+                        tag: 'Edu-Agrowisata',
+                        description: 'Paket edukasi luar ruangan interaktif yang dirancang khusus untuk anak-anak dan keluarga. Belajar teknik bercocok tanam padi di sawah terasering secara organik, merawat kebun, serta memetik buah jeruk segar langsung dari pohon.',
+                        price: 75000,
+                        unit: 'pax',
+                        img: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=600',
+                        phone: '628123456789',
+                        features: 'Petik Jeruk Organik, Tanam Padi Sawah, Merawat Kebun',
+                        createdAt: Date.now() - 86400000
+                    }
+                ]);
+            }
+
+            const edModules = load('lentera_education_modules', []);
+            if (edModules.length === 0) {
+                save('lentera_education_modules', [
+                    {
+                        id: 'kopi',
+                        title: 'Pengetahuan Kopi',
+                        category: 'Sejarah & Asal',
+                        description: 'Pelajari sejarah 200 tahun budidaya kopi di tanah vulkanik kami dan sains di balik profil rasa.',
+                        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAruYLfsN1zsSoe6ASC2YZFOyLR1YxR7hs8nYOLNogdcaoFg8blRnrHEFf-IdaefgS36taueiAIljEKrxb42H7LHMOZCZbK6jkikz_iiJs4DWDhA8XA4rFwO6M_vXtLI9h2lPxtgYO0FmMCloTTiEoHY6BAkg4aJh19FBnCcm8TlTMp82hEXr0Fih8MnF7CuoRTc0GBdSuZR1gpaJFcyWDSnzResbI2KQRi4RW8axud9P7vtMg96SPx_WM8ZjmiXTbFQc_Od8453a8',
+                        icon: 'menu_book',
+                        meta: '12 Modul',
+                        body: `
+                            <p class="mb-4">Kopi di Desa Kucur memiliki sejarah panjang yang bermula dari era kolonial. Terletak di lereng Gunung Kawi dengan ketinggian 800-1200 mdpl, tanah vulkanik kami memberikan nutrisi sempurna untuk biji kopi Arabika dan Robusta.</p>
+                            <h4 class="font-bold text-slate-900 dark:text-white mb-2">Apa yang akan Anda pelajari:</h4>
+                            <ul class="list-disc pl-5 space-y-2 mb-4">
+                                <li>Perbedaan profil rasa Arabika Kucur vs daerah lain.</li>
+                                <li>Siklus hidup pohon kopi dari bibit hingga panen.</li>
+                                <li>Pentingnya ekosistem hutan penyangga untuk kualitas biji.</li>
+                            </ul>
+                            <p>Modul ini mencakup 12 materi mendalam dengan panduan video dari ahli agronomi lokal.</p>
+                        `,
+                        btnText: 'Pelajari Modul Kopi',
+                        createdAt: Date.now() - 86400000
+                    },
+                    {
+                        id: 'tani',
+                        title: 'Kelompok Tani',
+                        category: 'Pahlawan Lokal',
+                        description: 'Temui 15 kelompok koperasi yang mengelola perkebunan berkelanjutan kami. Transparansi dari tanah hingga rak.',
+                        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBWQf4oUNapHWIsyItERnNvFSj7i2kcurfQTbOIlclRujNloH16iJri2lKD5_sB4aK1Eo44dmX-4djPG8f9mk0C05eCqWuazg51CkUnQMQTTS1gHuywIkToXymnxJvyUIG2EoAMvGKuLHKiBr-_pSAzKM8K9VxR9mpdJqjUZGTH0CS5j5RRgQc1pKmfgAEnl6u6EzuKkG_dm78jzzBzt75e8hMFxXcH27-9CXH9QM2sp8JJ4SoS__wnj_Eo-wT27dERZcfcQEkSe9U',
+                        icon: 'groups',
+                        meta: '15 Kelompok',
+                        body: `
+                            <p class="mb-4">Keberhasilan Desa Kucur terletak pada semangat gotong royong 15 kelompok tani kami. Setiap kelompok mengelola blok perkebunan tertentu dengan standar keberlanjutan yang ketat.</p>
+                            <h4 class="font-bold text-slate-900 dark:text-white mb-2">Dampak Sosial Kami:</h4>
+                            <ul class="list-disc pl-5 space-y-2 mb-4">
+                                <li>Sistem bagi hasil yang adil untuk seluruh anggota koperasi.</li>
+                                <li>Program beasiswa untuk anak-anak petani dari dana CSR.</li>
+                                <li>Pelatihan teknologi pertanian modern bagi pemuda desa.</li>
+                            </ul>
+                            <p>Kenali wajah-wajah di balik cangkir kopi Anda dan kontribusi mereka terhadap kelestarian alam.</p>
+                        `,
+                        btnText: 'Lihat Daftar Kelompok',
+                        createdAt: Date.now() - 86400000
+                    },
+                    {
+                        id: 'produksi',
+                        title: 'Proses Produksi',
+                        category: 'Perjalanan Interaktif',
+                        description: 'Perjalanan interaktif langkah demi langkah melalui teknik pencucian, fermentasi, pengeringan, dan penyangraian.',
+                        img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAZZRZ0sKiCtTbb_2y0PCevIbWGLQBKYwYPtyLKnepjt4ay0lDlEADSKAt8gk6p1CMnVXJCAH0qO9GnBF5G0KP2Z3oj2Z0oBBmoBdoGoYCEzRZg4qoA2JRcgMo2b10LwBR1P1VfIdmbh37cLRgEWkYK7pSkLcHT1I9KSI0D3c0I0WWQVvVBkfyti7RFDoDVa5x7PNNo0QPgzlwo_NsBdvpWVVVh79Oyve7h3o3tJx0tAJF69XKxTgrtyGuKQaQMVpIEZzhXVxax3wo',
+                        icon: 'psychology',
+                        meta: 'Interaktif',
+                        body: `
+                            <p class="mb-4">Dari pohon hingga ke rak, setiap langkah diproses dengan presisi. Kami menggabungkan kearifan tradisional dengan mesin pengolahan modern untuk memastikan standar kualitas ekspor.</p>
+                            <h4 class="font-bold text-slate-900 dark:text-white mb-2">Tahapan Tur Produksi:</h4>
+                            <ol class="list-decimal pl-5 space-y-2 mb-4">
+                                <li><strong>Pemetikan Selektif:</strong> Hanya buah merah (cherry) yang dipetik.</li>
+                                <li><strong>Fermentasi:</strong> Proses pencucian untuk mengembangkan aroma.</li>
+                                <li><strong>Pengeringan:</strong> Menggunakan dome tenaga surya untuk kadar air stabil.</li>
+                                <li><strong>Roasting:</strong> Penyangraian tingkat menengah untuk menjaga karakter floral.</li>
+                            </ol>
+                            <p>Ikuti tur virtual 360° untuk melihat fasilitas pengolahan kami secara langsung.</p>
+                        `,
+                        btnText: 'Mulai Tur Virtual',
+                        createdAt: Date.now() - 86400000
+                    }
+                ]);
+            }
+
+            renderAll();
+        }
+
+        $('#seed-demo')?.addEventListener('click', seedDemoData);
+
+        function clearAllStorage() {
+            [STORAGE.ERESOURCE, STORAGE.ADMINS, STORAGE.SPONSOR, STORAGE.SETTINGS, 'lentera_education_packages', 'lentera_education_modules'].forEach(k => localStorage.removeItem(k));
+            renderAll();
+        }
+
+        $('#clear-storage')?.addEventListener('click', () => {
+            openModal({
+                kicker: 'Konfirmasi',
+                title: 'Reset data demo?',
+                bodyHtml: `<div class="text-sm font-semibold text-slate-600 dark:text-slate-300">Data E-Resource, Akun Admin, dan Sponsorship di penyimpanan lokal akan dihapus.</div>`,
+                actions: [
+                    {
+                        id: 'cancel',
+                        label: 'Batal',
+                        className: 'flex-1 px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors',
+                        onClick: closeModal
+                    },
+                    {
+                        id: 'ok',
+                        label: 'Ya, Reset',
+                        className: 'flex-1 px-4 py-3 rounded-xl bg-slate-900 text-white font-800 hover:scale-[1.02] active:scale-[0.98] transition-all',
+                        onClick: () => {
+                            clearAllStorage();
+                            closeModal();
+                        }
+                    }
+                ]
+            });
+        });
+
+        $('#refresh-all')?.addEventListener('click', () => renderAll());
+
+        const eresForm = $('#eres-form');
+        const eresTitle = $('#eres-title');
+        const eresType = $('#eres-type');
+        const eresEnabled = $('#eres-enabled');
+        const eresText = $('#eres-text');
+        const eresUrl = $('#eres-url');
+        const eresTextWrap = $('#eres-text-wrap');
+        const eresUrlWrap = $('#eres-url-wrap');
+        const eresEditId = $('#eres-edit-id');
+        const eresList = $('#eres-list');
+        const eresEmpty = $('#eres-empty');
+        const eresCount = $('#eres-count');
+        const eresSearch = $('#eres-search');
+        const eresPreview = $('#eres-preview');
+
+        function updateEresourceFormByType() {
+            const t = eresType.value;
+            const isText = t === 'text';
+            eresTextWrap.classList.toggle('hidden', !isText);
+            eresUrlWrap.classList.toggle('hidden', isText);
+        }
+        eresType?.addEventListener('change', updateEresourceFormByType);
+        updateEresourceFormByType();
+
+        function resetEresourceForm() {
+            eresTitle.value = '';
+            eresType.value = 'text';
+            eresEnabled.value = 'true';
+            eresText.value = '';
+            eresUrl.value = '';
+            eresEditId.value = '';
+            updateEresourceFormByType();
+        }
+
+        $('#eres-reset')?.addEventListener('click', resetEresourceForm);
+
+        function renderEresource() {
+            const query = (eresSearch?.value || '').trim().toLowerCase();
+            const data = load(STORAGE.ERESOURCE, []);
+
+            const items = data
+                .filter(it => it.title.toLowerCase().includes(query))
+                .sort((a, b) => b.createdAt - a.createdAt);
+
+            if (eresCount) eresCount.innerText = String(items.length);
+            if (!eresList) return;
+
+            if (items.length === 0) {
+                eresList.innerHTML = '';
+                eresEmpty?.classList.remove('hidden');
+                return;
+            }
+
+            eresEmpty?.classList.add('hidden');
+
+            const badge = (enabled) => enabled
+                ? `<span class="px-2 py-0.5 text-[10px] font-800 rounded-full bg-primary/20 text-primary">AKTIF</span>`
+                : `<span class="px-2 py-0.5 text-[10px] font-800 rounded-full bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-200">NONAKTIF</span>`;
+
+            const typeBadge = (t) => ({
+                text: `<span class="px-2 py-0.5 text-[10px] font-800 rounded-full bg-blue-100 text-blue-700">TEXT</span>`,
+                foto: `<span class="px-2 py-0.5 text-[10px] font-800 rounded-full bg-orange-100 text-orange-700">FOTO</span>`,
+                video: `<span class="px-2 py-0.5 text-[10px] font-800 rounded-full bg-purple-100 text-purple-700">VIDEO</span>`,
+                pdf: `<span class="px-2 py-0.5 text-[10px] font-800 rounded-full bg-rose-100 text-rose-700">PDF</span>`
+            })[t] || '';
+
+            eresList.innerHTML = items.map(it => `
+                <div class="border border-primary/10 rounded-2xl p-4 bg-white dark:bg-slate-950 hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <span class="material-icons text-primary">${it.type === 'text' ? 'description' : it.type === 'foto' ? 'image' : it.type === 'video' ? 'play_circle' : 'picture_as_pdf'}</span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="font-800 text-slate-900 dark:text-white truncate">${it.title}</div>
+                                <div class="flex items-center gap-2 flex-shrink-0">
+                                    ${typeBadge(it.type)}
+                                    ${badge(!!it.enabled)}
+                                </div>
+                            </div>
+                            <div class="mt-1 text-xs text-slate-500 font-semibold">${formatDate(it.createdAt)}</div>
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                <button data-preview="${it.id}" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Preview</button>
+                                <button data-edit="${it.id}" class="px-3 py-2 rounded-xl bg-primary text-slate-900 font-800 text-xs hover:scale-[1.02] active:scale-[0.98] transition-all">Ubah</button>
+                                <button data-toggle="${it.id}" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-950 border border-primary/10 text-slate-700 dark:text-slate-200 font-bold text-xs hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors">${it.enabled ? 'Nonaktifkan' : 'Aktifkan'}</button>
+                                <button data-delete="${it.id}" class="px-3 py-2 rounded-xl bg-slate-900 text-white font-800 text-xs hover:scale-[1.02] active:scale-[0.98] transition-all">Hapus</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            $$('[data-preview]').forEach(btn => btn.addEventListener('click', () => previewEresource(btn.dataset.preview)));
+            $$('[data-edit]').forEach(btn => btn.addEventListener('click', () => editEresource(btn.dataset.edit)));
+            $$('[data-toggle]').forEach(btn => btn.addEventListener('click', () => toggleEresource(btn.dataset.toggle)));
+            $$('[data-delete]').forEach(btn => btn.addEventListener('click', () => deleteEresource(btn.dataset.delete)));
+        }
+
+        function previewEresource(id) {
+            const data = load(STORAGE.ERESOURCE, []);
+            const it = data.find(x => x.id === id);
+            if (!it || !eresPreview) return;
+
+            const header = `
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Preview</div>
+                        <div class="text-xl font-800 text-slate-900 dark:text-white mt-1">${it.title}</div>
+                        <div class="text-xs text-slate-500 font-semibold mt-1">${formatDate(it.createdAt)}</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 text-[10px] font-800 rounded-full bg-primary/20 text-primary">${it.enabled ? 'AKTIF' : 'NONAKTIF'}</span>
+                        <span class="px-2 py-0.5 text-[10px] font-800 rounded-full bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-200">${it.type.toUpperCase()}</span>
+                    </div>
+                </div>
+            `;
+
+            const content = (() => {
+                if (it.type === 'text') return `<div class="mt-4 text-sm font-semibold text-slate-700 dark:text-slate-200 whitespace-pre-line">${(it.text || '').replace(/</g, '&lt;')}</div>`;
+                if (it.type === 'foto') return it.url ? `<div class="mt-4 rounded-2xl overflow-hidden border border-primary/10"><img src="${it.url}" class="w-full max-h-[360px] object-cover"></div>` : `<div class="mt-4 text-sm font-semibold text-slate-500">Tidak ada URL.</div>`;
+                if (it.type === 'pdf') return it.url ? `<div class="mt-4"><a href="${it.url}" target="_blank" class="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-primary text-slate-900 font-800"><span class="material-icons">picture_as_pdf</span>Buka PDF</a></div>` : `<div class="mt-4 text-sm font-semibold text-slate-500">Tidak ada URL.</div>`;
+                if (it.type === 'video') {
+                    if (!it.url) return `<div class="mt-4 text-sm font-semibold text-slate-500">Tidak ada URL.</div>`;
+                    const embed = it.url.includes('youtube.com/watch') ? it.url.replace('watch?v=', 'embed/') : it.url;
+                    return `
+                        <div class="mt-4 rounded-2xl overflow-hidden border border-primary/10 bg-black aspect-video">
+                            <iframe class="w-full h-full" src="${embed}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    `;
+                }
+                return '';
+            })();
+
+            eresPreview.innerHTML = header + content;
+        }
+
+        function editEresource(id) {
+            const data = load(STORAGE.ERESOURCE, []);
+            const it = data.find(x => x.id === id);
+            if (!it) return;
+
+            setView('eresource');
+            eresEditId.value = it.id;
+            eresTitle.value = it.title;
+            eresType.value = it.type;
+            eresEnabled.value = String(!!it.enabled);
+            eresText.value = it.text || '';
+            eresUrl.value = it.url || '';
+            updateEresourceFormByType();
+        }
+
+        function toggleEresource(id) {
+            const data = load(STORAGE.ERESOURCE, []);
+            const it = data.find(x => x.id === id);
+            if (!it) return;
+            it.enabled = !it.enabled;
+            save(STORAGE.ERESOURCE, data);
+            renderAll();
+        }
+
+        function deleteEresource(id) {
+            openModal({
+                kicker: 'E-Resource',
+                title: 'Hapus informasi ini?',
+                bodyHtml: `<div class="text-sm font-semibold text-slate-600 dark:text-slate-300">Item akan dihapus permanen dari data demo lokal.</div>`,
+                actions: [
+                    {
+                        id: 'cancel',
+                        label: 'Batal',
+                        className: 'flex-1 px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors',
+                        onClick: closeModal
+                    },
+                    {
+                        id: 'ok',
+                        label: 'Hapus',
+                        className: 'flex-1 px-4 py-3 rounded-xl bg-slate-900 text-white font-800 hover:scale-[1.02] active:scale-[0.98] transition-all',
+                        onClick: () => {
+                            const data = load(STORAGE.ERESOURCE, []).filter(x => x.id !== id);
+                            save(STORAGE.ERESOURCE, data);
+                            if (eresEditId.value === id) resetEresourceForm();
+                            closeModal();
+                            renderAll();
+                        }
+                    }
+                ]
+            });
+        }
+
+        eresForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const data = load(STORAGE.ERESOURCE, []);
+            const id = eresEditId.value || uid('res');
+
+            const payload = {
+                id,
+                title: eresTitle.value.trim(),
+                type: eresType.value,
+                enabled: eresEnabled.value === 'true',
+                text: eresType.value === 'text' ? (eresText.value || '') : '',
+                url: eresType.value === 'text' ? '' : (eresUrl.value || ''),
+                createdAt: Date.now()
+            };
+
+            const idx = data.findIndex(x => x.id === id);
+            if (idx >= 0) {
+                payload.createdAt = data[idx].createdAt;
+                data[idx] = { ...data[idx], ...payload };
+            } else {
+                data.push(payload);
+            }
+            save(STORAGE.ERESOURCE, data);
+            resetEresourceForm();
+            renderAll();
+        });
+
+        eresSearch?.addEventListener('input', renderEresource);
+
+        const adminForm = $('#admin-form');
+        const adminName = $('#admin-name');
+        const adminEmail = $('#admin-email');
+        const adminRole = $('#admin-role');
+        const adminActive = $('#admin-active');
+        const adminEditId = $('#admin-edit-id');
+        const adminList = $('#admin-list');
+        const adminEmpty = $('#admin-empty');
+        const adminCount = $('#admin-count');
+        const adminSearch = $('#admin-search');
+        const adminFilterRole = $('#admin-filter-role');
+        const karangtarunaSelect = $('#karangtaruna-admin-select');
+
+        function resetAdminForm() {
+            adminName.value = '';
+            adminEmail.value = '';
+            adminRole.value = 'desa';
+            adminActive.value = 'true';
+            adminEditId.value = '';
+        }
+
+        $('#admin-reset')?.addEventListener('click', resetAdminForm);
+
+        function renderAdmins() {
+            const q = (adminSearch?.value || '').trim().toLowerCase();
+            const roleFilter = adminFilterRole?.value || 'all';
+            const data = load(STORAGE.ADMINS, []);
+
+            const items = data
+                .filter(a => (roleFilter === 'all' ? true : a.role === roleFilter))
+                .filter(a => (a.name + ' ' + a.email).toLowerCase().includes(q))
+                .sort((a, b) => b.createdAt - a.createdAt);
+
+            if (adminCount) adminCount.innerText = String(items.length);
+            if (!adminList) return;
+
+            if (items.length === 0) {
+                adminList.innerHTML = '';
+                adminEmpty?.classList.remove('hidden');
+            } else {
+                adminEmpty?.classList.add('hidden');
+                adminList.innerHTML = items.map(a => `
+                    <div class="border border-primary/10 rounded-2xl p-4 bg-white dark:bg-slate-950 hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-xl ${a.active ? 'bg-primary/10' : 'bg-slate-200 dark:bg-slate-800'} flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons ${a.active ? 'text-primary' : 'text-slate-500'}">person</span>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center justify-between gap-2">
+                                    <div class="min-w-0">
+                                        <div class="font-800 text-slate-900 dark:text-white truncate">${a.name}</div>
+                                        <div class="text-xs text-slate-500 font-semibold truncate mt-1">${a.email}</div>
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        <span class="px-2 py-0.5 text-[10px] font-800 rounded-full ${a.role === 'karangtaruna' ? 'bg-blue-100 text-blue-700' : 'bg-purple-100 text-purple-700'}">${a.role === 'karangtaruna' ? 'KARANGTARUNA' : 'DESA'}</span>
+                                        <span class="px-2 py-0.5 text-[10px] font-800 rounded-full ${a.active ? 'bg-primary/20 text-primary' : 'bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-200'}">${a.active ? 'AKTIF' : 'NONAKTIF'}</span>
+                                    </div>
+                                </div>
+                                <div class="mt-1 text-xs text-slate-500 font-semibold">${formatDate(a.createdAt)}</div>
+                                <div class="mt-4 flex flex-wrap gap-2">
+                                    <button data-admin-edit="${a.id}" class="px-3 py-2 rounded-xl bg-primary text-slate-900 font-800 text-xs hover:scale-[1.02] active:scale-[0.98] transition-all">Ubah</button>
+                                    <button data-admin-toggle="${a.id}" class="px-3 py-2 rounded-xl bg-white dark:bg-slate-950 border border-primary/10 text-slate-700 dark:text-slate-200 font-bold text-xs hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors">${a.active ? 'Nonaktifkan' : 'Aktifkan'}</button>
+                                    <button data-admin-delete="${a.id}" class="px-3 py-2 rounded-xl bg-slate-900 text-white font-800 text-xs hover:scale-[1.02] active:scale-[0.98] transition-all">Hapus</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                $$('[data-admin-edit]').forEach(btn => btn.addEventListener('click', () => editAdmin(btn.dataset.adminEdit)));
+                $$('[data-admin-toggle]').forEach(btn => btn.addEventListener('click', () => toggleAdmin(btn.dataset.adminToggle)));
+                $$('[data-admin-delete]').forEach(btn => btn.addEventListener('click', () => deleteAdmin(btn.dataset.adminDelete)));
+            }
+
+            if (karangtarunaSelect) {
+                const currentSettings = load(STORAGE.SETTINGS, { karangtarunaAdminId: '' });
+                const options = data
+                    .filter(a => a.role === 'karangtaruna' && a.active)
+                    .sort((a, b) => a.name.localeCompare(b.name, 'id'));
+
+                const current = currentSettings.karangtarunaAdminId || '';
+                karangtarunaSelect.innerHTML = `<option value="">Belum Dipilih</option>` + options.map(a => `
+                    <option value="${a.id}" ${a.id === current ? 'selected' : ''}>${a.name} (${a.email})</option>
+                `).join('');
+            }
+        }
+
+        function editAdmin(id) {
+            const data = load(STORAGE.ADMINS, []);
+            const a = data.find(x => x.id === id);
+            if (!a) return;
+            setView('accounts');
+            adminEditId.value = a.id;
+            adminName.value = a.name;
+            adminEmail.value = a.email;
+            adminRole.value = a.role;
+            adminActive.value = String(!!a.active);
+        }
+
+        function toggleAdmin(id) {
+            const data = load(STORAGE.ADMINS, []);
+            const a = data.find(x => x.id === id);
+            if (!a) return;
+            a.active = !a.active;
+            save(STORAGE.ADMINS, data);
+            renderAll();
+        }
+
+        function deleteAdmin(id) {
+            openModal({
+                kicker: 'Admin',
+                title: 'Hapus akun admin?',
+                bodyHtml: `<div class="text-sm font-semibold text-slate-600 dark:text-slate-300">Akun akan dihapus dari data demo lokal.</div>`,
+                actions: [
+                    {
+                        id: 'cancel',
+                        label: 'Batal',
+                        className: 'flex-1 px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors',
+                        onClick: closeModal
+                    },
+                    {
+                        id: 'ok',
+                        label: 'Hapus',
+                        className: 'flex-1 px-4 py-3 rounded-xl bg-slate-900 text-white font-800 hover:scale-[1.02] active:scale-[0.98] transition-all',
+                        onClick: () => {
+                            const data = load(STORAGE.ADMINS, []).filter(x => x.id !== id);
+                            save(STORAGE.ADMINS, data);
+                            if (adminEditId.value === id) resetAdminForm();
+                            const settings = load(STORAGE.SETTINGS, { karangtarunaAdminId: '' });
+                            if (settings.karangtarunaAdminId === id) {
+                                settings.karangtarunaAdminId = '';
+                                save(STORAGE.SETTINGS, settings);
+                            }
+                            closeModal();
+                            renderAll();
+                        }
+                    }
+                ]
+            });
+        }
+
+        adminForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const data = load(STORAGE.ADMINS, []);
+            const id = adminEditId.value || uid('adm');
+            const payload = {
+                id,
+                name: adminName.value.trim(),
+                email: adminEmail.value.trim(),
+                role: adminRole.value,
+                active: adminActive.value === 'true',
+                createdAt: Date.now()
+            };
+
+            const idx = data.findIndex(x => x.id === id);
+            if (idx >= 0) {
+                payload.createdAt = data[idx].createdAt;
+                data[idx] = { ...data[idx], ...payload };
+            } else {
+                data.push(payload);
+            }
+
+            save(STORAGE.ADMINS, data);
+            resetAdminForm();
+            renderAll();
+        });
+
+        adminSearch?.addEventListener('input', renderAdmins);
+        adminFilterRole?.addEventListener('change', renderAdmins);
+
+        $('#save-settings')?.addEventListener('click', () => {
+            const settings = load(STORAGE.SETTINGS, { karangtarunaAdminId: '' });
+            settings.karangtarunaAdminId = karangtarunaSelect?.value || '';
+            save(STORAGE.SETTINGS, settings);
+            const toast = $('#settings-toast');
+            toast?.classList.remove('hidden');
+            setTimeout(() => toast?.classList.add('hidden'), 2500);
+        });
+
+        const sponsorList = $('#sponsor-list');
+        const sponsorEmpty = $('#sponsor-empty');
+        const sponsorSearch = $('#sponsor-search');
+        const sponsorBadge = $('#sponsor-badge');
+        const sponsorPending = $('#sponsor-pending');
+        const sponsorApproved = $('#sponsor-approved');
+        const sponsorRejected = $('#sponsor-rejected');
+        const kpiSponsor = $('#kpi-sponsor');
+
+        function currencyIDR(amount) {
+            try {
+                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(amount || 0);
+            } catch {
+                return `Rp ${amount || 0}`;
+            }
+        }
+
+        function renderSponsorship() {
+            const q = (sponsorSearch?.value || '').trim().toLowerCase();
+            const data = load(STORAGE.SPONSOR, []);
+            const items = data
+                .filter(s => s.org.toLowerCase().includes(q))
+                .sort((a, b) => b.createdAt - a.createdAt);
+
+            const pendingCount = data.filter(s => s.status === 'pending').length;
+            const approvedCount = data.filter(s => s.status === 'approved').length;
+            const rejectedCount = data.filter(s => s.status === 'rejected').length;
+
+            if (kpiSponsor) kpiSponsor.innerText = String(pendingCount);
+            if (sponsorPending) sponsorPending.innerText = String(pendingCount);
+            if (sponsorApproved) sponsorApproved.innerText = String(approvedCount);
+            if (sponsorRejected) sponsorRejected.innerText = String(rejectedCount);
+
+            if (sponsorBadge) {
+                sponsorBadge.innerText = String(pendingCount);
+                sponsorBadge.classList.toggle('hidden', pendingCount === 0);
+            }
+
+            if (!sponsorList) return;
+
+            if (items.length === 0) {
+                sponsorList.innerHTML = '';
+                sponsorEmpty?.classList.remove('hidden');
+            } else {
+                sponsorEmpty?.classList.add('hidden');
+                const statusBadge = (st) => {
+                    if (st === 'pending') return `<span class="px-2 py-0.5 text-[10px] font-800 rounded-full bg-primary/20 text-primary">PENDING</span>`;
+                    if (st === 'approved') return `<span class="px-2 py-0.5 text-[10px] font-800 rounded-full bg-blue-100 text-blue-700">APPROVED</span>`;
+                    return `<span class="px-2 py-0.5 text-[10px] font-800 rounded-full bg-rose-100 text-rose-700">REJECTED</span>`;
+                };
+
+                sponsorList.innerHTML = items.map(s => `
+                    <div class="border border-primary/10 rounded-2xl p-4 bg-white dark:bg-slate-950 hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                <span class="material-icons text-primary">handshake</span>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center justify-between gap-2">
+                                    <div class="min-w-0">
+                                        <div class="font-800 text-slate-900 dark:text-white truncate">${s.org}</div>
+                                        <div class="text-xs text-slate-500 font-semibold truncate mt-1">${s.contact} • ${s.phone}</div>
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        ${statusBadge(s.status)}
+                                    </div>
+                                </div>
+                                <div class="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-200">${currencyIDR(s.amount)}</div>
+                                <div class="mt-2 text-xs text-slate-500 font-semibold">${formatDate(s.createdAt)}</div>
+                                <div class="mt-4 flex flex-wrap gap-2">
+                                    <button data-sponsor-detail="${s.id}" class="px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">Lihat Detail</button>
+                                    <button data-sponsor-approve="${s.id}" ${s.status !== 'pending' ? 'disabled' : ''} class="px-3 py-2 rounded-xl ${s.status !== 'pending' ? 'bg-slate-200 text-slate-500 dark:bg-slate-800 dark:text-slate-500 cursor-not-allowed' : 'bg-primary text-slate-900'} font-800 text-xs hover:scale-[1.02] active:scale-[0.98] transition-all">Approve</button>
+                                    <button data-sponsor-reject="${s.id}" ${s.status !== 'pending' ? 'disabled' : ''} class="px-3 py-2 rounded-xl ${s.status !== 'pending' ? 'bg-slate-200 text-slate-500 dark:bg-slate-800 dark:text-slate-500 cursor-not-allowed' : 'bg-slate-900 text-white'} font-800 text-xs hover:scale-[1.02] active:scale-[0.98] transition-all">Tolak</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                $$('[data-sponsor-detail]').forEach(btn => btn.addEventListener('click', () => sponsorDetail(btn.dataset.sponsorDetail)));
+                $$('[data-sponsor-approve]').forEach(btn => btn.addEventListener('click', () => updateSponsorStatus(btn.dataset.sponsorApprove, 'approved')));
+                $$('[data-sponsor-reject]').forEach(btn => btn.addEventListener('click', () => updateSponsorStatus(btn.dataset.sponsorReject, 'rejected')));
+            }
+        }
+
+        function sponsorDetail(id) {
+            const data = load(STORAGE.SPONSOR, []);
+            const s = data.find(x => x.id === id);
+            if (!s) return;
+            openModal({
+                kicker: 'Sponsorship / Investor',
+                title: s.org,
+                bodyHtml: `
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-primary/10">
+                                <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Kontak</div>
+                                <div class="mt-2 text-sm font-800 text-slate-900 dark:text-white">${s.contact}</div>
+                                <div class="text-xs text-slate-500 font-semibold mt-1">${s.phone}</div>
+                            </div>
+                            <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-primary/10">
+                                <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Nilai</div>
+                                <div class="mt-2 text-sm font-800 text-slate-900 dark:text-white">${currencyIDR(s.amount)}</div>
+                                <div class="text-xs text-slate-500 font-semibold mt-1">${formatDate(s.createdAt)}</div>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-primary/10">
+                            <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Proposal</div>
+                            <div class="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-200 whitespace-pre-line">${(s.proposal || '').replace(/</g, '&lt;')}</div>
+                        </div>
+                    </div>
+                `,
+                actions: [
+                    {
+                        id: 'close',
+                        label: 'Tutup',
+                        className: 'flex-1 px-4 py-3 rounded-xl bg-primary text-slate-900 font-800 hover:scale-[1.02] active:scale-[0.98] transition-all',
+                        onClick: closeModal
+                    }
+                ]
+            });
+        }
+
+        function updateSponsorStatus(id, status) {
+            const data = load(STORAGE.SPONSOR, []);
+            const s = data.find(x => x.id === id);
+            if (!s) return;
+            s.status = status;
+            save(STORAGE.SPONSOR, data);
+            renderAll();
+        }
+
+        $('#add-sponsor-demo')?.addEventListener('click', () => {
+            const data = load(STORAGE.SPONSOR, []);
+            data.push({
+                id: uid('sps'),
+                org: 'PT Mitra Desa',
+                contact: 'Nadya',
+                phone: '081111111111',
+                proposal: 'Sponsor booth UMKM & promosi digital',
+                amount: 15000000,
+                status: 'pending',
+                createdAt: Date.now()
+            });
+            save(STORAGE.SPONSOR, data);
+            renderAll();
+        });
+
+        sponsorSearch?.addEventListener('input', renderSponsorship);
+
+        function renderDashboard() {
+            const ers = load(STORAGE.ERESOURCE, []);
+            const admins = load(STORAGE.ADMINS, []);
+            const sponsors = load(STORAGE.SPONSOR, []);
+
+            const kpiSda = $('#kpi-sda');
+            const kpiUmkm = $('#kpi-umkm');
+            const kpiTx = $('#kpi-tx');
+            const kpiSponsor = $('#kpi-sponsor');
+            const apprSponsor = $('#appr-sponsor');
+            const apprEres = $('#appr-eres');
+
+            const pendingCount = sponsors.filter(s => s.status === 'pending').length;
+            const activeEres = ers.filter(e => e.enabled).length;
+
+            if (kpiSda) kpiSda.innerText = '12';
+            if (kpiUmkm) kpiUmkm.innerText = '38';
+            if (kpiTx) kpiTx.innerText = String(Math.max(1, (load('lentera_cart', []) || []).length));
+            if (kpiSponsor) kpiSponsor.innerText = String(pendingCount);
+            if (apprSponsor) apprSponsor.innerText = String(pendingCount);
+            if (apprEres) apprEres.innerText = String(activeEres);
+        }
+
+        // --- Education Management Logic ---
+        const eduTabPkg = $('#edu-tab-pkg');
+        const eduTabMod = $('#edu-tab-mod');
+        const eduPanelPkg = $('#edu-panel-pkg');
+        const eduPanelMod = $('#edu-panel-mod');
+
+        eduTabPkg?.addEventListener('click', () => {
+            eduTabPkg.classList.add('border-primary', 'text-primary');
+            eduTabPkg.classList.remove('border-transparent', 'text-slate-500');
+            eduTabMod.classList.add('border-transparent', 'text-slate-500');
+            eduTabMod.classList.remove('border-primary', 'text-primary');
+            eduPanelPkg.classList.remove('hidden');
+            eduPanelMod.classList.add('hidden');
+        });
+
+        eduTabMod?.addEventListener('click', () => {
+            eduTabMod.classList.add('border-primary', 'text-primary');
+            eduTabMod.classList.remove('border-transparent', 'text-slate-500');
+            eduTabPkg.classList.add('border-transparent', 'text-slate-500');
+            eduTabPkg.classList.remove('border-primary', 'text-primary');
+            eduPanelMod.classList.remove('hidden');
+            eduPanelPkg.classList.add('hidden');
+        });
+
+        // --- Package Form & List ---
+        const pkgForm = $('#pkg-form');
+        const pkgTitle = $('#pkg-title');
+        const pkgTag = $('#pkg-tag');
+        const pkgPrice = $('#pkg-price');
+        const pkgUnit = $('#pkg-unit');
+        const pkgImg = $('#pkg-img');
+        const pkgPhone = $('#pkg-phone');
+        const pkgFeatures = $('#pkg-features');
+        const pkgDesc = $('#pkg-desc');
+        const pkgEditId = $('#pkg-edit-id');
+        const pkgList = $('#pkg-list');
+        const pkgEmpty = $('#pkg-empty');
+        const pkgCount = $('#pkg-count');
+
+        function resetPkgForm() {
+            pkgTitle.value = '';
+            pkgTag.value = '';
+            pkgPrice.value = '';
+            pkgUnit.value = '';
+            pkgImg.value = '';
+            pkgPhone.value = '';
+            pkgFeatures.value = '';
+            pkgDesc.value = '';
+            pkgEditId.value = '';
+        }
+
+        $('#pkg-reset')?.addEventListener('click', resetPkgForm);
+
+        function renderPackages() {
+            const data = load('lentera_education_packages', []);
+            if (pkgCount) pkgCount.innerText = String(data.length);
+            if (!pkgList) return;
+
+            if (data.length === 0) {
+                pkgList.innerHTML = '';
+                pkgEmpty?.classList.remove('hidden');
+            } else {
+                pkgEmpty?.classList.add('hidden');
+                pkgList.innerHTML = data.map(p => `
+                    <div class="border border-primary/10 rounded-2xl p-4 bg-white dark:bg-slate-950 hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors">
+                        <div class="flex gap-4">
+                            <div class="w-20 h-20 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 flex-shrink-0">
+                                <img src="${p.img}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div class="min-w-0">
+                                        <div class="font-800 text-slate-900 dark:text-white truncate text-base">${p.title}</div>
+                                        <div class="text-xs font-bold text-primary mt-1">${currencyIDR(p.price)} / ${p.unit}</div>
+                                    </div>
+                                    <span class="px-2 py-0.5 text-[9px] font-800 rounded bg-primary/10 text-primary uppercase flex-shrink-0">${p.tag}</span>
+                                </div>
+                                <p class="text-xs text-slate-500 truncate mt-2 leading-relaxed">${p.description}</p>
+                                <div class="mt-4 flex flex-wrap gap-2">
+                                    <button data-pkg-edit="${p.id}" class="px-3 py-1.5 rounded-lg bg-primary text-slate-900 font-800 text-xs hover:scale-[1.02] active:scale-[0.98] transition-all">Ubah</button>
+                                    <button data-pkg-delete="${p.id}" class="px-3 py-1.5 rounded-lg bg-slate-900 text-white font-800 text-xs hover:scale-[1.02] active:scale-[0.98] transition-all">Hapus</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                $$('[data-pkg-edit]').forEach(btn => btn.addEventListener('click', () => editPackage(btn.dataset.pkgEdit)));
+                $$('[data-pkg-delete]').forEach(btn => btn.addEventListener('click', () => deletePackage(btn.dataset.pkgDelete)));
+            }
+        }
+
+        function editPackage(id) {
+            const data = load('lentera_education_packages', []);
+            const p = data.find(x => x.id === id);
+            if (!p) return;
+
+            pkgEditId.value = p.id;
+            pkgTitle.value = p.title;
+            pkgTag.value = p.tag;
+            pkgPrice.value = p.price;
+            pkgUnit.value = p.unit;
+            pkgImg.value = p.img;
+            pkgPhone.value = p.phone;
+            pkgFeatures.value = p.features || '';
+            pkgDesc.value = p.description;
+        }
+
+        function deletePackage(id) {
+            openModal({
+                kicker: 'Paket Wisata',
+                title: 'Hapus paket wisata?',
+                bodyHtml: `<div class="text-sm font-semibold text-slate-600 dark:text-slate-300">Paket akan dihapus secara permanen dari penyimpanan lokal.</div>`,
+                actions: [
+                    {
+                        id: 'cancel',
+                        label: 'Batal',
+                        className: 'flex-1 px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors',
+                        onClick: closeModal
+                    },
+                    {
+                        id: 'ok',
+                        label: 'Hapus',
+                        className: 'flex-1 px-4 py-3 rounded-xl bg-slate-900 text-white font-800 hover:scale-[1.02] active:scale-[0.98] transition-all',
+                        onClick: () => {
+                            const data = load('lentera_education_packages', []).filter(x => x.id !== id);
+                            save('lentera_education_packages', data);
+                            if (pkgEditId.value === id) resetPkgForm();
+                            closeModal();
+                            renderAll();
+                        }
+                    }
+                ]
+            });
+        }
+
+        pkgForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const data = load('lentera_education_packages', []);
+            const id = pkgEditId.value || uid('pkg');
+
+            const payload = {
+                id,
+                title: pkgTitle.value.trim(),
+                tag: pkgTag.value.trim(),
+                price: parseInt(pkgPrice.value),
+                unit: pkgUnit.value.trim(),
+                img: pkgImg.value.trim(),
+                phone: pkgPhone.value.trim(),
+                features: pkgFeatures.value.trim(),
+                description: pkgDesc.value.trim(),
+                createdAt: Date.now()
+            };
+
+            const idx = data.findIndex(x => x.id === id);
+            if (idx >= 0) {
+                payload.createdAt = data[idx].createdAt;
+                data[idx] = { ...data[idx], ...payload };
+            } else {
+                data.push(payload);
+            }
+
+            save('lentera_education_packages', data);
+            resetPkgForm();
+            renderAll();
+        });
+
+        // --- Module Form & List ---
+        const modForm = $('#mod-form');
+        const modId = $('#mod-id');
+        const modTitle = $('#mod-title');
+        const modCategory = $('#mod-category');
+        const modMeta = $('#mod-meta');
+        const modIcon = $('#mod-icon');
+        const modBtntext = $('#mod-btntext');
+        const modImg = $('#mod-img');
+        const modDesc = $('#mod-desc');
+        const modBody = $('#mod-body');
+        const modEditId = $('#mod-edit-id');
+        const modList = $('#mod-list');
+        const modEmpty = $('#mod-empty');
+        const modCount = $('#mod-count');
+
+        function resetModForm() {
+            modId.value = '';
+            modId.disabled = false;
+            modTitle.value = '';
+            modCategory.value = '';
+            modMeta.value = '';
+            modIcon.value = '';
+            modBtntext.value = '';
+            modImg.value = '';
+            modDesc.value = '';
+            modBody.value = '';
+            modEditId.value = '';
+        }
+
+        $('#mod-reset')?.addEventListener('click', resetModForm);
+
+        function renderModules() {
+            const data = load('lentera_education_modules', []);
+            if (modCount) modCount.innerText = String(data.length);
+            if (!modList) return;
+
+            if (data.length === 0) {
+                modList.innerHTML = '';
+                modEmpty?.classList.remove('hidden');
+            } else {
+                modEmpty?.classList.add('hidden');
+                modList.innerHTML = data.map(m => `
+                    <div class="border border-primary/10 rounded-2xl p-4 bg-white dark:bg-slate-950 hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors">
+                        <div class="flex gap-4">
+                            <div class="w-20 h-20 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800 flex-shrink-0">
+                                <img src="${m.img}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-start justify-between gap-2">
+                                    <div class="min-w-0">
+                                        <div class="font-800 text-slate-900 dark:text-white truncate text-base">${m.title}</div>
+                                        <div class="text-xs text-slate-500 mt-1">${m.category} • ${m.meta}</div>
+                                    </div>
+                                    <span class="px-2 py-0.5 text-[9px] font-800 rounded bg-blue-100 text-blue-700 uppercase flex-shrink-0 flex items-center gap-1">
+                                        <span class="material-icons text-[10px]">${m.icon}</span> ${m.id}
+                                    </span>
+                                </div>
+                                <p class="text-xs text-slate-500 truncate mt-2 leading-relaxed">${m.description}</p>
+                                <div class="mt-4 flex flex-wrap gap-2">
+                                    <button data-mod-edit="${m.id}" class="px-3 py-1.5 rounded-lg bg-primary text-slate-900 font-800 text-xs hover:scale-[1.02] active:scale-[0.98] transition-all">Ubah</button>
+                                    <button data-mod-delete="${m.id}" class="px-3 py-1.5 rounded-lg bg-slate-900 text-white font-800 text-xs hover:scale-[1.02] active:scale-[0.98] transition-all">Hapus</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                $$('[data-mod-edit]').forEach(btn => btn.addEventListener('click', () => editModule(btn.dataset.modEdit)));
+                $$('[data-mod-delete]').forEach(btn => btn.addEventListener('click', () => deleteModule(btn.dataset.modDelete)));
+            }
+        }
+
+        function editModule(id) {
+            const data = load('lentera_education_modules', []);
+            const m = data.find(x => x.id === id);
+            if (!m) return;
+
+            modEditId.value = m.id;
+            modId.value = m.id;
+            modId.disabled = true;
+            modTitle.value = m.title;
+            modCategory.value = m.category;
+            modMeta.value = m.meta;
+            modIcon.value = m.icon;
+            modBtntext.value = m.btnText;
+            modImg.value = m.img;
+            modDesc.value = m.description;
+            modBody.value = m.body;
+        }
+
+        function deleteModule(id) {
+            openModal({
+                kicker: 'Modul Edukasi',
+                title: 'Hapus modul edukasi?',
+                bodyHtml: `<div class="text-sm font-semibold text-slate-600 dark:text-slate-300">Modul akan dihapus secara permanen dari penyimpanan lokal.</div>`,
+                actions: [
+                    {
+                        id: 'cancel',
+                        label: 'Batal',
+                        className: 'flex-1 px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors',
+                        onClick: closeModal
+                    },
+                    {
+                        id: 'ok',
+                        label: 'Hapus',
+                        className: 'flex-1 px-4 py-3 rounded-xl bg-slate-900 text-white font-800 hover:scale-[1.02] active:scale-[0.98] transition-all',
+                        onClick: () => {
+                            const data = load('lentera_education_modules', []).filter(x => x.id !== id);
+                            save('lentera_education_modules', data);
+                            if (modEditId.value === id) resetModForm();
+                            closeModal();
+                            renderAll();
+                        }
+                    }
+                ]
+            });
+        }
+
+        modForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const data = load('lentera_education_modules', []);
+            const id = modId.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+
+            const payload = {
+                id,
+                title: modTitle.value.trim(),
+                category: modCategory.value.trim(),
+                meta: modMeta.value.trim(),
+                icon: modIcon.value.trim(),
+                btnText: modBtntext.value.trim(),
+                img: modImg.value.trim(),
+                description: modDesc.value.trim(),
+                body: modBody.value.trim(),
+                createdAt: Date.now()
+            };
+
+            const idx = data.findIndex(x => x.id === id || x.id === modEditId.value);
+            if (idx >= 0) {
+                payload.createdAt = data[idx].createdAt;
+                data[idx] = { ...data[idx], ...payload };
+            } else {
+                if (data.some(x => x.id === id)) {
+                    alert('ID Modul / Slug sudah digunakan. Silakan gunakan ID lain.');
+                    return;
+                }
+                data.push(payload);
+            }
+
+            save('lentera_education_modules', data);
+            resetModForm();
+            renderAll();
+        });
+
+        function renderAll() {
+            renderDashboard();
+            renderEresource();
+            renderAdmins();
+            renderSponsorship();
+            renderPackages();
+            renderModules();
+        }
+
+        renderAll();
+        setView('dashboard');
+    </script>
+</body>
+
+</html>

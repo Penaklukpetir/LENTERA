@@ -1,0 +1,189 @@
+﻿Preparation of Papers For Smartics Journal
+(Center, Bold, Times New Roman 24pt, maximum 16 words)
+First Authora,*, Second Authorb, Third Authora,b
+aFirst affiliation, Address, City, Country
+bSecond affiliation, Address, City, Country
+*correspondence email : email@email.com
+Abstract—These instructions give you guidelines for preparing papers for SMARTICS Journal. Use this document as a template if you are using Microsoft Word 6.0 or later. Otherwise, use this document as an instruction set. The electronic file of your paper will be formatted further at SMARTICS. Define all symbols used in the abstract. Do not cite references in the abstract. Do not delete the blank line immediately above the abstract; it sets the footnote at the bottom of this column.
+Index Terms—About four key words or phrases in alphabetical order, separated by semicolons. 
+Abstrak–-Artikel ini berisi petunjuk bagaimana mempersiapkan artikel yang digunakan untuk Jurnal SMARTICS. File ini dapat digunakan sebagai template jika penulisan menggunakan Microsoft Word 6.0 atau yang terbaru, atau digunakan sebagai panduan jika menggunakan word processor yang lain.. Definisikan semua simbol yang digunakan dalam abstrak. Jangan mencuplik referensi dalam abstrak. Jangan menghapus baris kosong di atas abstrak karena bagian ini akan digunakan untuk mengatur header/footer.
+Kata Kunci—Sekitar empat kata kunci atau frasa dalam urutan abjad yang terpisah oleh titik-koma.
+INTRODUCTION
+This document is a template for Microsoft Word versions 6.0 or later. If you are reading a paper version of this document, please download the electronic file, from http://ejournal.unikama.ac.id/index.php/jst,  so you can use it to prepare your manuscript. 
+Authors requested to submit a full paper for inclusion in SMARTICS Journal.  It is expected that the final version of the paper should be a minimum of six-A4 pages, including figures, tables and references. Please do not number the pages. Please send also CD with your paper in doc and pdf format. Please send the full version of your paper to the following through OJS (Open Journal Systems) in previous hyperlinks.
+If you have electronic version of this file, you can automatically use style (Format| Styles and Formatting). Replace this paragraph with your text, and then change the style. For example, this paragraph uses TEXT style and every heading title uses I. Caption Style. Please do not use space or enter to fit paragraph or text on the page, our layout editor will modify your manuscript layout.
+If you don’t have electronic version, the following styles and sizes must be used:
+Title: title style,  24 pt, bold, centered, Capitalize Each Word
+Name of Author(s): authors style, 11 pt, centered.
+Titles of each Section, Subsection, and References: Bold, 10 pt, Uppercase.
+Main body text: 10 pt, right and left justified.
+Abstract: 9 pt, bold, right and left justified
+Figure captions: 8 pt, centered. 
+Table captions: 8 pt, centered. 
+References: 8 pt, right and left justified
+Margins:
+Left- 30 mm,
+Bottom - 30 mm,
+Outside - 30 mm,
+Inside - 30 mm,
+Gutter – 0 mm,
+Pages – Multiple Page – Mirror Margins.
+UNITS
+Use either SI (MKS) or CGS as primary units. (SI units are strongly encouraged.) The SI unit for magnetic field strength H is A/m.).” An exception is when English units are used as identifiers in trade, such as “3½ in disk drive.” Avoid combining SI and CGS units, such as current in amperes and magnetic field in oersteds. This often leads to confusion because equations do not balance dimensionally. If you must use mixed units, clearly state the units for each quantity in an equation.
+FIGURES AND TABLES
+Large figures and tables may span both columns. Place figure captions below the figures; place table titles above the tables. Please do not include captions as part of the figures. Do not put captions in "text boxes" linked to the figures. Do not put borders around the outside of your figures.
+Table 1 Units For Magnetic PropertiesSymbolQuantityConversion from Gaussian andCGS EMU to SI amagnetic flux1 Mx 108Wb = 108 V·sBmagnetic flux density, magnetic induction1 G  104 T = 104Wb/m2Hmagnetic field strength1 Oe 103/(4) A/mmmagnetic moment1 erg/G = 1 emu  103 A·m2 = 103 J/TMmagnetization1 erg/(G·cm3) = 1 emu/cm3 103 A/m4Mmagnetization1 G  103/(4) A/mspecific magnetization1 erg/(G·g) = 1 emu/g  1 A·m2/kgjmagnetic dipole  moment1 erg/G = 1 emu  4 1010 Wb·mJmagnetic polarization1 erg/(G·cm3) = 1 emu/cm3 4 104 T,susceptibility1  4mass susceptibility1 cm3/g  4 103 m3/kgpermeability1  4 107 H/m   = 4 107Wb/(A·m)rrelative permeabilityrw, Wenergy density1 erg/cm3 101 J/m3N, Ddemagnetizing factor1  1/(4)No vertical lines in table. Statements that serve as captions for the entire table do not need footnote letters. aGaussian units are the same as cgs emu for magnetostatics; Mx = maxwell, G = gauss, Oe = oersted; Wb = weber, V = volt, s = second, T = tesla, m = meter, A = ampere, J = joule, kg = kilogram, H = henry.Table 1 Units For Magnetic PropertiesSymbolQuantityConversion from Gaussian andCGS EMU to SI amagnetic flux1 Mx 108Wb = 108 V·sBmagnetic flux density, magnetic induction1 G  104 T = 104Wb/m2Hmagnetic field strength1 Oe 103/(4) A/mmmagnetic moment1 erg/G = 1 emu  103 A·m2 = 103 J/TMmagnetization1 erg/(G·cm3) = 1 emu/cm3 103 A/m4Mmagnetization1 G  103/(4) A/mspecific magnetization1 erg/(G·g) = 1 emu/g  1 A·m2/kgjmagnetic dipole  moment1 erg/G = 1 emu  4 1010 Wb·mJmagnetic polarization1 erg/(G·cm3) = 1 emu/cm3 4 104 T,susceptibility1  4mass susceptibility1 cm3/g  4 103 m3/kgpermeability1  4 107 H/m   = 4 107Wb/(A·m)rrelative permeabilityrw, Wenergy density1 erg/cm3 101 J/m3N, Ddemagnetizing factor1  1/(4)No vertical lines in table. Statements that serve as captions for the entire table do not need footnote letters. aGaussian units are the same as cgs emu for magnetostatics; Mx = maxwell, G = gauss, Oe = oersted; Wb = weber, V = volt, s = second, T = tesla, m = meter, A = ampere, J = joule, kg = kilogram, H = henry.
+Table 1 Units For Magnetic Properties
+Symbol
+Quantity
+Conversion from Gaussian and
+CGS EMU to SI a
+magnetic flux
+1 Mx 108Wb = 108 V·s
+B
+magnetic flux density, magnetic induction
+1 G  104 T = 104Wb/m2
+H
+magnetic field strength
+1 Oe 103/(4) A/m
+m
+magnetic moment
+1 erg/G = 1 emu 
+ 103 A·m2 = 103 J/T
+M
+magnetization
+1 erg/(G·cm3) = 1 emu/cm3
+ 103 A/m
+4M
+magnetization
+1 G  103/(4) A/m
+specific magnetization
+1 erg/(G·g) = 1 emu/g  1 A·m2/kg
+j
+magnetic dipole  moment
+1 erg/G = 1 emu 
+ 4 1010 Wb·m
+J
+magnetic polarization
+1 erg/(G·cm3) = 1 emu/cm3
+ 4 104 T
+,
+susceptibility
+1  4
+mass susceptibility
+1 cm3/g  4 103 m3/kg
+permeability
+1  4 107 H/m 
+  = 4 107Wb/(A·m)
+r
+relative permeability
+r
+w, W
+energy density
+1 erg/cm3 101 J/m3
+N, D
+demagnetizing factor
+1  1/(4)
+No vertical lines in table. Statements that serve as captions for the entire table do not need footnote letters. 
+aGaussian units are the same as cgs emu for magnetostatics; Mx = maxwell, G = gauss, Oe = oersted; Wb = weber, V = volt, s = second, T = tesla, m = meter, A = ampere, J = joule, kg = kilogram, H = henry.
+Table 1 Units For Magnetic Properties
+Symbol
+Quantity
+Conversion from Gaussian and
+CGS EMU to SI a
+magnetic flux
+1 Mx 108Wb = 108 V·s
+B
+magnetic flux density, magnetic induction
+1 G  104 T = 104Wb/m2
+H
+magnetic field strength
+1 Oe 103/(4) A/m
+m
+magnetic moment
+1 erg/G = 1 emu 
+ 103 A·m2 = 103 J/T
+M
+magnetization
+1 erg/(G·cm3) = 1 emu/cm3
+ 103 A/m
+4M
+magnetization
+1 G  103/(4) A/m
+specific magnetization
+1 erg/(G·g) = 1 emu/g  1 A·m2/kg
+j
+magnetic dipole  moment
+1 erg/G = 1 emu 
+ 4 1010 Wb·m
+J
+magnetic polarization
+1 erg/(G·cm3) = 1 emu/cm3
+ 4 104 T
+,
+susceptibility
+1  4
+mass susceptibility
+1 cm3/g  4 103 m3/kg
+permeability
+1  4 107 H/m 
+  = 4 107Wb/(A·m)
+r
+relative permeability
+r
+w, W
+energy density
+1 erg/cm3 101 J/m3
+N, D
+demagnetizing factor
+1  1/(4)
+No vertical lines in table. Statements that serve as captions for the entire table do not need footnote letters. 
+aGaussian units are the same as cgs emu for magnetostatics; Mx = maxwell, G = gauss, Oe = oersted; Wb = weber, V = volt, s = second, T = tesla, m = meter, A = ampere, J = joule, kg = kilogram, H = henry.
+For paper in English, use the abbreviation "Fig." even at the beginning of a sentence. Do not abbreviate "Table.". If paper is writen in Bahasa Indonesia, use "Gambar. "and "Tabel" as usual. 
+Photographs and greyscale figures should be prepared with 220 dpi resolution and saved with no compression, 8 bits per pixel (greyscale). Colour figures should be prepared with 400 dpi resolution and saved with no compression, 8 bits per pixel (palette or 256 colour) minimum. 
+Tables and figures should be centered. Place table captions above the tables (Table 1) and figure captions below the figures (Figures 1 and 2). Use Table Title Style for table caption and use Figure Captions Style for figure. Figures and tables may span across both columns (Fig.1). Tables are numbered with Roman numerals (Table Title style,8pt, centered).
+ Fig. 1. SRM geometry with FEM mesh: 6/6 stator/rotorFig. 1. SRM geometry with FEM mesh: 6/6 stator/rotorFig. 2. Torque characteristics versus rotor position and different current density of exciting current: 6/6 stator/rotorFig. 2. Torque characteristics versus rotor position and different current density of exciting current: 6/6 stator/rotor
+Fig. 1. SRM geometry with FEM mesh: 6/6 stator/rotor
+Fig. 1. SRM geometry with FEM mesh: 6/6 stator/rotor
+Fig. 2. Torque characteristics versus rotor position and different current density of exciting current: 6/6 stator/rotor
+Fig. 2. Torque characteristics versus rotor position and different current density of exciting current: 6/6 stator/rotor
+MATH AND UNITS
+Math
+Number equations consecutively with equation numbers in parentheses flush with the right margin, as in (1). If you are using Word, use either the Microsoft Equation Editor or the MathType add-on (http://www.mathtype.com) for equations in your paper (Insert | Object | Create New | Microsoft Equation orMathType Equation). “Float over text” should not be selected.
+Expressions and equations must be centred. They need to be numbered as follows:
+U = R I                                         (1)
+References within the text will have the number of the equation within curved parenthesis, as in the case of (1). Variables will be in Italics, constants in Normal, and matrices in Bold.
+                                        (2)
+(3)
+Units
+Use either SI (MKS) or CGS as primary units. (SI units are strongly encouraged.) English units may be used as secondary units (in parentheses). This applies to papers in data storage. For example, write “15 Gb/cm2 (100 Gb/in2).” An exception is when English units are used as identifiers in trade, such as “3½ in disk drive.” Avoid combining SI and CGS units, such as current in amperes and magnetic field in oersteds. This often leads to confusion because equations do not balance dimensionally. If you must use mixed units, clearly state the units for each quantity in an equation.
+The SI unit for magnetic field strength H is A/m. However, if you wish to use units of T, either refer to magnetic flux density B or magnetic field strength symbolized as µ0H. Use the center dot to separate compound units, e.g., “A·m2.”
+REFRENCE AND CITATION
+Number citations consecutively in square brackets [1]. The sentence punctuation follows the brackets [2]. Multiple references [2], [3] are each numbered with separate brackets [1]-[3]. When citing a section in a book, please give the relevant page numbers [2]. In sentences, refer simply to the reference number, as in [3]. Do not use "Ref. [3]" or "reference [3]" except at the beginning of a sentence: "Reference [3] shows ... ."
+The Reference list must appear numbered in square brackets in the last (non numbered) section and should have the following structure:
+Author(s)
+Title of the work or article 
+Journal, conference, book or thesis, in italics
+Publisher, in the case of books
+Page numbers if necessary (example: pp.32-36)
+Place and date of publication (with books and theses, the year of publication is sufficient).
+ACKNOWLEDGMENT
+The preferred spelling of the word “acknowledgment” in American English is without an “e” after the “g.” Use the singular heading even if you have many acknowledgments. Avoid expressions such as “One of us (S.B.A.) would like to thank ... .” Instead, write “F. A. Author thanks ... .”Sponsor and financial support acknowledgments are placed in the unnumbered footnote on the first page.
+REFERENCES
+G. O. Young, “Synthetic structure of industrial plastics (Book style with paper title and editor),” in Plastics, 2nd ed. vol. 3, J. Peters, Ed.  New York: McGraw-Hill, 1964, pp. 15–64.
+W.-K. Chen, Linear Networks and Systems (Book style).Belmont, CA: Wadsworth, 1993, pp. 123–135.
+H. Poor, An Introduction to Signal Detection and Estimation.   New York: Springer-Verlag, 1985, ch. 4.
+B. Smith, “An approach to graphs of linear forms (Unpublished work style),” unpublished. 
+IEEE Criteria for Class IE Electric Systems (Standards style), IEEE Standard 308, 1969.
+Letter Symbols for Quantities, ANSI Standard Y10.5-1968.
+R. E. Haskell and C. T. Case, “Transient signal propagation in lossless isotropic plasmas (Report style),” USAF Cambridge Res. Lab., Cambridge, MA Rep. ARCRL-66-234 (II), 1994, vol. 2.
+E. E. Reber, R. L. Michell, and C. J. Carter, “Oxygen absorption in the Earth’s atmosphere,” Aerospace Corp., Los Angeles, CA, Tech. Rep. TR-0200 (420-46)-3, Nov. 1988.
+(Handbook style) Transmission Systems for Communications, 3rd ed., Western Electric Co., Winston-Salem, NC, 1985, pp. 44–60.
+Motorola Semiconductor Data Manual, Motorola Semiconductor Products Inc., Phoenix, AZ, 1989.
+(Basic Book/Monograph Online Sources) J. K. Author. (year, month, day). Title (edition) [Type of medium]. Volume(issue). Available: http://www.(URL)
+J. Jones. (1991, May 10). Networks (2nd ed.) [Online]. Available: http://www.atm.com
+(Journal Online Sources style) K. Author. (year, month). Title. Journal [Type of medium]. Volume(issue), paging if given.  Available: http://www.(URL)
+R. J. Vidmar. (1992, August). On the use of atmospheric plasmas as electromagnetic reflectors. IEEE Trans. Plasma Sci. [Online]. 21(3). pp. 876—880.   Available: http://www.halcyon.com/pub/journals/21ps03-vidmar
+First A. Author (M’76–SM’81–F’87) and the other authors may include  biographies at the end of regular papers. Biographies are often not included in conference-related papers. The first paragraph may contain a place and/or date of birth (list place, then date). Next, the author’s educational background is listed. The degrees should be listed with type of degree in what field, which institution, city, state or country, and year degree was earned. The author’s major field of study should be lower-cased.
+The second paragraph uses the pronoun of the person (he or she) and not the author’s last name. It lists military and work experience, including summer and fellowship jobs. Job titles are capitalized. The current job must have a location; previous positions may be listed without one. Information concerning previous publications may be included. Try not to list more than three books or published articles. The format for listing publishers of a book within the biography is: title of book (city, state: publisher name, year) similar to a reference. Current and previous research interests ends the paragraph.
+The third paragraph begins with the author’s title and last name (e.g., Dr. Smith, Prof. Jones, Mr. Kajor, Ms. Hunter).  If a photograph is provided, the biography will be indented around it. The photograph is placed at the top left of the biography. Personal hobbies will be deleted from the biography.

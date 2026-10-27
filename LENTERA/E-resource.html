@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>E-Resource & Ulasan LENTERA</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4bee2b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#132210",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 antialiased min-h-screen">
+    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white">lightbulb</span>
+                </div>
+                <span class="text-2xl font-800 tracking-tight text-slate-900 dark:text-white uppercase"></span>
+            </div>
+            <div class="hidden lg:flex items-center gap-8">
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Home.html">Home</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Catalog.html">Catalog</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Location.html">Location</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Education.html">Education</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Navigation.html">Navigation</a>
+                <a class="text-sm font-bold text-primary relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-primary"
+                    href="E-resource.html">E-Resource</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Sponsor.html">Sponsor</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Profile.html">Profil</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <button
+                    class="p-2.5 rounded-full hover:bg-primary/10 transition-colors text-slate-600 dark:text-slate-300 lg:hidden"
+                    id="mobile-menu-button">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <button id="cart-button"
+                    class="p-2.5 rounded-full hover:bg-primary/10 transition-colors text-slate-600 dark:text-slate-300 relative">
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                    <span id="cart-count"
+                        class="absolute top-1 right-1 w-4 h-4 bg-primary text-[10px] text-slate-900 font-bold rounded-full flex items-center justify-center">0</span>
+                </button>
+                <div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
+                <button
+                    class="flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <div
+                        class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
+                        <span class="material-symbols-outlined text-slate-500">account_circle</span>
+                    </div>
+                    <span class="text-sm font-bold text-slate-700 dark:text-slate-200 hidden sm:inline">User</span>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div class="lg:hidden hidden border-t border-primary/10 bg-white dark:bg-background-dark px-6 py-4 space-y-4"
+            id="mobile-menu">
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Home.html">Home</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Catalog.html">Catalog</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Location.html">Location</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Education.html">Education</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Navigation.html">Navigation</a>
+            <a class="block text-sm font-bold text-primary" href="E-resource.html">E-Resource</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Sponsor.html">Sponsor</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Profile.html">Profil</a>
+        </div>
+    </nav>
+
+    <!-- Cart Sidebar/Drawer -->
+    <div id="cart-drawer"
+        class="fixed inset-y-0 right-0 w-full sm:w-96 bg-white dark:bg-background-dark shadow-2xl z-[60] transform translate-x-full transition-transform duration-300 ease-in-out border-l border-primary/10">
+        <div class="flex flex-col h-full">
+            <div class="p-6 border-b border-primary/10 flex items-center justify-between bg-primary/5">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-primary">shopping_basket</span>
+                    <h2 class="text-xl font-bold">Keranjang Belanja</h2>
+                </div>
+                <button id="close-cart" class="p-2 hover:bg-primary/10 rounded-full transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- Cart items will be injected here -->
+                <div id="empty-cart-msg"
+                    class="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-50">
+                    <span class="material-symbols-outlined text-6xl">shopping_cart_off</span>
+                    <p class="font-medium text-slate-500">Keranjang Anda masih kosong</p>
+                    <button id="start-shopping" class="text-primary font-bold text-sm hover:underline">Mulai Belanja
+                        Sekarang</button>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-primary/10 bg-slate-50 dark:bg-slate-900/50">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-slate-500 font-medium">Total Pembayaran</span>
+                    <span id="cart-total" class="text-2xl font-800 text-primary">Rp 0</span>
+                </div>
+                <button
+                    class="w-full bg-primary text-slate-900 font-800 py-4 rounded-2xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    Lanjutkan Pembayaran
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+                <p class="text-[10px] text-center text-slate-400 mt-4 font-medium uppercase tracking-widest">Aman •
+                    Terpercaya • Produk Lokal</p>
+            </div>
+        </div>
+    </div>
+    <div id="cart-overlay"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[55] hidden opacity-0 transition-opacity duration-300">
+    </div>
+
+    <main class="max-w-7xl mx-auto px-6 py-6 space-y-16">
+        <section>
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                <div>
+                    <h2 class="text-3xl font-800 text-slate-900 dark:text-white">Apa Kata Pengunjung</h2>
+                    <p class="text-slate-500 dark:text-slate-400 mt-2">Ulasan terverifikasi dari komunitas desa global
+                        kami</p>
+                </div>
+                <div class="flex gap-3">
+                    <button
+                        class="px-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold flex items-center gap-2 hover:bg-slate-50 transition-colors shadow-sm">
+                        <span class="material-icons text-slate-400 text-sm">filter_list</span>
+                        Filter Ulasan
+                    </button>
+                    <button
+                        class="px-6 py-3 bg-primary text-slate-900 rounded-xl font-bold flex items-center gap-2 hover:opacity-90 transition-all shadow-lg shadow-primary/20">
+                        <span class="material-icons">add_comment</span>
+                        Berikan Ulasan
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div
+                    class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex gap-3">
+                            <img alt="Sarah Jenkins" class="w-12 h-12 rounded-full object-cover"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDE94r0zDSUktA8TD-1BeW2GNOrI01CQKiCETfPfSNwmHdmlW49i5rLWnT9YzJgYkGffCdQRjDGYvzGBf70oPgNqVsepqzJUwvgrIbKA_UfZmW285tXt-hO8G_2XTqIkuSstjpz95vaGeLQnOk3IQefHjhsPkhVzzubyjz2Cf0_0MPSHZq0lGffqufhqEuhAwWV7a6FebJ3eHmkGxE3It6yGaFRWdKSKhp-q8Bd0QCCS8vCSYqVBkW8bB3LXIeYVAvt44JD5CAZAnE" />
+                            <div>
+                                <h4 class="font-bold text-slate-900 dark:text-white">Sarah Jenkins</h4>
+                                <p class="text-xs text-slate-500">Dikunjungi: Hutan Bambu • 12 Okt</p>
+                            </div>
+                        </div>
+                        <div class="flex text-primary">
+                            <span class="material-icons text-sm">star</span>
+                            <span class="material-icons text-sm">star</span>
+                            <span class="material-icons text-sm">star</span>
+                            <span class="material-icons text-sm">star</span>
+                            <span class="material-icons text-sm">star</span>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-4">
+                        "Wisata edukasinya sangat berkesan. Pemandu lokal sangat berpengetahuan tentang spesies bambu
+                        asli. Sangat merekomendasikan pendakian saat matahari terbenam!"
+                    </p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <img alt="Hutan bambu" class="rounded-lg h-24 w-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuqsD7MyHQCoHdaLoVF8umVyfR0RHbSCrSTWCb2UyyoQ3qZN2FhfxVYhw-YdocX9B7XFmstXIWo_yE9codgQoR1r4TUlF3hjn4ZEkJ7PAzTKIQM8LSN3-rF4OkuakDEbm90RO23SmoO9SLeLL-2YbkBLjCge-0MhHCVQf_AeRN2m97xEVvUHCUl6sA97AuV28b1dl4UW9ju6YXNBPDHkl7CgV2PrHYNSMlXAliGvB8iQofjJPJRcaVHJz4rHtDH-MFEMgMhOjLRn0" />
+                        <img alt="Pemandangan danau" class="rounded-lg h-24 w-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkUPH5HbN7LFe4Mv8vRHw4JbrAYJIgukKXTZShLouv0YqjR6taLQ2oYUm_k9T94Ah-9W70frlCrgkxUUszr3xeXrV5nB5Dbyv_BtSZOVWsn0YBlmQo-9bXjuyrxHomZJSMeL_NRAS0c7Agv_WoO8VOqD_1yQ6erss0bmktP9z2vebEId8kLMtM-NwS1G-eKz0vRAi7YN-vO2KHnHSw3gPhPAatLpb7SxsQXhYk1UbOMRYiuYtsmlcpXvl6p1vx5kIYTr899uuBhuQ" />
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex gap-3">
+                            <img alt="Marcus Thorne" class="w-12 h-12 rounded-full object-cover"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5qxNyZO2dj6iEXybNbOovLkFI0cqz59KXVjCKCaf7pTwZI0tkFt_uAMXZc3CSKkriNNk9YVRoDwYvQaeZaBk4VRx1qxAgN0xj3Bg0-FpYQqs4IpDkou2yYCFy5XnfOTR-ftaLox3B0R6OTLSNIQz2RC39YtCjQD_xbyNHvu3x7xwqIul6toABonMx5hF0xgAyRfVpp8ukt0KKltplBRAkQM801ys9RLKFt_oVdgV8i1QuoLXfRNhnUQhnBY5oY2i8XXpk4K8LqWo" />
+                            <div>
+                                <h4 class="font-bold text-slate-900 dark:text-white">Marcus Thorne</h4>
+                                <p class="text-xs text-slate-500">Dikunjungi: Sawah Terasering • 08 Okt</p>
+                            </div>
+                        </div>
+                        <div class="flex text-primary">
+                            <span class="material-icons text-sm">star</span>
+                            <span class="material-icons text-sm">star</span>
+                            <span class="material-icons text-sm">star</span>
+                            <span class="material-icons text-sm">star</span>
+                            <span class="material-icons text-sm text-slate-200">star</span>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-4">
+                        "Peluang fotografi yang luar biasa. Keramahtamahan para tetua desa selama upacara minum teh
+                        adalah puncak dari perjalanan saya ke wilayah ini."
+                    </p>
+                    <div class="relative group cursor-pointer overflow-hidden rounded-lg h-40">
+                        <div
+                            class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all flex items-center justify-center">
+                            <span class="material-icons text-white text-4xl">play_circle_filled</span>
+                        </div>
+                        <img alt="Terasering sawah" class="w-full h-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuClJgTvfnAo-xyMuFQGxiU4TbqZfbQ6GnLqF1BfMDOeUy_nFq4cDtPiDzoJ0hyxq3iyoXilWGrv9EPk0QLz_-Nj4zpOkjd_mo2NmrusuQhZO9tF3lh_hAVDUu6YwFAyBEWpE--88_6fQO6gHKP44DgKJ4DvNq9a7f8nD-ONa8spiZ9XkhNdUTu8pAfwi-XhaEIfux8px5Y_rt2EOXUD1ckHNrTACtroTQJcwY5hMrVGoyB0kPvGOkXFAdNe9jV00Jjc1tDQEPmwdSg" />
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex gap-3">
+                            <img alt="Elena Rossi" class="w-12 h-12 rounded-full object-cover"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBz6crZtjY6G2DXE1tggFGxXCc8NEGK2SUTnk1YXBbLQiFn6bPoLfHn5TfPH9P6T_5qwO_v51pTRvyFiHP9Q_ZcO5Gm8yFuW_otHqYH18svz2cGSeqtMpQJadn5bgL-FC419oHUMUiiqQZgQUWigi1qMwQhVtMxoxTkgjSYsGjPOoq1gfyUeXyhD1Bxl7JCccC5UieMG82gYub66PmLtny3Cx0j4pdJfx8c-IJr0LO1KLT9WPvpUn2TtIpC_dSQ70Zr07PWyLFEp-U" />
+                            <div>
+                                <h4 class="font-bold text-slate-900 dark:text-white">Elena Rossi</h4>
+                                <p class="text-xs text-slate-500">Dikunjungi: Sentra Kerajinan • 02 Okt</p>
+                            </div>
+                        </div>
+                        <div class="flex text-primary">
+                            <span class="material-icons text-sm">star</span>
+                            <span class="material-icons text-sm">star</span>
+                            <span class="material-icons text-sm">star</span>
+                            <span class="material-icons text-sm">star</span>
+                            <span class="material-icons text-sm">star</span>
+                        </div>
+                    </div>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-4">
+                        "Melihat proses menenun sangat menarik. Saya membeli beberapa tekstil buatan tangan untuk dibawa
+                        pulang. Dukung pengrajin lokal!"
+                    </p>
+                    <div class="grid grid-cols-3 gap-2">
+                        <img alt="Tekstil tenun" class="rounded-lg h-16 w-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAb18wapaSpblZ4d5J-381l2pmU9zCu9I_3vpZ3rKAN5VTsQM4q120Y7d0tLZL42VQX6HKpyw1P_7cjdPskc9-iHHL4ZKQTPr8TPD4YzJKSV9MwKLRfmws9D8nNa8-kNiOUO5vGVB3I6c2pCMR0e4eOATO5x9AHMZdE8PqhY-q045zQsLwJ7HbB4WI7a4m6cnBT7IgyXxK7nP1BebsWvBiZfqK1kj32fjwGpHlzQdAkPrCQQv9iuuJ96EhDHJ6hZduFaiW393VJOCE" />
+                        <img alt="Keramik kerajinan" class="rounded-lg h-16 w-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiGtovyMD60e8F5LjVdMyJcaaRc8oKnmWN8N21qmMiVG0V52kPAwihy3HhBjWcE4CiqmUPrkmPQpyXy9g_YNt-SpXCGqpcmbmsJUPpZ1VU6bqhz7pplT7LeNUt7HCYaTKsOTS2ZUTj8V3LsZOHlR-7AIcx_XawhYk-wRYV4lOJjqG7JReKm9-27DucLs5XKJKwL_wxkOEdPx5vziAitwxSMF9bGNbaI4sWBbHqJW94oEw-45qeGPCAopTvlat71YoIy2pjreH7AgE" />
+                        <div
+                            class="bg-slate-100 dark:bg-slate-700 rounded-lg h-16 w-full flex items-center justify-center text-xs font-bold text-slate-400">
+                            +4 Foto
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="space-y-8">
+            <div class="border-t border-slate-200 dark:border-slate-800 pt-16">
+                <h2 class="text-3xl font-800 text-slate-900 dark:text-white mb-2">Kabar Desa</h2>
+                <p class="text-slate-500 dark:text-slate-400">Update resmi, berita, dan catatan administratif</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-8" id="featured-news-container">
+                    <div class="group relative h-[500px] rounded-2xl overflow-hidden cursor-pointer shadow-xl">
+                        <img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWJWRuY4hdyxFAgFYRhvV2qjgN7yU-02_sLaVC-6sqyD_ndwVzMfOSt7tG1fu6qCRGNKWDCM3Gb6w80UGOqquCgaJ54crWr5JTPpJqM1gfduwcZJSbqACb9TCypXE0FjPyIu5XwCuak3sQxvHB5UPcYwkn9T8mgyOCaZ_NiW7YPWsUtbvFPrdlnK-EPRgBlZ1Q_I6MpsZZz6Xrot3r9Zt0QV6ztzQlcCWPYzG7tpO5ycVAv1aOZgvOfVLlw9hNgCoxACMM_a_UPZY" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent">
+                        </div>
+                        <div class="absolute bottom-0 p-10 space-y-4">
+                            <span
+                                class="px-4 py-1.5 bg-primary text-slate-900 text-xs font-800 rounded-full uppercase tracking-wider">Berita
+                                Utama</span>
+                            <h3 class="text-4xl font-800 text-white leading-tight max-w-2xl">Hibah Pariwisata
+                                Berkelanjutan Baru Diberikan untuk Peningkatan Infrastruktur 2024</h3>
+                            <p class="text-slate-300 max-w-xl text-lg">Komite LENTERA dengan bangga mengumumkan hibah
+                                senilai Rp 3,8 Miliar untuk pengembangan jalur ramah lingkungan dan integrasi energi
+                                surya di homestay desa.</p>
+                            <div class="flex items-center gap-4 pt-2">
+                                <div class="flex items-center gap-2 text-white/80 text-sm">
+                                    <span class="material-icons text-sm">calendar_today</span>
+                                    <span>15 Oktober 2023</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-white/80 text-sm">
+                                    <span class="material-icons text-sm">person</span>
+                                    <span>Admin Desa</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:col-span-4 space-y-6">
+                    <h4 class="text-xl font-bold flex items-center gap-2">
+                        <span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                        Update Terbaru
+                    </h4>
+                    <div class="space-y-4" id="recent-news-container">
+                        <div
+                            class="flex gap-4 p-4 rounded-xl hover:bg-white dark:hover:bg-slate-800 transition-colors cursor-pointer border border-transparent hover:border-slate-100 dark:hover:border-slate-700">
+                            <div class="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden">
+                                <img class="w-full h-full object-cover"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1yjrM5vBBEGIX2ZccR75qyFDfzXBhH2qFt2gMjY2V6_F9hELK0VtZBehwFPdv9jn_8JxlEJIQ2YCFAYia5pGH3s1CEia8Xykjy9I_QchfmfiAtmL784Yrr1wM2nw-BfP86XTUdwiAxG2ScZmy8oUP-hF2wuQPxHWHFeP1pvIuqUUwsex8cDE78aaS1VJSnUo6cSxZIGJO-fjF7seLZLr2ZpoeVEsr6nfrfXUvxYcFFrDLh9cuervcSUWe2lZjvvtKJQAQK4KViFQ" />
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-xs font-bold text-primary uppercase">Komunitas</p>
+                                <h5 class="font-bold text-slate-900 dark:text-white leading-snug line-clamp-2">Pertemuan
+                                    Bulanan Warga: Membahas Jadwal Festival Panen</h5>
+                                <p class="text-xs text-slate-400">2 jam yang lalu</p>
+                            </div>
+                        </div>
+                        <div
+                            class="flex gap-4 p-4 rounded-xl hover:bg-white dark:hover:bg-slate-800 transition-colors cursor-pointer border border-transparent hover:border-slate-100 dark:hover:border-slate-700">
+                            <div class="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden">
+                                <img class="w-full h-full object-cover"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAL20DZf0ZDR-WpqqJvszdVjyQtH0nQZCJmmQKeC_XmLibuVja9CJ9RB8ZSBkk9YTcmv4Jhzp0ZmCwyokAWizVrv9l-FE3DsFvWLNNI5r03TTgz-pGEFMSotHhxiXEzso7sUoxZukrt9BHO0RwcdBdQ-6j8UHdS2-0TCIY4tJs5bFxRX9Gq6oiG0wSOgYIhZe6qLpkJRLiXCj_s9_fWe3qX99EJi4jiusF8WoL5xfEH7-XKqZF7tGFiuyeVFGdrGm8kY4Sk9Rc9ung" />
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-xs font-bold text-primary uppercase">Hospitality</p>
+                                <h5 class="font-bold text-slate-900 dark:text-white leading-snug line-clamp-2">Program
+                                    Sertifikasi Homestay Baru Diluncurkan untuk Warga Lokal</h5>
+                                <p class="text-xs text-slate-400">Kemarin</p>
+                            </div>
+                        </div>
+                        <div
+                            class="flex gap-4 p-4 rounded-xl hover:bg-white dark:hover:bg-slate-800 transition-colors cursor-pointer border border-transparent hover:border-slate-100 dark:hover:border-slate-700">
+                            <div class="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden">
+                                <img class="w-full h-full object-cover"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR3bnUbS1rvPxZgvMezq_8XOHPNH2_5cvpQ1ZZFT_2bR-2eBCLyfCpcVPeF02aQ9hcTKpFXzapqOmSmk2_VOA7jwHhuEvqi73DxxaivsKyJrbTjd_RQjb08lyPqSr5zZ7W3wEYjRV6bhu2xLS2_oZQk6wlxlH8Ao6KfbsSTB19XRw3-L1n5IHxmIny17Eilp0BXHeCduRwUHdFID_mgIMH0Jb5Jjgk4HAuTDLWLW_RxJqCndyWYn5u1PqDilZjWddTVF7qpwURisY" />
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-xs font-bold text-primary uppercase">Lingkungan</p>
+                                <h5 class="font-bold text-slate-900 dark:text-white leading-snug line-clamp-2">Upaya
+                                    Penghijauan Mencapai Target 5.000 Bibit Pohon Baru</h5>
+                                <p class="text-xs text-slate-400">3 hari yang lalu</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                        class="w-full py-4 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-600 dark:text-slate-400 font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        Lihat Semua Berita
+                    </button>
+                </div>
+            </div>
+            <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 border border-slate-100 dark:border-slate-700">
+                <div class="flex items-center justify-between mb-8">
+                    <h4 class="text-xl font-bold flex items-center gap-2">
+                        <span class="material-icons text-primary">inventory_2</span>
+                        Arsip Sumber Daya
+                    </h4>
+                    <div class="flex gap-2">
+                        <span
+                            class="px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-lg border border-primary/20">2.481
+                            Berkas</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div
+                        class="p-4 rounded-xl bg-background-light dark:bg-slate-900 border border-slate-100 dark:border-slate-700 hover:border-primary/50 transition-all cursor-pointer group">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-white dark:bg-slate-800 flex items-center justify-center mb-4 shadow-sm group-hover:bg-primary transition-colors">
+                            <span class="material-icons text-slate-400 group-hover:text-white">description</span>
+                        </div>
+                        <h6 class="font-bold text-slate-900 dark:text-white mb-1">Peraturan Desa</h6>
+                        <p class="text-xs text-slate-500">Dokumen hukum dan regulasi</p>
+                    </div>
+                    <div
+                        class="p-4 rounded-xl bg-background-light dark:bg-slate-900 border border-slate-100 dark:border-slate-700 hover:border-primary/50 transition-all cursor-pointer group">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-white dark:bg-slate-800 flex items-center justify-center mb-4 shadow-sm group-hover:bg-primary transition-colors">
+                            <span class="material-icons text-slate-400 group-hover:text-white">assessment</span>
+                        </div>
+                        <h6 class="font-bold text-slate-900 dark:text-white mb-1">Laporan Tahunan</h6>
+                        <p class="text-xs text-slate-500">Ringkasan progres dan finansial</p>
+                    </div>
+                    <div
+                        class="p-4 rounded-xl bg-background-light dark:bg-slate-900 border border-slate-100 dark:border-slate-700 hover:border-primary/50 transition-all cursor-pointer group">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-white dark:bg-slate-800 flex items-center justify-center mb-4 shadow-sm group-hover:bg-primary transition-colors">
+                            <span class="material-icons text-slate-400 group-hover:text-white">photo_library</span>
+                        </div>
+                        <h6 class="font-bold text-slate-900 dark:text-white mb-1">Galeri Foto</h6>
+                        <p class="text-xs text-slate-500">Galeri sejarah desa</p>
+                    </div>
+                    <div
+                        class="p-4 rounded-xl bg-background-light dark:bg-slate-900 border border-slate-100 dark:border-slate-700 hover:border-primary/50 transition-all cursor-pointer group">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-white dark:bg-slate-800 flex items-center justify-center mb-4 shadow-sm group-hover:bg-primary transition-colors">
+                            <span class="material-icons text-slate-400 group-hover:text-white">map</span>
+                        </div>
+                        <h6 class="font-bold text-slate-900 dark:text-white mb-1">Peta Perencanaan</h6>
+                        <p class="text-xs text-slate-500">Peta pengembangan dan lahan</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="bg-primary/10 rounded-3xl p-12 relative overflow-hidden">
+            <div class="absolute -right-20 -top-20 w-80 h-80 bg-primary/20 rounded-full blur-3xl"></div>
+            <div class="absolute -left-20 -bottom-20 w-60 h-60 bg-primary/20 rounded-full blur-3xl"></div>
+            <div class="relative z-10 max-w-2xl mx-auto text-center space-y-6">
+                <h2 class="text-4xl font-800 text-slate-900 dark:text-white">Bergabunglah dengan Lingkaran Dalam LENTERA
+                </h2>
+                <p class="text-slate-600 dark:text-slate-400 text-lg">Dapatkan pembaruan eksklusif tentang peluang
+                    pariwisata, festival musiman, dan proyek pembangunan komunitas langsung ke email Anda.</p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <input
+                        class="flex-1 px-6 py-4 rounded-xl border-transparent focus:ring-primary focus:border-primary dark:bg-slate-800 dark:text-white"
+                        placeholder="Masukkan alamat email Anda" type="email" />
+                    <button
+                        class="bg-primary text-slate-900 px-8 py-4 rounded-xl font-bold hover:opacity-90 transition-all shadow-lg shadow-primary/30">Berlangganan
+                        Sekarang</button>
+                </div>
+                <p class="text-xs text-slate-400 italic">Kami menghormati privasi Anda. Batalkan langganan kapan saja.
+                </p>
+            </div>
+        </section>
+    </main>
+    <footer class="bg-slate-900 text-slate-400 py-16 mt-20">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div class="col-span-1 md:col-span-1 space-y-4">
+                <div class="flex items-center gap-2 mb-6">
+                    <div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+                        <span class="material-icons text-slate-900 text-sm">eco</span>
+                    </div>
+                    <span class="text-xl font-800 text-white"></span>
+                </div>
+                <p class="text-sm leading-relaxed">Merintis pariwisata desa yang berkelanjutan melalui edukasi berbasis
+                    komunitas dan transparansi digital.</p>
+            </div>
+            <div>
+                <h6 class="text-white font-bold mb-6">Eksplorasi</h6>
+                <ul class="space-y-3 text-sm">
+                    <li><a class="hover:text-primary transition-colors" href="#">Situs Wisata</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Sumber Daya Edukasi</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Peta Desa</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Acara Mendatang</a></li>
+                </ul>
+            </div>
+            <div>
+                <h6 class="text-white font-bold mb-6">Sumber Daya</h6>
+                <ul class="space-y-3 text-sm">
+                    <li><a class="hover:text-primary transition-colors" href="#">Berita &amp; Update</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Dokumen Publik</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Pusat Ulasan</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Dashboard Admin</a></li>
+                </ul>
+            </div>
+            <div>
+                <h6 class="text-white font-bold mb-6">Hubungi Kami</h6>
+                <ul class="space-y-3 text-sm">
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-sm">location_on</span>
+                        <span>Desa Lembah Hijau, Distrik Pusat</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-sm">email</span>
+                        <span>halo@lentera-desa.id</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons text-primary text-sm">call</span>
+                        <span>+62 (21) 555-0123</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div
+            class="max-w-7xl mx-auto px-6 mt-16 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs uppercase tracking-widest font-semibold">
+            <span>© 2023 DESA. HAK CIPTA DILINDUNGI.</span>
+            <div class="flex gap-8">
+                <a class="hover:text-white transition-colors" href="#">Kebijakan Privasi</a>
+                <a class="hover:text-white transition-colors" href="#">Syarat Layanan</a>
+                <a class="hover:text-white transition-colors" href="#">Pengaturan Cookie</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // --- Cart Functionality ---
+        let cart = JSON.parse(localStorage.getItem('lentera_cart')) || [];
+        const cartDrawer = document.getElementById('cart-drawer');
+        const cartOverlay = document.getElementById('cart-overlay');
+        const cartButton = document.getElementById('cart-button');
+        const closeCart = document.getElementById('close-cart');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartCountBadge = document.getElementById('cart-count');
+        const cartTotalDisplay = document.getElementById('cart-total');
+        const emptyCartMsg = document.getElementById('empty-cart-msg');
+
+        function saveCart() {
+            localStorage.setItem('lentera_cart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function toggleCart() {
+            const isOpen = !cartDrawer.classList.contains('translate-x-full');
+            if (isOpen) {
+                cartDrawer.classList.add('translate-x-full');
+                cartOverlay.classList.add('hidden');
+                cartOverlay.classList.remove('opacity-100');
+            } else {
+                cartDrawer.classList.remove('translate-x-full');
+                cartOverlay.classList.remove('hidden');
+                setTimeout(() => cartOverlay.classList.add('opacity-100'), 10);
+                updateCartUI();
+            }
+        }
+
+        cartButton?.addEventListener('click', toggleCart);
+        closeCart?.addEventListener('click', toggleCart);
+        cartOverlay?.addEventListener('click', toggleCart);
+        document.getElementById('start-shopping')?.addEventListener('click', toggleCart);
+
+        function updateCartUI() {
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            if (cartCountBadge) {
+                cartCountBadge.innerText = totalQty;
+                cartCountBadge.classList.toggle('hidden', totalQty === 0);
+            }
+
+            if (!cartItemsContainer) return;
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '';
+                cartItemsContainer.appendChild(emptyCartMsg);
+                cartTotalDisplay.innerText = 'Rp 0';
+                return;
+            }
+
+            if (emptyCartMsg && emptyCartMsg.parentNode) emptyCartMsg.remove();
+
+            cartItemsContainer.innerHTML = cart.map(item => `
+                <div class="flex gap-4 group">
+                    <div class="w-20 h-20 rounded-xl overflow-hidden border border-slate-100 flex-shrink-0">
+                        <img src="${item.img}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="font-bold text-sm text-slate-900 dark:text-white mb-1">${item.name}</h4>
+                        <p class="text-primary font-bold text-sm mb-3">Rp ${(item.price * item.qty / 1000).toLocaleString()}rb</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
+                                <button onclick="updateQty('${item.id}', -1)" class="px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500">-</button>
+                                <span class="px-3 py-1 text-xs font-bold border-x border-slate-200 dark:border-slate-700">${item.qty}</span>
+                                <button onclick="updateQty('${item.id}', 1)" class="px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500">+</button>
+                            </div>
+                            <button onclick="removeFromCart('${item.id}')" class="text-slate-400 hover:text-red-500 transition-colors">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            if (cartTotalDisplay) cartTotalDisplay.innerText = `Rp ${(total / 1000).toLocaleString()}rb`;
+        }
+
+        window.updateQty = (id, change) => {
+            const item = cart.find(item => item.id === id);
+            if (item) {
+                item.qty += change;
+                if (item.qty <= 0) {
+                    removeFromCart(id);
+                } else {
+                    saveCart();
+                }
+            }
+        };
+
+        window.removeFromCart = (id) => {
+            cart = cart.filter(item => item.id !== id);
+            saveCart();
+        };
+
+        updateCartUI();
+
+        // --- Kabar Desa Dynamic Sync ---
+        const DEFAULT_NEWS = [
+            {
+                id: 'default_1',
+                title: 'Hibah Pariwisata Berkelanjutan Baru Diberikan untuk Peningkatan Infrastruktur 2024',
+                type: 'text',
+                text: 'Komite LENTERA dengan bangga mengumumkan hibah senilai Rp 3,8 Miliar untuk pengembangan jalur ramah lingkungan dan integrasi energi surya di homestay desa.',
+                tag: 'Berita Utama',
+                author: 'Admin Desa',
+                img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCWJWRuY4hdyxFAgFYRhvV2qjgN7yU-02_sLaVC-6sqyD_ndwVzMfOSt7tG1fu6qCRGNKWDCM3Gb6w80UGOqquCgaJ54crWr5JTPpJqM1gfduwcZJSbqACb9TCypXE0FjPyIu5XwCuak3sQxvHB5UPcYwkn9T8mgyOCaZ_NiW7YPWsUtbvFPrdlnK-EPRgBlZ1Q_I6MpsZZz6Xrot3r9Zt0QV6ztzQlcCWPYzG7tpO5ycVAv1aOZgvOfVLlw9hNgCoxACMM_a_UPZY',
+                dateStr: '15 Oktober 2023'
+            },
+            {
+                id: 'default_2',
+                title: 'Pertemuan Bulanan Warga: Membahas Jadwal Festival Panen',
+                type: 'text',
+                text: 'Pertemuan warga bulanan membahas berbagai persiapan kegiatan dan jadwal Festival Panen Desa Kucur.',
+                tag: 'Komunitas',
+                author: 'Admin Desa',
+                img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB1yjrM5vBBEGIX2ZccR75qyFDfzXBhH2qFt2gMjY2V6_F9hELK0VtZBehwFPdv9jn_8JxlEJIQ2YCFAYia5pGH3s1CEia8Xykjy9I_QchfmfiAtmL784Yrr1wM2nw-BfP86XTUdwiAxG2ScZmy8oUP-hF2wuQPxHWHFeP1pvIuqUUwsex8cDE78aaS1VJSnUo6cSxZIGJO-fjF7seLZLr2ZpoeVEsr6nfrfXUvxYcFFrDLh9cuervcSUWe2lZjvvtKJQAQK4KViFQ',
+                dateStr: '2 jam yang lalu'
+            },
+            {
+                id: 'default_3',
+                title: 'Program Sertifikasi Homestay Baru Diluncurkan untuk Warga Lokal',
+                type: 'text',
+                text: 'Peluncuran program sertifikasi homestay baru guna meningkatkan standar pelayanan akomodasi bagi wisatawan di desa.',
+                tag: 'Hospitality',
+                author: 'Admin Desa',
+                img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAL20DZf0ZDR-WpqqJvszdVjyQtH0nQZCJmmQKeC_XmLibuVja9CJ9RB8ZSBkk9YTcmv4Jhzp0ZmCwyokAWizVrv9l-FE3DsFvWLNNI5r03TTgz-pGEFMSotHhxiXEzso7sUoxZukrt9BHO0RwcdBdQ-6j8UHdS2-0TCIY4tJs5bFxRX9Gq6oiG0wSOgYIhZe6qLpkJRLiXCj_s9_fWe3qX99EJi4jiusF8WoL5xfEH7-XKqZF7tGFiuyeVFGdrGm8kY4Sk9Rc9ung',
+                dateStr: 'Kemarin'
+            },
+            {
+                id: 'default_4',
+                title: 'Upaya Penghijauan Mencapai Target 5.000 Bibit Pohon Baru',
+                type: 'text',
+                text: 'Koperasi desa berhasil melaksanakan penanaman 5.000 bibit pohon baru sebagai langkah nyata pelestarian lingkungan hidup.',
+                tag: 'Lingkungan',
+                author: 'Admin Desa',
+                img: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBR3bnUbS1rvPxZgvMezq_8XOHPNH2_5cvpQ1ZZFT_2bR-2eBCLyfCpcVPeF02aQ9hcTKpFXzapqOmSmk2_VOA7jwHhuEvqi73DxxaivsKyJrbTjd_RQjb08lyPqSr5zZ7W3wEYjRV6bhu2xLS2_oZQk6wlxlH8Ao6KfbsSTB19XRw3-L1n5IHxmIny17Eilp0BXHeCduRwUHdFID_mgIMH0Jb5Jjgk4HAuTDLWLW_RxJqCndyWYn5u1PqDilZjWddTVF7qpwURisY',
+                dateStr: '3 hari yang lalu'
+            }
+        ];
+
+        window.handleNewsClick = (type, url, text) => {
+            if (url) {
+                window.open(url, '_blank');
+            } else if (text && text !== 'undefined' && text !== '') {
+                alert(text);
+            }
+        };
+
+        function renderKabarDesa() {
+            const localData = JSON.parse(localStorage.getItem('lentera_admin_eresource')) || [];
+            const activeLocal = localData.filter(item => item.enabled);
+
+            const mappedLocal = activeLocal.map(item => {
+                let img = 'https://images.unsplash.com/photo-1596422846543-75c6fc18a523?auto=format&fit=crop&q=80&w=600';
+                if (item.type === 'foto' || item.type === 'video') {
+                    img = item.url || img;
+                } else if (item.type === 'pdf') {
+                    img = 'https://images.unsplash.com/photo-1568667256549-094345857637?auto=format&fit=crop&q=80&w=600';
+                } else {
+                    img = 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=600';
+                }
+
+                const typeTags = {
+                    text: 'Pengumuman',
+                    foto: 'Galeri',
+                    video: 'Video',
+                    pdf: 'Dokumen'
+                };
+
+                return {
+                    id: item.id,
+                    title: item.title,
+                    type: item.type,
+                    text: item.text || '',
+                    url: item.url || '',
+                    tag: typeTags[item.type] || 'Info',
+                    author: 'Admin Desa',
+                    img: img,
+                    dateStr: new Date(item.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+                    createdAt: item.createdAt
+                };
+            });
+
+            mappedLocal.sort((a, b) => b.createdAt - a.createdAt);
+
+            const newsList = [...mappedLocal];
+            DEFAULT_NEWS.forEach(defNews => {
+                if (!newsList.some(n => n.title === defNews.title)) {
+                    newsList.push(defNews);
+                }
+            });
+
+            // Render Featured News Card
+            const featured = newsList[0];
+            const featuredNewsContainer = document.getElementById('featured-news-container');
+            if (featured && featuredNewsContainer) {
+                const escapedText = (featured.text || '').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, ' ');
+                featuredNewsContainer.innerHTML = `
+                    <div class="group relative h-[500px] rounded-2xl overflow-hidden cursor-pointer shadow-xl" onclick="handleNewsClick('${featured.type}', '${featured.url}', '${escapedText}')">
+                        <img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                            src="${featured.img}" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent">
+                        </div>
+                        <div class="absolute bottom-0 p-10 space-y-4">
+                            <span class="px-4 py-1.5 bg-primary text-slate-900 text-xs font-800 rounded-full uppercase tracking-wider">${featured.tag}</span>
+                            <h3 class="text-4xl font-800 text-white leading-tight max-w-2xl">${featured.title}</h3>
+                            <p class="text-slate-300 max-w-xl text-lg line-clamp-2">${featured.text || 'Ketuk untuk detail selengkapnya.'}</p>
+                            <div class="flex items-center gap-4 pt-2">
+                                <div class="flex items-center gap-2 text-white/80 text-sm">
+                                    <span class="material-icons text-sm">calendar_today</span>
+                                    <span>${featured.dateStr}</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-white/80 text-sm">
+                                    <span class="material-icons text-sm">person</span>
+                                    <span>${featured.author}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Render sidebar updates
+            const recentNewsContainer = document.getElementById('recent-news-container');
+            if (recentNewsContainer) {
+                recentNewsContainer.innerHTML = '';
+                const updates = newsList.slice(1, 4);
+                updates.forEach(item => {
+                    const escapedItemText = (item.text || '').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, ' ');
+                    recentNewsContainer.innerHTML += `
+                        <div class="flex gap-4 p-4 rounded-xl hover:bg-white dark:hover:bg-slate-800 transition-colors cursor-pointer border border-transparent hover:border-slate-100 dark:hover:border-slate-700" onclick="handleNewsClick('${item.type}', '${item.url}', '${escapedItemText}')">
+                            <div class="flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden">
+                                <img class="w-full h-full object-cover" src="${item.img}" />
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-xs font-bold text-primary uppercase">${item.tag}</p>
+                                <h5 class="font-bold text-slate-900 dark:text-white leading-snug line-clamp-2">${item.title}</h5>
+                                <p class="text-xs text-slate-400">${item.dateStr}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        renderKabarDesa();
+    </script>
+</body>
+
+</html>

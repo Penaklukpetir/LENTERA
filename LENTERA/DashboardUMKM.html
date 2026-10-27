@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Dashboard Mitra UMKM • LENTERA</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4bee2b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#132210",
+                    },
+                    fontFamily: { "display": ["Plus Jakarta Sans"] },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 450, 'GRAD' 0, 'opsz' 24; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(100,116,139,.35); border-radius: 999px; }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 antialiased min-h-screen">
+    <div class="min-h-screen flex">
+        <!-- Sidebar -->
+        <aside class="w-72 bg-white dark:bg-slate-950 border-r border-primary/10 flex flex-col sticky top-0 h-screen">
+            <div class="p-6 border-b border-primary/10">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white">storefront</span>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Mitra UMKM</div>
+                        <div class="text-xl font-800 tracking-tight text-slate-900 dark:text-white truncate">Kriya Makmur</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 space-y-2">
+                <button data-view="dashboard" class="view-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-bold bg-primary/10 text-primary">
+                    <span class="material-icons">dashboard</span>
+                    Ringkasan
+                </button>
+                <button data-view="products" class="view-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-bold hover:bg-primary/10 text-slate-700 dark:text-slate-200 transition-colors">
+                    <span class="material-icons">inventory_2</span>
+                    Produk Saya
+                </button>
+                <button data-view="orders" class="view-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-bold hover:bg-primary/10 text-slate-700 dark:text-slate-200 transition-colors">
+                    <span class="material-icons">receipt_long</span>
+                    Pesanan Masuk
+                    <span class="ml-auto inline-flex items-center justify-center min-w-6 h-6 px-2 bg-red-500 text-white text-[10px] font-800 rounded-full">3</span>
+                </button>
+                <button data-view="withdrawal" class="view-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-bold hover:bg-primary/10 text-slate-700 dark:text-slate-200 transition-colors">
+                    <span class="material-icons">account_balance_wallet</span>
+                    Penarikan Dana
+                </button>
+                <button data-view="settings" class="view-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left font-bold hover:bg-primary/10 text-slate-700 dark:text-slate-200 transition-colors">
+                    <span class="material-icons">store</span>
+                    Profil Toko
+                </button>
+            </div>
+
+            <div class="mt-auto p-6 border-t border-primary/10 space-y-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center overflow-hidden">
+                        <span class="material-icons text-slate-500">person</span>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="text-sm font-bold text-slate-900 dark:text-white truncate">Budi Santoso</div>
+                        <div class="text-xs text-slate-500 truncate">Pemilik Toko</div>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button id="toggle-theme" class="flex-1 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        Tema
+                    </button>
+                    <a href="Login.html" class="flex-1 px-4 py-2 rounded-xl border border-red-200 text-red-500 font-bold text-sm text-center hover:bg-red-50 transition-colors">
+                        Keluar
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 min-w-0 bg-slate-50/50 dark:bg-background-dark">
+            <header class="sticky top-0 z-40 bg-white/85 dark:bg-slate-950/80 backdrop-blur-md border-b border-primary/10">
+                <div class="px-8 h-20 flex items-center justify-between">
+                    <div class="min-w-0">
+                        <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Panel Mitra UMKM</div>
+                        <h1 id="page-title" class="text-2xl font-800 text-slate-900 dark:text-white truncate">Ringkasan</h1>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="text-right hidden sm:block">
+                            <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Saldo Aktif</div>
+                            <div class="text-xl font-800 text-primary">Rp 1.250.000</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-8 space-y-8">
+                <!-- VIEW: DASHBOARD -->
+                <section data-section="dashboard" class="view-section space-y-8">
+                    <!-- KPI Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div class="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Pesanan Baru</div>
+                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                                    <span class="material-icons text-sm">shopping_bag</span>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-3xl font-800 text-slate-900 dark:text-white">3</div>
+                            <div class="mt-2 text-xs text-slate-500 font-semibold">Perlu segera dikirim</div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Total Produk</div>
+                                <div class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center">
+                                    <span class="material-icons text-sm">inventory_2</span>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-3xl font-800 text-slate-900 dark:text-white">12</div>
+                            <div class="mt-2 text-xs text-slate-500 font-semibold">Produk aktif di etalase</div>
+                        </div>
+                        <div class="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <div class="text-xs font-bold text-slate-500 uppercase tracking-widest">Penjualan Bulan Ini</div>
+                                <div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
+                                    <span class="material-icons text-sm">payments</span>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-3xl font-800 text-slate-900 dark:text-white">Rp 4.5M</div>
+                            <div class="mt-2 text-xs text-slate-500 font-semibold text-primary flex items-center gap-1">
+                                <span class="material-icons text-[12px]">trending_up</span> +15% dari bulan lalu
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: PRODUCTS -->
+                <section data-section="products" class="view-section hidden space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Form Upload -->
+                        <div class="bg-white dark:bg-slate-950 border border-primary/10 rounded-3xl p-6 shadow-sm">
+                            <h2 class="text-lg font-800 text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                                <span class="material-icons text-primary">add_circle</span> Tambah Produk
+                            </h2>
+                            <form class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Nama Produk</label>
+                                    <input type="text" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Keranjang Bambu M" required>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Harga (Rp)</label>
+                                        <input type="number" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary focus:border-primary" placeholder="350000" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Stok</label>
+                                        <input type="number" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary focus:border-primary" placeholder="10" required>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Deskripsi</label>
+                                    <textarea rows="4" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Deskripsi lengkap produk..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Foto Produk</label>
+                                    <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-6 text-center hover:border-primary/50 transition-colors cursor-pointer bg-slate-50 dark:bg-slate-900">
+                                        <span class="material-icons text-slate-400 mb-2">cloud_upload</span>
+                                        <p class="text-xs font-semibold text-slate-500">Klik untuk unggah gambar (Max 2MB)</p>
+                                    </div>
+                                </div>
+                                <button type="button" class="w-full py-3 bg-primary text-slate-900 font-800 rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all">Simpan Produk</button>
+                            </form>
+                        </div>
+
+                        <!-- Product List -->
+                        <div class="lg:col-span-2 bg-white dark:bg-slate-950 border border-primary/10 rounded-3xl p-6 shadow-sm flex flex-col">
+                            <h2 class="text-lg font-800 text-slate-900 dark:text-white mb-6">Etalase Toko</h2>
+                            <div class="flex-1 overflow-y-auto pr-2 space-y-4">
+                                <!-- Item 1 -->
+                                <div class="flex gap-4 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+                                    <div class="w-20 h-20 rounded-xl bg-slate-200 overflow-hidden flex-shrink-0">
+                                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-0zMYhdXGCIaSNsvekoS0DeSPXakM11lU5mhdD1yV035Xf582Dbex40DsC1Cpv7zJ3VAD-pH_hE8weRdqRdtdD_hrW36LCD2vdnHiEmxn2GO78F2J_I8wNmBdizXBxoOWaH7Vi_FTC2FAH3E3btNzEOiU4D-lVV7-vAvdcuIyZJ54MPoGRYSP4ji7BxJTpvZmrdksvjIU3XE928J3UPr8kJ8VTLnCWjpf-ZwKnSRYnfGFkArfT7x2UW6i4rLb5BqpEPteEMNAezI" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex justify-between items-start">
+                                            <h3 class="font-bold text-slate-900 dark:text-white truncate">Keranjang Bambu M</h3>
+                                            <div class="flex gap-2">
+                                                <button class="text-slate-400 hover:text-blue-500"><span class="material-icons text-[18px]">edit</span></button>
+                                                <button class="text-slate-400 hover:text-red-500"><span class="material-icons text-[18px]">delete</span></button>
+                                            </div>
+                                        </div>
+                                        <p class="text-primary font-bold text-sm mt-1">Rp 350.000</p>
+                                        <div class="flex items-center gap-4 mt-2 text-xs font-semibold text-slate-500">
+                                            <span class="flex items-center gap-1"><span class="material-icons text-[14px]">inventory</span> Stok: 15</span>
+                                            <span class="flex items-center gap-1"><span class="material-icons text-[14px]">visibility</span> Aktif</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Item 2 -->
+                                <div class="flex gap-4 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50">
+                                    <div class="w-20 h-20 rounded-xl bg-slate-200 overflow-hidden flex-shrink-0">
+                                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAc1v1IhStJV0pW2t74n9I18lQmZMY-9RVxxbPxqCrWlpC5mvR-ZhSQi2sgVTuTIqibYszWlvMZ-_tb4YU2cQmmw3BGwE3hlUp1D5cKnMqCZAFXiYNxW1crsZWGLmZdsqlEdAUmFEt-txYfw-fZVEDMShpjOHtHjHmmp_qq4kxlHhow4Og38yRjT0Lk9_3qVczR-bGgAwzxUmQvPpQSbAEb-0uUEWO9m4xlb3WAi5MFxGrT48cfWZ6CJuKySvpOe1fHD-xFBbdFDz0" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex justify-between items-start">
+                                            <h3 class="font-bold text-slate-900 dark:text-white truncate">Madu Hutan Liar</h3>
+                                            <div class="flex gap-2">
+                                                <button class="text-slate-400 hover:text-blue-500"><span class="material-icons text-[18px]">edit</span></button>
+                                                <button class="text-slate-400 hover:text-red-500"><span class="material-icons text-[18px]">delete</span></button>
+                                            </div>
+                                        </div>
+                                        <p class="text-primary font-bold text-sm mt-1">Rp 125.000</p>
+                                        <div class="flex items-center gap-4 mt-2 text-xs font-semibold text-slate-500">
+                                            <span class="flex items-center gap-1 text-red-500"><span class="material-icons text-[14px]">inventory</span> Stok: 0 (Habis)</span>
+                                            <span class="flex items-center gap-1 text-slate-400"><span class="material-icons text-[14px]">visibility_off</span> Nonaktif</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- VIEW: WITHDRAWAL -->
+                <section data-section="withdrawal" class="view-section hidden space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Withdrawal Form -->
+                        <div class="bg-white dark:bg-slate-950 border border-primary/10 rounded-3xl p-6 shadow-sm">
+                            <h2 class="text-lg font-800 text-slate-900 dark:text-white mb-6">Ajukan Penarikan</h2>
+                            
+                            <div class="bg-primary/10 rounded-2xl p-5 mb-6 text-center border border-primary/20">
+                                <p class="text-xs font-bold text-primary uppercase tracking-widest mb-1">Saldo Dapat Ditarik</p>
+                                <p class="text-2xl font-800 text-slate-900 dark:text-white">Rp 1.250.000</p>
+                            </div>
+
+                            <form class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Jumlah Penarikan (Rp)</label>
+                                    <input type="number" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary focus:border-primary" placeholder="1000000" required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Rekening Tujuan</label>
+                                    <select class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-primary focus:border-primary">
+                                        <option>Bank Jatim - 123456789 (Budi S)</option>
+                                        <option>BCA - 098765432 (Budi S)</option>
+                                    </select>
+                                </div>
+                                <div class="pt-2">
+                                    <button type="button" onclick="alert('Permohonan penarikan diajukan ke admin desa.')" class="w-full py-3 bg-primary text-slate-900 font-800 rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex justify-center items-center gap-2">
+                                        <span class="material-icons text-sm">payments</span> Tarik Dana
+                                    </button>
+                                </div>
+                            </form>
+                            <p class="text-[10px] text-slate-500 font-medium text-center mt-4">Proses verifikasi pencairan dana oleh Aparat Desa maksimal 2x24 Jam Kerja.</p>
+                        </div>
+
+                        <!-- Withdrawal History -->
+                        <div class="lg:col-span-2 bg-white dark:bg-slate-950 border border-primary/10 rounded-3xl p-6 shadow-sm">
+                            <h2 class="text-lg font-800 text-slate-900 dark:text-white mb-6">Riwayat Penarikan</h2>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr class="border-b border-slate-200 dark:border-slate-800">
+                                            <th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Tanggal</th>
+                                            <th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Jumlah</th>
+                                            <th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Rekening Tujuan</th>
+                                            <th class="py-3 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-sm">
+                                        <tr class="border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-900/50">
+                                            <td class="py-4 px-4 font-semibold text-slate-600 dark:text-slate-300">01 Mei 2026</td>
+                                            <td class="py-4 px-4 font-bold text-slate-900 dark:text-white">Rp 2.000.000</td>
+                                            <td class="py-4 px-4 font-semibold text-slate-600 dark:text-slate-300">Bank Jatim - 123***</td>
+                                            <td class="py-4 px-4"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded">Selesai</span></td>
+                                        </tr>
+                                        <tr class="border-b border-slate-100 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-900/50">
+                                            <td class="py-4 px-4 font-semibold text-slate-600 dark:text-slate-300">15 Apr 2026</td>
+                                            <td class="py-4 px-4 font-bold text-slate-900 dark:text-white">Rp 1.500.000</td>
+                                            <td class="py-4 px-4 font-semibold text-slate-600 dark:text-slate-300">Bank Jatim - 123***</td>
+                                            <td class="py-4 px-4"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded">Selesai</span></td>
+                                        </tr>
+                                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-900/50">
+                                            <td class="py-4 px-4 font-semibold text-slate-600 dark:text-slate-300">20 Mar 2026</td>
+                                            <td class="py-4 px-4 font-bold text-slate-900 dark:text-white">Rp 5.000.000</td>
+                                            <td class="py-4 px-4 font-semibold text-slate-600 dark:text-slate-300">BCA - 098***</td>
+                                            <td class="py-4 px-4"><span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded">Selesai</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Views Placeholder for Others -->
+                <section data-section="orders" class="view-section hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-950 border border-primary/10 rounded-3xl p-6 shadow-sm">
+                        <h2 class="text-lg font-800 text-slate-900 dark:text-white mb-6">Manajemen Pesanan</h2>
+                        <div class="text-center py-10 text-slate-500 font-medium border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+                            Fitur manajemen resi dan kurir akan tampil di sini.
+                        </div>
+                    </div>
+                </section>
+                <section data-section="settings" class="view-section hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-950 border border-primary/10 rounded-3xl p-6 shadow-sm">
+                        <h2 class="text-lg font-800 text-slate-900 dark:text-white mb-6">Profil Toko UMKM</h2>
+                        <div class="text-center py-10 text-slate-500 font-medium border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+                            Pengaturan identitas toko, deskripsi, dan rekening bank.
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Navigation Logic
+        const viewButtons = document.querySelectorAll('.view-btn');
+        const sections = document.querySelectorAll('.view-section');
+        const pageTitle = document.getElementById('page-title');
+
+        viewButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.getAttribute('data-view');
+                
+                // Update buttons
+                viewButtons.forEach(b => {
+                    b.classList.remove('bg-primary/10', 'text-primary');
+                    b.classList.add('text-slate-700', 'dark:text-slate-200');
+                });
+                btn.classList.add('bg-primary/10', 'text-primary');
+                btn.classList.remove('text-slate-700', 'dark:text-slate-200');
+
+                // Update title
+                pageTitle.innerText = btn.innerText.trim();
+
+                // Update views
+                sections.forEach(sec => {
+                    if (sec.getAttribute('data-section') === target) {
+                        sec.classList.remove('hidden');
+                    } else {
+                        sec.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        // Theme Toggle (Mock)
+        document.getElementById('toggle-theme').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
+    </script>
+</body>
+</html>

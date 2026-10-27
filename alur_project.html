@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alur Pengerjaan Proyek LENTERA - Desa Wisata Kucur</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0A3966;
+            --primary-light: #EBF5FF;
+            --teal: #0D9488;
+            --teal-light: #F0FDFA;
+            --emerald: #10B981;
+            --amber: #F59E0B;
+            --slate-800: #1E293B;
+            --slate-600: #475569;
+            --slate-50: #F8FAFC;
+            --border: #E2E8F0;
+            --shadow: 0 10px 30px -5px rgba(10, 57, 102, 0.08);
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--slate-50);
+            color: var(--slate-800);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* HEADER PRESENTASI */
+        header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            background: #FFFFFF;
+            z-index: 10;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-badge {
+            background: var(--primary);
+            color: #FFFFFF;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .project-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--slate-600);
+        }
+
+        /* SLIDE WRAPPER */
+        .slides-container {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            max-width: 1000px;
+            height: 520px;
+            background: #FFFFFF;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            padding: 40px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+            pointer-events: none;
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+            z-index: 2;
+        }
+
+        /* TIPE SLIDE 1: JUDUL */
+        .slide-title-layout {
+            justify-content: center !important;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary) 0%, #1E1B4B 100%);
+            color: #FFFFFF;
+            border: none;
+        }
+
+        .slide-title-layout h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .slide-title-layout p {
+            font-size: 18px;
+            color: #93C5FD;
+            font-weight: 400;
+            max-width: 700px;
+            line-height: 1.5;
+            margin-bottom: 35px;
+        }
+
+        .author-box {
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding-top: 20px;
+            font-size: 15px;
+            color: #E2E8F0;
+        }
+
+        /* SLIDE UMUM: HEADER & KONTEN */
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-light);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .slide-num {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--teal);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .slide-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* LAYOUT DUA KOLOM */
+        .slide-body {
+            display: flex;
+            gap: 40px;
+            flex-grow: 1;
+            align-items: stretch;
+        }
+
+        .col-left {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .col-right {
+            flex: 0.8;
+            background: var(--primary-light);
+            border-radius: 14px;
+            padding: 25px;
+            border-left: 5px solid var(--teal);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* STEPPER LINGKARAN UNTUK ALUR */
+        .stepper {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .step-item {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .step-circle {
+            background: var(--teal);
+            color: #FFFFFF;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(13, 148, 136, 0.2);
+        }
+
+        .step-text h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .step-text p {
+            font-size: 14px;
+            line-height: 1.4;
+            color: var(--slate-600);
+        }
+
+        /* LIST DENGAN CHECKMARK */
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .feature-list li {
+            position: relative;
+            padding-left: 28px;
+            font-size: 15px;
+            line-height: 1.5;
+            color: var(--slate-800);
+        }
+
+        .feature-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            top: 1px;
+            width: 18px;
+            height: 18px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .feature-list li strong {
+            color: var(--primary);
+        }
+
+        .callout-desc {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--slate-600);
+        }
+
+        /* KOTAK EVALUASI / FEEDBACK */
+        .feedback-box {
+            background: #FFFBEB;
+            border-left: 5px solid var(--amber);
+            border-radius: 0 12px 12px 0;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .feedback-box h5 {
+            font-family: 'Montserrat', sans-serif;
+            color: #B45309;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .feedback-box p {
+            font-size: 13px;
+            line-height: 1.4;
+            color: #92400E;
+        }
+
+        /* PANEL KONTROL NAVIGASI (FOOTER) */
+        footer {
+            padding: 20px 40px;
+            border-top: 1px solid var(--border);
+            background: #FFFFFF;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .controls-btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            background: #FFFFFF;
+            border: 1px solid var(--border);
+            color: var(--slate-800);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+            outline: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            border-color: var(--teal);
+            color: var(--teal);
+            background: var(--teal-light);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .nav-btn-primary {
+            background: var(--primary);
+            color: #FFFFFF;
+            border: none;
+        }
+
+        .nav-btn-primary:hover:not(:disabled) {
+            background: var(--teal);
+            color: #FFFFFF;
+        }
+
+        .progress-indicator {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--slate-600);
+            background: var(--slate-50);
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        /* PROGRESS BAR DI BAWAH */
+        .progress-bar-container {
+            width: 100%;
+            height: 5px;
+            background: var(--border);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 20;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--teal) 100%);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER PRESENTASI -->
+    <header>
+        <div class="logo-section">
+            <span class="logo-badge">LENTERA</span>
+            <span class="project-title">Alur Kerja Pengembangan Proyek</span>
+        </div>
+        <div class="progress-indicator">
+            <span id="current-num">01</span> / <span id="total-num">06</span>
+        </div>
+    </header>
+
+    <!-- CONTAINER SLIDES -->
+    <div class="slides-container">
+
+        <!-- SLIDE 1: JUDUL UTAMA -->
+        <div class="slide active slide-title-layout">
+            <h1>ALUR PENGERJAAN PROYEK</h1>
+            <p>Bagaimana metodologi Rapid Application Development (RAD) diimplementasikan dalam menyusun analisis dan perancangan Sistem Informasi Geografis LENTERA Pemetaan Lahan Kopi Kucur.</p>
+            <div class="author-box">
+                <strong>Alan Assidiqqi Pratama</strong><br>
+                NIM: 322310022 &bull; Jurusan Sistem Informasi &bull; Universitas Ma Chung
+            </div>
+        </div>
+
+        <!-- SLIDE 2: PERENCANAAN KEBUTUHAN -->
+        <div class="slide">
+            <div class="slide-header">
+                <span class="slide-num">Tahap 1</span>
+                <span class="slide-title">Requirements Planning (Perencanaan)</span>
+            </div>
+            <div class="slide-body">
+                <div class="col-left">
+                    <ul class="feature-list">
+                        <li><strong>Observasi Mitra Lapangan:</strong> Mengunjungi Desa Kucur, Kec. Dau untuk memetakan sebaran lahan kopi milik petani local dan mengukur elevasi.</li>
+                        <li><strong>Wawancara Pemangku Kepentingan:</strong> Berdiskusi dengan Kepala Desa, Karang Taruna, Pokdarwis, dan perwakilan Kelompok Tani Kopi.</li>
+                        <li><strong>Identifikasi Masalah Utama:</strong> Menemukan kendala ketiadaan sistem pemetaan digital letak kebun kopi, data elevasi, dan statistik jumlah pohon secara spasial terstruktur.</li>
+                    </ul>
+                </div>
+                <div class="col-right">
+                    <h4 style="color: var(--primary); font-family:'Montserrat'; font-weight:700; margin-bottom:10px; font-size:16px;">Hasil Tahap 1</h4>
+                    <p class="callout-desc">
+                        Dokumen kebutuhan awal sistem yang mencakup fungsionalitas peta digital (Leaflet.js), materi edukasi budidaya tani, serta pengajuan proposal kemitraan sponsorship B2B.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: DESAIN PENGGUNA -->
+        <div class="slide">
+            <div class="slide-header">
+                <span class="slide-num">Tahap 2</span>
+                <span class="slide-title">User Design (Perancangan Sistem)</span>
+            </div>
+            <div class="slide-body">
+                <div class="col-left">
+                    <ul class="feature-list">
+                        <li><strong>Pemodelan UML (Use Case & Activity):</strong> Merancang batas otorisasi pengguna untuk 4 aktor (Visitor/Sponsor, Admin/Karang Taruna, Sponsor Terverifikasi, dan Kades).</li>
+                        <li><strong>Desain Database Spasial:</strong> Menyusun Entity Relationship Diagram (ERD) dan struktur fisik tabel lokasi dengan koordinat spasial <code>POINT</code>.</li>
+                        <li><strong>Protototipe Antarmuka (UI/UX Mockups):</strong> Merancang maket halaman peta interaktif dan dasbor manajemen marker spasial.</li>
+                    </ul>
+                </div>
+                <div class="col-right">
+                    <h4 style="color: var(--primary); font-family:'Montserrat'; font-weight:700; margin-bottom:10px; font-size:16px;">Hasil Tahap 2</h4>
+                    <p class="callout-desc">
+                        Blueprint arsitektur <strong>Three-Tier RESTful API</strong>, struktur database relasional yang mendukung spatial indexing, dan rancangan maket antarmuka pengguna (UI).
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: KONSTRUKSI KODE -->
+        <div class="slide">
+            <div class="slide-header">
+                <span class="slide-num">Tahap 3</span>
+                <span class="slide-title">Construction (Pembangunan)</span>
+            </div>
+            <div class="slide-body">
+                <div class="col-left">
+                    <ul class="feature-list">
+                        <li><strong>Frontend Integrasi Leaflet.js:</strong> Membangun portal peta interaktif yang dapat memetakan marker lokasi kebun kopi beserta data elevasi dan pemilik.</li>
+                        <li><strong>Pemrograman RESTful API Gateway:</strong> Membuat server logika back-end untuk mengelola penanda lokasi kebun kopi, data spasial elevasi, pengajuan proposal sponsor, dan edukasi tani.</li>
+                        <li><strong>Sistem Keamanan JWT & RBAC:</strong> Mengintegrasikan enkripsi kata sandi Bcrypt, otentikasi stateless JSON Web Token, dan kontrol peran akses dasbor.</li>
+                    </ul>
+                </div>
+                <div class="col-right">
+                    <h4 style="color: var(--primary); font-family:'Montserrat'; font-weight:700; margin-bottom:10px; font-size:16px;">Hasil Tahap 3</h4>
+                    <p class="callout-desc">
+                        Kode sumber aplikasi GIS terintegrasi (frontend & backend) yang siap diuji secara fungsional. Seluruh form input dilengkapi koordinat GPS presisi.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: PENGUJIAN DAN EVALUASI -->
+        <div class="slide">
+            <div class="slide-header">
+                <span class="slide-num">Tahap 4</span>
+                <span class="slide-title">Cutover (Pengujian & Evaluasi)</span>
+            </div>
+            <div class="slide-body">
+                <div class="col-left">
+                    <div class="feedback-box">
+                        <h5>Masukan Mitra Kelompok Tani</h5>
+                        <p>Fitur navigasi rute jalan dinamis (Leaflet Routing Machine) dinilai terlalu berat & rumit karena terkendala koneksi internet pedesaan yang tidak stabil di lereng gunung.</p>
+                    </div>
+                    <ul class="feature-list">
+                        <li><strong>Revisi Alur Navigasi:</strong> Mengganti rute jalan dinamis dengan penanda koordinat statis kebun dan tombol cepat hubungi **WhatsApp Pemandu Lokal**.</li>
+                        <li><strong>Uji Fungsional (Black Box):</strong> Menguji seluruh fungsionalitas (Login, CRUD Marker Kebun, Upload File Edukasi, dan Pengiriman Proposal Sponsor) dengan hasil valid.</li>
+                    </ul>
+                </div>
+                <div class="col-right">
+                    <h4 style="color: var(--primary); font-family:'Montserrat'; font-weight:700; margin-bottom:10px; font-size:16px;">Hasil Tahap 4</h4>
+                    <p class="callout-desc">
+                        Sistem final GIS LENTERA yang telah direfaktor agar andal digunakan di area pedesaan yang minim koneksi, lengkap dengan laporan pengujian kotak hitam.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: KESIMPULAN ALUR -->
+        <div class="slide">
+            <div class="slide-header">
+                <span class="slide-num">Selesai</span>
+                <span class="slide-title">Kesimpulan & Hasil Akhir Proyek</span>
+            </div>
+            <div class="slide-body">
+                <div class="col-left">
+                    <div class="stepper">
+                        <div class="step-item">
+                            <div class="step-circle">1</div>
+                            <div class="step-text">
+                                <h4>Dokumen Blue Print SRS Formal</h4>
+                                <p>Menghasilkan dokumen spesifikasi kebutuhan perangkat lunak (SRS) berbasis standar internasional ISO/IEC/IEEE 29148.</p>
+                            </div>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-circle">2</div>
+                            <div class="step-text">
+                                <h4>Platform Solutif Berbasis RAD</h4>
+                                <p>Sistem GIS kopi LENTERA berhasil dibangun secara cepat dan tanggap terhadap kendala infrastruktur koneksi mitra.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-right" style="background: var(--teal-light); border-left-color: var(--teal); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    <span style="font-size: 48px; margin-bottom: 10px;">🏆</span>
+                    <h4 style="color: var(--teal); font-family:'Montserrat'; font-weight:700; margin-bottom:10px; font-size:18px;">Proyek Selesai & Valid</h4>
+                    <p style="font-size: 13px; line-height: 1.4; color: var(--slate-600);">
+                        Siap dipresentasikan untuk sidang Praktik Kerja Lapangan (PKL) dan disubmit ke jurnal SMARTICS.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PANEL KONTROL NAVIGASI (FOOTER) -->
+    <footer>
+        <button id="btn-prev" class="nav-btn" disabled>
+            <span>◀</span> Sebelumnya
+        </button>
+        <div class="controls-btn-group">
+            <button id="btn-next" class="nav-btn nav-btn-primary">
+                Selanjutnya <span>▶</span>
+            </button>
+        </div>
+    </footer>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-bar-container">
+        <div id="progress-bar" class="progress-bar-fill"></div>
+    </div>
+
+    <!-- JAVASCRIPT NAVIGASI INTERAKTIF -->
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const currentNum = document.getElementById('current-num');
+        const totalNum = document.getElementById('total-num');
+        const progressBar = document.getElementById('progress-bar');
+
+        let currentSlideIndex = 0;
+        const totalSlides = slides.length;
+
+        totalNum.textContent = String(totalSlides).padStart(2, '0');
+
+        function updateSlides() {
+            // Tampilkan slide aktif, sembunyikan yang lain
+            slides.forEach((slide, idx) => {
+                if (idx === currentSlideIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            // Update nomor slide aktif
+            currentNum.textContent = String(currentSlideIndex + 1).padStart(2, '0');
+
+            // Update disabled state tombol
+            btnPrev.disabled = currentSlideIndex === 0;
+            
+            if (currentSlideIndex === totalSlides - 1) {
+                btnNext.innerHTML = 'Mulai Kembali <span>🔄</span>';
+            } else {
+                btnNext.innerHTML = 'Selanjutnya <span>▶</span>';
+            }
+
+            // Update progress bar
+            const percent = (currentSlideIndex / (totalSlides - 1)) * 100;
+            progressBar.style.width = `${percent}%`;
+        }
+
+        // Event listener tombol navigasi
+        btnNext.addEventListener('click', () => {
+            if (currentSlideIndex < totalSlides - 1) {
+                currentSlideIndex++;
+            } else {
+                currentSlideIndex = 0; // Loop kembali ke awal
+            }
+            updateSlides();
+        });
+
+        btnPrev.addEventListener('click', () => {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+            }
+            updateSlides();
+        });
+
+        // Dukungan navigasi panah keyboard kiri/kanan
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight' || event.key === ' ') {
+                if (currentSlideIndex < totalSlides - 1) {
+                    currentSlideIndex++;
+                } else {
+                    currentSlideIndex = 0;
+                }
+                updateSlides();
+            } else if (event.key === 'ArrowLeft') {
+                if (currentSlideIndex > 0) {
+                    currentSlideIndex--;
+                }
+                updateSlides();
+            }
+        });
+
+        // Inisialisasi
+        updateSlides();
+    </script>
+</body>
+
+</html>

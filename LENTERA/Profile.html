@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Profil Tim - LENTERA</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4bee2b",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#132210",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 antialiased min-h-screen">
+    <nav class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-primary/10">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white">lightbulb</span>
+                </div>
+                <span class="text-2xl font-800 tracking-tight text-slate-900 dark:text-white uppercase"></span>
+            </div>
+            <div class="hidden lg:flex items-center gap-8">
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Home.html">Home</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Catalog.html">Catalog</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Location.html">Location</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Education.html">Education</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Navigation.html">Navigation</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="E-resource.html">E-Resource</a>
+                <a class="text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                    href="Sponsor.html">Sponsor</a>
+                <a class="text-sm font-bold text-primary relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-primary"
+                    href="Profile.html">Profil</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <button
+                    class="p-2.5 rounded-full hover:bg-primary/10 transition-colors text-slate-600 dark:text-slate-300 lg:hidden"
+                    id="mobile-menu-button">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+                <button id="cart-button"
+                    class="p-2.5 rounded-full hover:bg-primary/10 transition-colors text-slate-600 dark:text-slate-300 relative">
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                    <span id="cart-count"
+                        class="absolute top-1 right-1 w-4 h-4 bg-primary text-[10px] text-slate-900 font-bold rounded-full flex items-center justify-center">0</span>
+                </button>
+                <div class="h-8 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1 hidden sm:block"></div>
+                <button
+                    class="flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <div
+                        class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
+                        <span class="material-symbols-outlined text-slate-500">account_circle</span>
+                    </div>
+                    <span class="text-sm font-bold text-slate-700 dark:text-slate-200 hidden sm:inline">User</span>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div class="lg:hidden hidden border-t border-primary/10 bg-white dark:bg-background-dark px-6 py-4 space-y-4"
+            id="mobile-menu">
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Home.html">Home</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Catalog.html">Catalog</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Location.html">Location</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Education.html">Education</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Navigation.html">Navigation</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="E-resource.html">E-Resource</a>
+            <a class="block text-sm font-semibold hover:text-primary transition-colors text-slate-600 dark:text-slate-300"
+                href="Sponsor.html">Sponsor</a>
+            <a class="block text-sm font-bold text-primary" href="Profile.html">Profil</a>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="relative py-20 overflow-hidden">
+            <div class="absolute top-0 left-0 -z-10 w-full h-full bg-primary/5 blur-3xl rounded-full translate-y-1/2"></div>
+            <div class="max-w-7xl mx-auto px-6 text-center">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-xs font-bold mb-6">
+                    <span class="material-symbols-outlined text-sm">groups</span>
+                    TIM PENGEMBANG
+                </div>
+                <h1 class="text-5xl lg:text-7xl font-extrabold text-slate-900 dark:text-white leading-tight mb-6">
+                    Di Balik Inovasi <span class="text-primary">LENTERA</span>
+                </h1>
+                <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+                    Kami adalah Software House yang berdedikasi untuk menciptakan solusi digital yang berdampak positif bagi masyarakat, khususnya dalam memajukan potensi pariwisata dan edukasi di pedesaan.
+                </p>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section class="py-24 bg-white dark:bg-slate-900/50">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Member 1 -->
+                    <div class="group">
+                        <div class="relative aspect-square rounded-3xl overflow-hidden mb-6 border-4 border-white dark:border-slate-800 shadow-xl transition-all group-hover:-translate-y-2">
+                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400" alt="Team Member" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                                <div class="flex gap-3">
+                                    <a href="#" class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition-colors">
+                                        <span class="material-symbols-outlined text-sm">share</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Ahmad Fauzi</h3>
+                        <p class="text-primary font-bold text-sm uppercase tracking-wider">Project Manager</p>
+                        <p class="text-slate-500 text-sm mt-2">Memastikan setiap visi LENTERA terwujud dengan sempurna.</p>
+                    </div>
+
+                    <!-- Member 2 -->
+                    <div class="group">
+                        <div class="relative aspect-square rounded-3xl overflow-hidden mb-6 border-4 border-white dark:border-slate-800 shadow-xl transition-all group-hover:-translate-y-2">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400" alt="Team Member" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                                <div class="flex gap-3">
+                                    <a href="#" class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition-colors">
+                                        <span class="material-symbols-outlined text-sm">share</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Siti Aminah</h3>
+                        <p class="text-primary font-bold text-sm uppercase tracking-wider">Lead Developer</p>
+                        <p class="text-slate-500 text-sm mt-2">Arsitek di balik sistem LENTERA yang handal dan cepat.</p>
+                    </div>
+
+                    <!-- Member 3 -->
+                    <div class="group">
+                        <div class="relative aspect-square rounded-3xl overflow-hidden mb-6 border-4 border-white dark:border-slate-800 shadow-xl transition-all group-hover:-translate-y-2">
+                            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400" alt="Team Member" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                                <div class="flex gap-3">
+                                    <a href="#" class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition-colors">
+                                        <span class="material-symbols-outlined text-sm">share</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Budi Santoso</h3>
+                        <p class="text-primary font-bold text-sm uppercase tracking-wider">UI/UX Designer</p>
+                        <p class="text-slate-500 text-sm mt-2">Menghadirkan pengalaman pengguna yang indah dan intuitif.</p>
+                    </div>
+
+                    <!-- Member 4 -->
+                    <div class="group">
+                        <div class="relative aspect-square rounded-3xl overflow-hidden mb-6 border-4 border-white dark:border-slate-800 shadow-xl transition-all group-hover:-translate-y-2">
+                            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400" alt="Team Member" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                                <div class="flex gap-3">
+                                    <a href="#" class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-primary transition-colors">
+                                        <span class="material-symbols-outlined text-sm">share</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Dewi Lestari</h3>
+                        <p class="text-primary font-bold text-sm uppercase tracking-wider">Content Strategist</p>
+                        <p class="text-slate-500 text-sm mt-2">Menyusun narasi yang kuat untuk mempromosikan desa.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Vision Section -->
+        <section class="py-24 bg-background-light dark:bg-background-dark overflow-hidden">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex flex-col lg:flex-row items-center gap-16">
+                    <div class="flex-1">
+                        <h2 class="text-4xl font-bold text-slate-900 dark:text-white mb-8">Visi Kami untuk Masa Depan Desa</h2>
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary shrink-0">
+                                    <span class="material-symbols-outlined">trending_up</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg text-slate-900 dark:text-white">Pertumbuhan Ekonomi</h4>
+                                    <p class="text-slate-500">Membantu UMKM desa menjangkau pasar yang lebih luas melalui platform digital.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center text-blue-500 shrink-0">
+                                    <span class="material-symbols-outlined">school</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg text-slate-900 dark:text-white">Edukasi Berkelanjutan</h4>
+                                    <p class="text-slate-500">Menyediakan akses informasi dan pelatihan yang mudah bagi warga desa.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="w-12 h-12 rounded-2xl bg-orange-500/20 flex items-center justify-center text-orange-500 shrink-0">
+                                    <span class="material-symbols-outlined">eco</span>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-lg text-slate-900 dark:text-white">Pelestarian Budaya</h4>
+                                    <p class="text-slate-500">Mendokumentasikan dan mempromosikan kearifan lokal secara digital.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-1 relative">
+                        <div class="relative rounded-[2.5rem] overflow-hidden shadow-2xl">
+                            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800" alt="Office" class="w-full aspect-square object-cover">
+                            <div class="absolute inset-0 bg-primary/20 mix-blend-overlay"></div>
+                        </div>
+                        <div class="absolute -bottom-10 -right-10 w-48 h-48 bg-primary rounded-full blur-3xl opacity-30"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                            <span class="material-icons-outlined text-white text-sm">lightbulb</span>
+                        </div>
+                        <span class="text-xl font-bold tracking-tight"></span>
+                    </div>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Mendorong pembangunan berkelanjutan melalui inovasi pedesaan dan edukasi. Bergabunglah bersama
+                        kami untuk membuat perubahan.
+                    </p>
+                </div>
+                <div>
+                    <h5 class="font-bold mb-6">Eksplorasi</h5>
+                    <ul class="space-y-4 text-slate-400 text-sm">
+                        <li><a class="hover:text-primary" href="Home.html">Destinasi</a></li>
+                        <li><a class="hover:text-primary" href="E-resource.html">E-Resources</a></li>
+                        <li><a class="hover:text-primary" href="Education.html">Lokakarya</a></li>
+                        <li><a class="hover:text-primary" href="Home.html">Cerita Lokal</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold mb-6">Komunitas</h5>
+                    <ul class="space-y-4 text-slate-400 text-sm">
+                        <li><a class="hover:text-primary" href="#">Jadi Pemandu</a></li>
+                        <li><a class="hover:text-primary" href="Sponsor.html">Sponsor</a></li>
+                        <li><a class="hover:text-primary" href="#">Relawan</a></li>
+                        <li><a class="hover:text-primary" href="#">Forum</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold mb-6">Tetap Terhubung</h5>
+                    <p class="text-slate-400 text-sm mb-4">Dapatkan info terbaru dari desa kami.</p>
+                    <div class="flex gap-2">
+                        <input class="bg-slate-800 border-none rounded-lg text-sm focus:ring-primary flex-1"
+                            placeholder="Alamat email" type="email" />
+                        <button class="bg-primary p-2 rounded-lg"><span
+                                class="material-icons-outlined">send</span></button>
+                    </div>
+                    <div class="mt-8 flex gap-4 text-slate-400">
+                        <a class="hover:text-primary transition-colors" href="#">Kontak Kami</a>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="border-t border-slate-800 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-slate-500 text-xs">© 2023 Inisiatif Desa. Seluruh hak cipta dilindungi.</p>
+                <div class="flex gap-6 text-xs text-slate-500">
+                    <a class="hover:text-white" href="#">Kebijakan Privasi</a>
+                    <a class="hover:text-white" href="#">Syarat dan Ketentuan</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+
+</html>

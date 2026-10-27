@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentasi Usulan Topik Tugas Akhir - Alan Assidiqqi Pratama</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #0B0F19;
+            --bg-card: #151C2C;
+            --primary: #38BDF8;
+            --primary-hover: #7DD3FC;
+            --teal: #2DD4BF;
+            --teal-light: rgba(45, 212, 191, 0.1);
+            --emerald: #34D399;
+            --rose: #F87171;
+            --text-main: #F1F5F9;
+            --text-muted: #94A3B8;
+            --border: #223047;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* HEADER */
+        header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 10;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .badge-ta {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--teal) 100%);
+            color: #0B0F19;
+            font-weight: 800;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .header-title {
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .slide-counter {
+            font-weight: 800;
+            font-size: 14px;
+            color: var(--primary);
+            background: rgba(56, 189, 248, 0.1);
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        /* SLIDE CONTAINER */
+        .slides-wrapper {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .slide {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            transform: scale(0.96) translateY(20px);
+            width: 94%;
+            max-width: 1150px;
+            height: 88%;
+            min-height: 540px;
+            max-height: 640px;
+            background: var(--bg-card);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            padding: 30px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+            z-index: 1;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+            z-index: 2;
+        }
+
+        /* SLIDE 1: JUDUL (Elegant Dark/Teal Theme) */
+        .slide-judul-layout {
+            justify-content: center !important;
+            align-items: center !important;
+            text-align: center;
+            background: radial-gradient(circle at top right, rgba(45, 212, 191, 0.15), transparent 60%),
+                radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.1), transparent 60%),
+                var(--bg-card);
+        }
+
+        .slide-judul-layout * {
+            align-self: center;
+            text-align: center;
+        }
+
+        .presentation-tag {
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--teal);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            background: var(--teal-light);
+            padding: 6px 18px;
+            border-radius: 30px;
+            border: 1px solid rgba(45, 212, 191, 0.2);
+            display: inline-block;
+        }
+
+        .main-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.35;
+            margin-bottom: 20px;
+            max-width: 920px;
+            color: #FFFFFF;
+        }
+
+        .sub-title {
+            font-size: 16px;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-bottom: 40px;
+            max-width: 800px;
+            line-height: 1.6;
+        }
+
+        .presenter-details {
+            border-top: 1px solid var(--border);
+            padding-top: 25px;
+            font-size: 14px;
+            color: var(--text-muted);
+            width: 80%;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .presenter-details strong {
+            color: var(--text-main);
+        }
+
+        /* SLIDE COMMON HEADERS */
+        .slide-nav-tag {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--teal);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .slide-main-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .slide-main-title::after {
+            content: "";
+            flex-grow: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* CONTENT CONTAINER */
+        .slide-body {
+            display: flex;
+            gap: 40px;
+            flex-grow: 1;
+            min-height: 0;
+            align-items: center;
+        }
+
+        .content-left {
+            flex: 1.1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .content-right {
+            flex: 0.9;
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        /* BULLET LISTS WITH CUSTOM DESIGN */
+        .custom-bullets {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .custom-bullets li {
+            position: relative;
+            padding-left: 32px;
+            font-size: 15px;
+            line-height: 1.55;
+            color: var(--text-main);
+        }
+
+        .custom-bullets li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 6px;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 3px;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        .custom-bullets li strong {
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
+        /* CARDS FOR RUMUSAN MASALAH */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            height: 100%;
+            align-content: center;
+        }
+
+        .tall-card {
+            background: rgba(30, 41, 59, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        .tall-card:hover {
+            border-color: var(--primary);
+            background: rgba(56, 189, 248, 0.05);
+            transform: translateY(-4px);
+        }
+
+        .card-badge {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            width: fit-content;
+            letter-spacing: 0.5px;
+        }
+
+        .tall-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+
+        .tall-card p {
+            font-size: 13.5px;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        /* 3x3 FEATURES GRID */
+        .features-grid-3x3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            width: 100%;
+            height: 100%;
+            align-content: center;
+        }
+
+        .feature-box {
+            background: rgba(30, 41, 59, 0.35);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .feature-box:hover {
+            border-color: var(--primary);
+            background: rgba(56, 189, 248, 0.08);
+            transform: translateY(-3px);
+        }
+
+        .feature-box-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-box h4 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+
+        .feature-box p {
+            font-size: 11.5px;
+            line-height: 1.4;
+            color: var(--text-muted);
+        }
+
+        /* RAD GRID 2x2 STYLING */
+        .rad-grid-2x2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            width: 100%;
+            height: 100%;
+            align-content: center;
+        }
+
+        .rad-card {
+            background: rgba(30, 41, 59, 0.35);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .rad-card:hover {
+            border-color: var(--teal);
+            background: rgba(45, 212, 191, 0.05);
+            transform: translateY(-3px);
+        }
+
+        .rad-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .rad-step-badge {
+            background: rgba(45, 212, 191, 0.15);
+            color: var(--teal);
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .rad-card h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+
+        .rad-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .rad-card ul li {
+            font-size: 11.5px;
+            line-height: 1.35;
+            color: var(--text-muted);
+            position: relative;
+            padding-left: 16px;
+        }
+
+        .rad-card ul li::before {
+            content: "✓";
+            color: var(--teal);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        /* ROADMAP STYLING */
+        .roadmap-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            width: 100%;
+            height: 100%;
+            align-content: center;
+        }
+
+        .roadmap-card {
+            background: rgba(30, 41, 59, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        .roadmap-card:hover {
+            border-color: var(--primary);
+            background: rgba(56, 189, 248, 0.05);
+            transform: translateY(-4px);
+        }
+
+        .roadmap-card h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .roadmap-card h3 span {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        .roadmap-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .roadmap-card ul li {
+            font-size: 12.5px;
+            line-height: 1.45;
+            color: var(--text-muted);
+            position: relative;
+            padding-left: 16px;
+        }
+
+        .roadmap-card ul li::before {
+            content: "•";
+            color: var(--teal);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* SCOPE AND LIMITATION STYLING */
+        .scope-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            width: 100%;
+        }
+
+        .scope-panel {
+            border-radius: 18px;
+            padding: 18px 20px;
+            border: 1px solid var(--border);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .scope-panel.in-scope {
+            background: rgba(16, 185, 129, 0.03);
+            border-top: 4px solid var(--emerald);
+        }
+
+        .scope-panel.out-scope {
+            background: rgba(239, 68, 68, 0.03);
+            border-top: 4px solid var(--rose);
+        }
+
+        .panel-title {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .scope-panel.in-scope .panel-title {
+            color: var(--emerald);
+        }
+
+        .scope-panel.out-scope .panel-title {
+            color: var(--rose);
+        }
+
+        .scope-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .scope-list li {
+            position: relative;
+            padding-left: 16px;
+            font-size: 11.5px;
+            line-height: 1.35;
+            color: var(--text-main);
+        }
+
+        .scope-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .scope-panel.in-scope .scope-list li::before {
+            color: var(--emerald);
+        }
+
+        .scope-panel.out-scope .scope-list li::before {
+            color: var(--rose);
+        }
+
+        /* RIGHT PANEL INFO BOX */
+        .info-box {
+            background: rgba(56, 189, 248, 0.05);
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid rgba(56, 189, 248, 0.1);
+        }
+
+        .info-box h5 {
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .info-box p {
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        /* FOOTER NAV CONTROLS */
+        footer {
+            padding: 20px 40px;
+            border-top: 1px solid var(--border);
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .footer-help {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-nav {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 13px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-nav:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(56, 189, 248, 0.05);
+        }
+
+        .btn-nav:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .btn-primary-nav {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--teal) 100%);
+            color: #0B0F19;
+            border: none;
+            font-weight: 700;
+        }
+
+        .btn-primary-nav:hover:not(:disabled) {
+            background: linear-gradient(135deg, var(--primary-hover) 0%, var(--teal) 100%);
+            color: #0B0F19;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+
+        /* PROGRESS INDICATOR */
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: var(--border);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 20;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--teal) 100%);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-left">
+            <span class="badge-ta">PROPOSAL TA</span>
+            <span class="header-title">Usulan Topik Tugas Akhir</span>
+        </div>
+        <div class="slide-counter">
+            <span id="slide-curr">01</span> / <span id="slide-tot">08</span>
+        </div>
+    </header>
+
+    <!-- CONTAINER SLIDES -->
+    <div class="slides-wrapper">
+
+        <!-- SLIDE 1: JUDUL -->
+        <div class="slide active slide-judul-layout">
+            <span class="presentation-tag">Usulan Topik Tugas Akhir</span>
+            <h1 class="main-title">Software Engineering of GIS (Geographic Information System) Technology for Coffee
+                Plant Mapping of Farmer Groups in Kucur Village</h1>
+            <p class="sub-title">Rekayasa Perangkat Lunak Sistem Informasi Geografis (SIG) Berbasis Web untuk Pemetaan
+                Lahan Kebun Kopi Kelompok Tani di Desa Kucur</p>
+
+            <div class="presenter-details">
+                <div>Pengusul: <strong>Alan Assidiqqi Pratama</strong></div>
+                <div>NIM: <strong>322310022</strong></div>
+                <div>Instansi: <strong>Universitas Ma Chung</strong></div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: LATAR BELAKANG MASALAH UTAMA -->
+        <div class="slide">
+            <div>
+                <span class="slide-nav-tag">01. Pendahuluan</span>
+                <h2 class="slide-main-title">Latar Belakang Masalah</h2>
+            </div>
+            <div class="slide-body">
+                <div class="content-left">
+                    <ul class="custom-bullets">
+                        <li><strong>Potensi Kopi Desa Kucur:</strong> Desa Kucur (Kec. Dau, Kab. Malang) memiliki potensi perkebunan kopi ekspor berkualitas yang dikelola oleh kelompok tani lokal.</li>
+                        <li><strong>Keterbatasan Pencatatan Konvensional:</strong> Pencatatan batas lahan, elevasi kebun, jenis varietas kopi, dan jumlah pohon masih dilakukan secara konvensional (menggunakan kertas), sehingga membatasi akurasi peramalan panen.</li>
+                        <li><strong>Hambatan Kemitraan & Pasca-Panen:</strong> Ketiadaan transparansi data geografis dan pengelolaan pasca-panen yang belum maksimal sering menyebabkan kerugian saat panen raya akibat permainan tengkulak.</li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="info-box">
+                        <h5>Akar Permasalahan</h5>
+                        <p>Ketiadaan sistem peta digital terintegrasi yang menghubungkan data spasial lahan kopi, elevasi MDPL, dan rantai pasok agribisnis desa.</p>
+                    </div>
+                    <div class="info-box" style="margin-top: 15px; border-color: rgba(45, 212, 191, 0.2); background: rgba(45, 212, 191, 0.03);">
+                        <h5 style="color: var(--teal);">Solusi Usulan System</h5>
+                        <p>Membangun platform <strong>LENTERA Web-GIS & SCM</strong> untuk memetakan lahan kopi secara presisi serta mentransformasi pengelolaan pasca-panen desa.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE POIN 5 (DAHULU): KORELASI KARAKTERISTIK GEOGRAFIS & GEOLOGIS -->
+        <div class="slide">
+            <div>
+                <span class="slide-nav-tag">01. Karakteristik Geografis & Geologis</span>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+                    <h2 class="slide-main-title" style="margin-bottom: 0;">Geografi & Topografi Wilayah Desa Kucur</h2>
+                    <span class="rpjmdes-badge">RPJMDes Bab IV (Profil Wilayah & Geologi)</span>
+                </div>
+            </div>
+            <div class="slide-body">
+                <div class="content-left">
+                    <strong style="color: var(--teal); font-size: 13px; display: block; margin-bottom: 8px;">Fakta Lapangan Dokumen RPJMDes Kucur:</strong>
+                    <ul class="custom-bullets">
+                        <li><strong>Koordinat & Luas Wilayah:</strong> Desa Kucur terletak pada koordinat <code>7°57'44.59" LS</code> & <code>112°33'06.77" BT</code> dengan luas wilayah <code>717,00 Ha</code>.</li>
+                        <li><strong>Topografi Daratan Tinggi:</strong> Berada di lereng Gunung Sari dengan ketinggian rata-rata <code>800 m s.d. 2494 m MDPL</code>.</li>
+                        <li><strong>Lahan Tegalan Kering:</strong> Kondisi tanah pertanian didominasi tegalan kering tadah hujan seluas <code>316,50 Ha</code>.</li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="info-box" style="border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.05);">
+                        <h5 style="color: var(--primary);">Penerapan Teknis SIG LENTERA</h5>
+                        <p>Skema database <code>coffee_plots</code> menggunakan tipe data spasial PostGIS <code>GEOMETRY(Point, 4326)</code> untuk merekam titik lokasi latitude & longitude.</p>
+                    </div>
+                    <div class="legal-box" style="margin-top: 14px; border-color: rgba(56, 189, 248, 0.3);">
+                        <strong style="color: #38BDF8; display: block; margin-bottom: 4px;">Korelasi di Peta:</strong>
+                        <p style="font-size: 12px; line-height: 1.4; color: var(--text-main);">Titik sebaran lahan kopi diklasifikasikan berdasarkan ketinggian MDPL (elevation). Ini krusial karena varietas Arabika membutuhkan elevasi lebih tinggi dibanding Robusta untuk tumbuh optimal.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE POIN 6 (DAHULU): KORELASI KESENJANGAN TEKNOLOGI PERTANIAN -->
+        <div class="slide">
+            <div>
+                <span class="slide-nav-tag">01.5. Kesenjangan Teknologi & Digitalisasi</span>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+                    <h2 class="slide-main-title" style="margin-bottom: 0;">Digitalisasi Lahan Tani & Inventarisasi Spasial</h2>
+                    <span class="rpjmdes-badge">RPJMDes Bab IV (Hambatan f)</span>
+                </div>
+            </div>
+            <div class="slide-body">
+                <div class="content-left">
+                    <strong style="color: var(--rose); font-size: 13px; display: block; margin-bottom: 8px;">Fakta Lapangan Dokumen RPJMDes Kucur:</strong>
+                    <ul class="custom-bullets">
+                        <li><strong>Masalah Riil Penguasaan Teknologi:</strong> Terdapat masalah berupa <em>"kurangnya penguasaan teknologi pertanian sehingga menyebabkan kurang maksimalnya hasil pertanian"</em>.</li>
+                        <li><strong>Pencatatan Konvensional Kertas:</strong> Pencatatan lahan, estimasi panen, & kepemilikan aset pada 7 kelompok tani (<strong>Gemah Ripah 1–5 dan KWT 1–2</strong>) masih dilakukan manual menggunakan kertas.</li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="info-box" style="border-color: rgba(248, 113, 113, 0.4); background: rgba(248, 113, 113, 0.05);">
+                        <h5 style="color: var(--rose);">Penerapan Teknis SIG LENTERA</h5>
+                        <p>Inventarisasi metadata pertanian digital yang terikat langsung pada pin koordinat spasial lahan kopi.</p>
+                    </div>
+                    <div class="legal-box" style="margin-top: 14px; border-color: rgba(248, 113, 113, 0.3);">
+                        <strong style="color: #F87171; display: block; margin-bottom: 4px;">Korelasi Interaktif Peta Leaflet.js:</strong>
+                        <p style="font-size: 12px; line-height: 1.4; color: var(--text-main);">Saat investor (Sponsor) atau dinas terkait mengetuk marker kebun di peta, sistem secara otomatis menampilkan pop-up profil petani pemilik, varietas kopi, jumlah pohon (tree count), & estimasi tonase panen.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE POIN 1: KORELASI FITUR SCM HUB -->
+        <div class="slide">
+            <div>
+                <span class="slide-nav-tag">02. Supply Chain Management Hub</span>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+                    <h2 class="slide-main-title" style="margin-bottom: 0;">Mitigasi Kerugian Panen Raya & Modul SCM</h2>
+                    <span class="rpjmdes-badge">RPJMDes Bab IV (Hambatan f kedua)</span>
+                </div>
+            </div>
+            <div class="slide-body">
+                <div class="content-left">
+                    <strong style="color: var(--rose); font-size: 13px; display: block; margin-bottom: 8px;">Masalah Riil Desa (RPJMDes Kucur):</strong>
+                    <ul class="custom-bullets">
+                        <li><strong>Pengelolaan Pasca-Panen Kurang Maksimal:</strong> Kurangnya penguasaan teknologi pengelolaan pasca-panen (Hambatan f kedua).</li>
+                        <li><strong>Permainan Tengkulak & Harga Anjlok:</strong> Petani mengalami kerugian karena harga jual kopi dan jeruk sering turun drastis (anjlok) saat panen raya akibat permainan tengkulak.</li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="info-box" style="border-color: rgba(52, 211, 153, 0.4); background: rgba(52, 211, 153, 0.05);">
+                        <h5 style="color: var(--emerald);">Fitur LENTERA: SCM Hub</h5>
+                        <p>Memuat fitur Tracking Pasca-Panen (Natural/Washed), Grading, Traceability QR Code, serta Demand Forecast & Price Trends.</p>
+                    </div>
+                    <div class="legal-box" style="margin-top: 14px; border-color: rgba(52, 211, 153, 0.3);">
+                        <strong style="color: #34D399; display: block; margin-bottom: 4px;">Justifikasi Ilmiah:</strong>
+                        <p style="font-size: 12px; line-height: 1.4; color: var(--text-main);">Diusulkan sebagai solusi digital langsung untuk memutus rantai tengkulak, menjaga kestabilan harga komoditas saat panen raya, dan meningkatkan nilai tawar hasil tani kopi/jeruk desa secara transparan.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE POIN 2: KORELASI ADVISORY AGRONOMI LIVE -->
+        <div class="slide">
+            <div>
+                <span class="slide-nav-tag">02.5. Advisory Agronomi & Presisi Iklim</span>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+                    <h2 class="slide-main-title" style="margin-bottom: 0;">Pertanian Tadah Hujan & Presisi Iklim Live</h2>
+                    <span class="rpjmdes-badge green">RPJMDes Bab IV (Tadah Hujan 2.100 mm)</span>
+                </div>
+            </div>
+            <div class="slide-body">
+                <div class="content-left">
+                    <strong style="color: var(--teal); font-size: 13px; display: block; margin-bottom: 8px;">Kondisi Geografis Desa (RPJMDes Kucur):</strong>
+                    <ul class="custom-bullets">
+                        <li><strong>Dataran Tinggi 800-2494 MDPL:</strong> Wilayah perkebunan berada di elevasi lereng tinggi.</li>
+                        <li><strong>Tanah Kering Tadah Hujan:</strong> Lahan pertanian sangat bergantung pada curah hujan musiman (rata-rata curah hujan mencapai 2.100 mm per tahun).</li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="info-box" style="border-color: rgba(45, 212, 191, 0.4); background: rgba(45, 212, 191, 0.05);">
+                        <h5 style="color: var(--teal);">Fitur LENTERA: Advisory Open-Meteo & MDPL</h5>
+                        <p>Widget Advisory Agronomi Live (integrasi API cuaca Open-Meteo) & Grafik Distribusi Lahan berdasarkan MDPL pada Dasbor Desa.</p>
+                    </div>
+                    <div class="legal-box" style="margin-top: 14px; border-color: rgba(45, 212, 191, 0.3);">
+                        <strong style="color: #2DD4BF; display: block; margin-bottom: 4px;">Justifikasi Ilmiah:</strong>
+                        <p style="font-size: 12px; line-height: 1.4; color: var(--text-main);">Karena pertanian tadah hujan sangat sensitif terhadap perubahan iklim, fitur ini memberikan prediksi cuaca presisi real-time sekaligus memetakan sebaran Arabika & Robusta agar penanaman optimal.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE POIN 3: KORELASI E-RESOURCE LIBRARY & EDUKASI -->
+        <div class="slide">
+            <div>
+                <span class="slide-nav-tag">03. Pemberdayaan Kelompok Tani</span>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+                    <h2 class="slide-main-title" style="margin-bottom: 0;">Pemberdayaan 7 Kelompok Tani Desa Kucur</h2>
+                    <span class="rpjmdes-badge green">RPJMDes Bab III Misi Bidang D</span>
+                </div>
+            </div>
+            <div class="slide-body">
+                <div class="content-left">
+                    <strong style="color: var(--emerald); font-size: 13px; display: block; margin-bottom: 8px;">Kebijakan Pemberdayaan (RPJMDes Kucur):</strong>
+                    <ul class="custom-bullets">
+                        <li><strong>Misi Bidang D (Pemberdayaan SDM):</strong> Prioritas utama untuk <em>"Meningkatkan SDM Kelompok Tani dan Ternak"</em>.</li>
+                        <li><strong>Pelatihan Pupuk Organik:</strong> Desa memprioritaskan pelatihan pertanian & pupuk organik karena rendahnya pemahaman pertanian alternatif.</li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="info-box" style="border-color: rgba(52, 211, 153, 0.4); background: rgba(52, 211, 153, 0.05);">
+                        <h5 style="color: var(--emerald);">Fitur LENTERA: Edukasi & E-Resource</h5>
+                        <p>Portal Modul Edukasi Wisata Tani & E-Resource Library Digital Desa.</p>
+                    </div>
+                    <div class="legal-box" style="margin-top: 14px; border-color: rgba(52, 211, 153, 0.3);">
+                        <strong style="color: #34D399; display: block; margin-bottom: 4px;">Justifikasi Ilmiah:</strong>
+                        <p style="font-size: 12px; line-height: 1.4; color: var(--text-main);">Platform ini mendigitalisasi modul pelatihan fisik (seperti panduan pupuk organik) menjadi perpustakaan digital terpusat yang diakses mandiri oleh 7 Kelompok Tani aktif Kucur (<strong>Gemah Ripah 1–5 dan KWT 1–2</strong>).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE POIN 4: KORELASI PORTAL SPONSOR B2B HUB -->
+        <div class="slide">
+            <div>
+                <span class="slide-nav-tag">03.5. Kemitraan Investasi B2B</span>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
+                    <h2 class="slide-main-title" style="margin-bottom: 0;">Permodalan UMKM & Transfer Pihak Ketiga</h2>
+                    <span class="rpjmdes-badge blue">RPJMDes Bab IV (Hambatan h & Pasal 5.1)</span>
+                </div>
+            </div>
+            <div class="slide-body">
+                <div class="content-left">
+                    <strong style="color: var(--primary); font-size: 13px; display: block; margin-bottom: 8px;">Masalah Permodalan & Regulasi (RPJMDes Kucur):</strong>
+                    <ul class="custom-bullets">
+                        <li><strong>Permodalan UMKM Kurang:</strong> UMKM rumahan Kucur <em>"belum mendapatkan perhatian cukup dalam hal permodalan dan pemasaran"</em> (Hambatan h).</li>
+                        <li><strong>Regulasi Transfer Pihak Ketiga:</strong> Pasal 5.1 memperbolehkan desa menerima pendapatan transfer dari pihak ketiga.</li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="info-box" style="border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.05);">
+                        <h5 style="color: var(--primary);">Fitur LENTERA: Sponsor B2B Hub</h5>
+                        <p>Formulir pengunggahan proposal kemitraan (&lt; 5MB) & dasbor Approval Sponsorship oleh Kepala Desa.</p>
+                    </div>
+                    <div class="legal-box" style="margin-top: 14px; border-color: rgba(56, 189, 248, 0.3);">
+                        <strong style="color: #38BDF8; display: block; margin-bottom: 4px;">Justifikasi Ilmiah:</strong>
+                        <p style="font-size: 12px; line-height: 1.4; color: var(--text-main);">Menyediakan jembatan formal & transparan bagi investor swasta untuk menyalurkan investasi/dana CSR secara legal langsung ke kas UMKM kelompok tani di bawah pengawasan desa.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: RUMUSAN MASALAH -->
+        <div class="slide">
+            <div>
+                <span class="slide-nav-tag">03. Rumusan Masalah</span>
+                <h2 class="slide-main-title">Rumusan Masalah Penelitian</h2>
+            </div>
+            <div class="slide-body" style="align-items: stretch;">
+                <div class="grid-layout" style="grid-template-columns: 1fr 1fr 1fr;">
+                    <div class="tall-card">
+                        <span class="card-badge">RM-01</span>
+                        <h3>Rancang Bangun Web-GIS & SCM</h3>
+                        <p>Bagaimana merancang dan membangun platform LENTERA Web-GIS yang mengintegrasikan pemetaan spasial lahan kebun kopi Desa Kucur dengan modul Supply Chain Management (SCM) Hub secara terpadu?</p>
+                    </div>
+                    <div class="tall-card">
+                        <span class="card-badge">RM-02</span>
+                        <h3>Arsitektur & Keamanan</h3>
+                        <p>Bagaimana mengimplementasikan arsitektur API Three-Tier dengan otentikasi JWT stateless dan RBAC untuk mengamankan modifikasi data spasial & transaksi SCM?</p>
+                    </div>
+                    <div class="tall-card">
+                        <span class="card-badge">RM-03</span>
+                        <h3>Mitigasi & Presisi Panen</h3>
+                        <p>Bagaimana mengintegrasikan model peramalan panen MLR dan Spatial Traceability (QR Code) untuk menjaga kestabilan harga komoditas saat panen raya?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: BATASAN MASALAH (IN-SCOPE VS OUT-OF-SCOPE) -->
+        <div class="slide">
+            <div>
+                <span class="slide-nav-tag">03.5. Batasan Penelitian</span>
+                <h2 class="slide-main-title">Batasan Masalah & Ruang Lingkup Sistem</h2>
+            </div>
+            <div class="slide-body" style="align-items: stretch; justify-content: center; height: 100%;">
+                <div class="scope-container">
+                    <div class="scope-panel in-scope">
+                        <div class="panel-title"><span>✓</span> Ruang Lingkup Implementasi (In-Scope)</div>
+                        <ul class="scope-list">
+                            <li><strong>Pemetaan Spasial & Polygon Leaflet.js:</strong> Pemetaan batas lahan kopi Desa Kucur, varietas Arabika/Robusta, & elevasi MDPL via PostGIS.</li>
+                            <li><strong>Model Peramalan Panen MLR:</strong> Perhitungan estimasi tonase panen berbasis Luas Lahan (m²), Jumlah Pohon, & Elevasi MDPL.</li>
+                            <li><strong>SCM Supply Chain Management Hub:</strong> Tracking Pasca-Panen (Natural/Washed), Grading, Traceability QR Code, & Approval Sponsorship B2B.</li>
+                            <li><strong>Dasbor Eksekutif & Control Panel:</strong> Pemisahan Portal Publik Read-Only & Control Panel Standalone Perangkat Desa.</li>
+                        </ul>
+                    </div>
+                    <div class="scope-panel out-scope">
+                        <div class="panel-title"><span>✗</span> Di Luar Lingkup (Out-of-Scope)</div>
+                        <ul class="scope-list">
+                            <li>Sistem transaksi e-commerce jual-beli kopi langsung, checkout payment gateway, & pembukuan keuangan UMKM mandiri.</li>
+                            <li>Fitur kalkulasi rute jalan dinamis otomatis (Leaflet Routing Machine) karena kendala sinyal internet lereng gunung.</li>
+                            <li>Integrasi perangkat sensor IoT (Internet of Things) kelembaban tanah fisik secara real-time di kebun.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE ARSITEKTUR SITEMAP (BERDASARKAN MINDMAP) -->
+        <div class="slide">
+            <div>
+                <span class="slide-nav-tag">04. Arsitektur Sistem</span>
+                <h2 class="slide-main-title">Peta Situs (Sitemap) LENTERA Web-GIS & SCM</h2>
+            </div>
+            <div class="slide-body" style="align-items: stretch; justify-content: center; height: 100%;">
+                <div class="scope-container">
+                    <div class="scope-panel in-scope" style="border-top-color: var(--teal);">
+                        <div class="panel-title" style="color: var(--teal);">🌐 Portal Publik & Wisatawan</div>
+                        <ul class="scope-list">
+                            <li><strong>Home Page & Banner Utama:</strong> Hero agrowisata Desa Kucur & live weather.</li>
+                            <li><strong>Peta Web-GIS Interaktif:</strong> Basemap Switcher (Satelit Esri, Vektor, Topografi), Poligon Batas Desa Kucur, Vector SVG Pins (Arabika & Robusta), & Widget Statistik Spasial.</li>
+                            <li><strong>Modul Edukasi Wisata Tani:</strong> Panduan budidaya kopi lereng tinggi.</li>
+                            <li><strong>E-Resource Library & Sponsor B2B:</strong> Pengumuman desa & proposal investor.</li>
+                            <li><strong>Profil & Portal Login Wisatawan:</strong> Informasi instansi & akses masuk.</li>
+                        </ul>
+                    </div>
+                    <div class="scope-panel in-scope" style="border-top-color: var(--primary);">
+                        <div class="panel-title" style="color: var(--primary);">🛡️ Dasbor Perangkat Desa & Admin</div>
+                        <ul class="scope-list">
+                            <li><strong>Dasbor Eksekutif Kontrol Mandiri:</strong> 4 Metrik Spasial (Pohon, MLR, Elevasi, B2B), Grafik Panen MDPL, Mini Peta Live, Advisory Open-Meteo, & Quick Action Panel.</li>
+                            <li><strong>Manajemen Spasial & Digitasi Lahan:</strong> Form input lat, lng, elevasi & MLR.</li>
+                            <li><strong>Modul Hasil & Prediksi Panen:</strong> Pemetaan Lahan, Pencatatan Hasil Panen Realisasi, Prediksi Panen MLR, Tracking Pasca-Panen, & Traceability QR Code.</li>
+                            <li><strong>Approval Sponsor B2B & Moderasi:</strong> Approval PDF proposal & ulasan visitor.</li>
+                            <li><strong>RBAC & Keamanan JWT:</strong> Otentikasi akun admin stateless.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE DASBOR EKSEKUTIF DESA -->
+        <div class="slide">
+            <div>
+                <span class="slide-nav-tag">04.5. Dasbor Eksekutif Kontrol Mandiri Desa</span>
+                <h2 class="slide-main-title">Fitur-Fitur Utama Dasbor Perangkat Desa</h2>
+            </div>
+            <div class="slide-body" style="align-items: stretch; justify-content: center; height: 100%;">
+                <div class="features-grid-3x3" style="grid-template-columns: 1fr 1fr 1fr;">
+                    <div class="feature-box">
+                        <div class="feature-box-header">
+                            <span class="card-badge">METRIK</span>
+                            <h4>4 Kartu Metrik Spasial</h4>
+                        </div>
+                        <p>Jumlah Pohon, Tonase MLR, Rata-rata Elevasi MDPL, dan Total Dana Kemitraan B2B.</p>
+                    </div>
+
+                    <div class="feature-box">
+                        <div class="feature-box-header">
+                            <span class="card-badge" style="background: rgba(52, 211, 153, 0.15); color: var(--emerald);">GRAFIK</span>
+                            <h4>Distribusi Panen per MDPL</h4>
+                        </div>
+                        <p>Visualisasi grafik estimasi panen varietas Arabika & Robusta berdasarkan zona ketinggian.</p>
+                    </div>
+
+                    <div class="feature-box">
+                        <div class="feature-box-header">
+                            <span class="card-badge" style="background: rgba(56, 189, 248, 0.15); color: var(--primary);">GIS</span>
+                            <h4>Mini Peta Spasial Live</h4>
+                        </div>
+                        <p>Widget miniatur peta interaktif sebaran lahan kebun Desa Kucur secara real-time.</p>
+                    </div>
+
+                    <div class="feature-box">
+                        <div class="feature-box-header">
+                            <span class="card-badge" style="background: rgba(45, 212, 191, 0.15); color: var(--teal);">CUACA</span>
+                            <h4>Advisory Agronomi Live</h4>
+                        </div>
+                        <p>Integrasi Open-Meteo cuaca live dan saran otomatis penjemuran kopi untuk Kades.</p>
+                    </div>
+
+                    <div class="feature-box">
+                        <div class="feature-box-header">
+                            <span class="card-badge" style="background: rgba(248, 113, 113, 0.15); color: var(--rose);">ACTION</span>
+                            <h4>Quick Action Panel</h4>
+                        </div>
+                        <p>Fungsi cepat Approval Sponsor B2B, Moderasi Ulasan Visitor, dan Export Laporan PDF.</p>
+                    </div>
+
+                    <div class="feature-box">
+                        <div class="feature-box-header">
+                            <span class="card-badge">DIGITASI</span>
+                            <h4>Manajemen Spasial Lahan</h4>
+                        </div>
+                        <p>Digitasi titik & poligon lahan baru, input elevasi MDPL, dan kalkulasi otomatis MLR.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE MODUL HASIL & PREDIKSI PANEN -->
+        <div class="slide">
+            <div>
+                <span class="slide-nav-tag">05. Modul Hasil & Prediksi Panen</span>
+                <h2 class="slide-main-title">Modul Pencatatan Panen & Peramalan Hasil MLR</h2>
+            </div>
+            <div class="slide-body" style="align-items: stretch; justify-content: center; height: 100%;">
+                <div class="rad-grid-2x2">
+                    <div class="rad-card">
+                        <div class="rad-card-header">
+                            <span class="rad-step-badge">MODUL 1</span>
+                            <span style="font-size: 11px; font-weight: 800; color: var(--primary);">PASCA-PANEN</span>
+                        </div>
+                        <h3>Tracking Pasca-Panen Kopi</h3>
+                        <ul>
+                            <li>Pelacakan metode olah biji kopi (Natural & Washed Process).</li>
+                            <li>Pemantauan durasi pengeringan di greenhouse penjemuran desa.</li>
+                        </ul>
+                    </div>
+
+                    <div class="rad-card">
+                        <div class="rad-card-header">
+                            <span class="rad-step-badge">MODUL 2</span>
+                            <span style="font-size: 11px; font-weight: 800; color: var(--primary);">HASIL PANEN</span>
+                        </div>
+                        <h3>Pencatatan Panen Realisasi & Grading</h3>
+                        <ul>
+                            <li>Pencatatan volume hasil panen aktual per lahan kebun (bukan mutasi stok gudang).</li>
+                            <li>Klasifikasi kelas mutu biji kopi hasil panen (Specialty vs Commercial Grade).</li>
+                        </ul>
+                    </div>
+
+                    <div class="rad-card">
+                        <div class="rad-card-header">
+                            <span class="rad-step-badge">MODUL 3</span>
+                            <span style="font-size: 11px; font-weight: 800; color: var(--primary);">TRACEABILITY</span>
+                        </div>
+                        <h3>Traceability QR Code Generator</h3>
+                        <ul>
+                            <li>Generator QR Code kejelasan asal-usul kebun pada kemasan kopi.</li>
+                            <li>Pemindaian QR Code yang langsung menampilkan peta spasial lahan asal.</li>
+                        </ul>
+                    </div>
+
+                    <div class="rad-card">
+                        <div class="rad-card-header">
+                            <span class="rad-step-badge">MODUL 4</span>
+                            <span style="font-size: 11px; font-weight: 800; color: var(--primary);">PREDIKSI PANEN MLR</span>
+                        </div>
+                        <h3>Model Peramalan Hasil Panen MLR</h3>
+                        <ul>
+                            <li>Estimasi tonase hasil panen kopi berdasarkan Luas Lahan (m²), Pohon, & Elevasi.</li>
+                            <li>Visualisasi grafik prediksi hasil panen per zona ketinggian MDPL Desa Kucur.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE METODOLOGI RAD -->
+        <div class="slide">
+            <div>
+                <span class="slide-nav-tag">06. Metodologi Pengembangan</span>
+                <h2 class="slide-main-title">Metodologi Rapid Application Development (RAD)</h2>
+            </div>
+            <div class="slide-body" style="align-items: stretch; justify-content: center; height: 100%;">
+                <div class="rad-grid-2x2">
+                    <div class="rad-card">
+                        <div class="rad-card-header">
+                            <span class="rad-step-badge">Fase 1</span>
+                            <span style="font-size: 11px; font-weight: 800; color: var(--primary);">REQUIREMENTS PLANNING</span>
+                        </div>
+                        <h3>Perencanaan Kebutuhan Perangkat Lunak</h3>
+                        <ul>
+                            <li>Analisis pencatatan konvensional lahan & elevasi kebun kopi Desa Kucur.</li>
+                            <li>Wawancara & observasi bersama kelompok tani dan perangkat desa.</li>
+                            <li>Penyusunan analisis kebutuhan sistem terstruktur.</li>
+                        </ul>
+                    </div>
+
+                    <div class="rad-card">
+                        <div class="rad-card-header">
+                            <span class="rad-step-badge">Fase 2</span>
+                            <span style="font-size: 11px; font-weight: 800; color: var(--primary);">USER DESIGN & PROTOTYPING</span>
+                        </div>
+                        <h3>Perancangan & Prototipe Interaktif</h3>
+                        <ul>
+                            <li>Desain UI/UX React.js (Portal Publik & Dasbor Perangkat Desa).</li>
+                            <li>Prototipe cepat peta spasial Leaflet.js & skema warna elevasi MDPL.</li>
+                            <li>Iterasi cepat fitur SCM Hub & peramalan panen Regresi MLR.</li>
+                        </ul>
+                    </div>
+
+                    <div class="rad-card">
+                        <div class="rad-card-header">
+                            <span class="rad-step-badge">Fase 3</span>
+                            <span style="font-size: 11px; font-weight: 800; color: var(--primary);">CONSTRUCTION & CODING</span>
+                        </div>
+                        <h3>Konstruksi & Integrasi Sistem</h3>
+                        <ul>
+                            <li>Pengodean Web Frontend & RESTful API Express.js.</li>
+                            <li>Integrasi basis data relasional PostgreSQL (E-Resource, Edukasi, Ulasan, Admin).</li>
+                            <li>Implementasi kontrol moderasi ulasan & persetujuan sponsorship B2B.</li>
+                        </ul>
+                    </div>
+
+                    <div class="rad-card">
+                        <div class="rad-card-header">
+                            <span class="rad-step-badge">Fase 4</span>
+                            <span style="font-size: 11px; font-weight: 800; color: var(--primary);">CUTOVER & TESTING</span>
+                        </div>
+                        <h3>Pengujian & Cutover</h3>
+                        <ul>
+                            <li>Pengujian fungsionalitas (Black-Box Testing) & responsivitas Mobile.</li>
+                            <li>Serah terima platform LENTERA Web-GIS kepada Perangkat Desa Kucur.</li>
+                            <li>Penyusunan draf artikel ilmiah untuk publikasi jurnal SMARTICS.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE KEUNGGULAN DAN NOVELTY -->
+        <div class="slide">
+            <div>
+                <span class="slide-nav-tag">07. Nilai Kebaruan & Arsitektur Solusi</span>
+                <h2 class="slide-main-title">Keunggulan & Kebaruan Sistem (Novelty)</h2>
+            </div>
+            <div class="slide-body">
+                <div class="content-left">
+                    <ul class="custom-bullets">
+                        <li><strong>Pemisahan Arsitektur Portal Publik vs Dasbor Belakang:</strong> Portal publik murni <em>Read-Only</em> bagi wisatawan, sementara seluruh kontrol terpusat di Dasbor Perangkat Desa.</li>
+                        <li><strong>Peramalan Hasil Panen MLR Terintegrasi Elevasi:</strong> Model Regresi Linear Berganda presisi tinggi yang menggabungkan Luas Lahan, Jumlah Pohon, dan Elevasi MDPL.</li>
+                        <li><strong>Integrasi SCM & Traceability Spasial:</strong> Penelusuran asal-usul kopi via QR Code yang terhubung langsung dengan peta lokasi kebun.</li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="info-box" style="border-left: 4px solid var(--emerald); background: rgba(52, 211, 153, 0.02); margin-top: 0;">
+                        <h5 style="color: var(--emerald);">Responsif & Mobile Bottom-Sheet UX</h5>
+                        <p>Navigasi peta interaktif di HP otomatis beralih ke tata letak <em>Bottom Sheet slide-up</em> dan <em>Hamburger Drawer</em>.</p>
+                    </div>
+                    <div class="info-box" style="margin-top: 15px;">
+                        <h5>Persistensi Data PostgreSQL RESTful API</h5>
+                        <p>Seluruh transaksi data terhubung langsung ke basis data relational PostgreSQL.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE TUJUAN TUGAS AKHIR -->
+        <div class="slide">
+            <div>
+                <span class="slide-nav-tag">08. Sasaran Riset & Luaran TA</span>
+                <h2 class="slide-main-title">Tujuan & Luaran Tugas Akhir</h2>
+            </div>
+            <div class="slide-body">
+                <div class="content-left">
+                    <ul class="custom-bullets">
+                        <li><strong>Perancangan Spesifikasi Sistem:</strong> Menyusun analisis & pemodelan kebutuhan sistem Web-GIS & SCM yang terstruktur.</li>
+                        <li><strong>Platform Web-GIS & SCM Terintegrasi:</strong> Membangun sistem Web-GIS interaktif Leaflet.js dengan fitur Peramalan Panen (MLR), SCM Hub, dan Dasbor Belakang Desa.</li>
+                        <li><strong>Inovasi Moderasi & Kemitraan B2B:</strong> Menyediakan sarana moderasi ulasan serta approval sponsorship digital.</li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <div class="info-box" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                        <h5 style="font-size: 15px; margin-bottom: 12px;">Luaran Utama Penelitian</h5>
+                        <p style="margin-bottom: 10px;">1. Dokumen analisis kebutuhan sistem sebagai cetak biru platform.</p>
+                        <p style="margin-bottom: 10px;">2. Platform LENTERA Web-GIS & SCM fungsional terhubung PostgreSQL.</p>
+                        <p>3. Draf Artikel Ilmiah terstruktur untuk jurnal SMARTICS.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE PENUTUP -->
+        <div class="slide slide-judul-layout">
+            <span class="presentation-tag" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: #FFFFFF;">Penutup Usulan</span>
+            <h1 class="main-title" style="font-size: 40px; margin-bottom: 10px; font-family: 'Playfair Display', serif;">Terima Kasih</h1>
+            <p class="sub-title" style="margin-bottom: 25px;">Mohon arahan dan masukan Bapak/Ibu Dosen Penguji untuk usulan topik ini.</p>
+
+            <div class="author-box" style="width: 50%; border-top: 1px solid var(--border); padding-top: 20px; font-size: 14px; color: var(--text-muted);">
+                Alan Assidiqqi Pratama &bull; 322310022
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PANEL KONTROL NAVIGASI -->
+    <footer>
+        <div class="footer-help">Gunakan tombol panah keyboard (◀ / ▶) atau tombol di bawah</div>
+        <div class="nav-buttons">
+            <button id="nav-prev" class="btn-nav" disabled>◀ Sebelumnya</button>
+            <button id="nav-next" class="btn-nav btn-primary-nav">Selanjutnya ▶</button>
+        </div>
+    </footer>
+
+    <!-- PROGRESS BAR -->
+    <div class="progress-container">
+        <div id="indicator-fill" class="progress-fill"></div>
+    </div>
+
+    <!-- JAVASCRIPT NAVIGASI INTERAKTIF -->
+    <script>
+        const taSlides = document.querySelectorAll('.slide');
+        const taBtnPrev = document.getElementById('nav-prev');
+        const taBtnNext = document.getElementById('nav-next');
+        const taSlideCurr = document.getElementById('slide-curr');
+        const taSlideTot = document.getElementById('slide-tot');
+        const taIndicatorFill = document.getElementById('indicator-fill');
+
+        let taCurrentIndex = 0;
+        const taTotalSlides = taSlides.length;
+
+        taSlideTot.textContent = String(taTotalSlides).padStart(2, '0');
+
+        function updateTaSlides() {
+            // Tampilkan slide aktif, sembunyikan yang lain
+            taSlides.forEach((slide, idx) => {
+                if (idx === taCurrentIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            // Update nomor slide aktif
+            taSlideCurr.textContent = String(taCurrentIndex + 1).padStart(2, '0');
+
+            // Update disabled state tombol
+            taBtnPrev.disabled = taCurrentIndex === 0;
+
+            if (taCurrentIndex === taTotalSlides - 1) {
+                taBtnNext.innerHTML = 'Mulai Kembali 🔄';
+            } else {
+                taBtnNext.innerHTML = 'Selanjutnya ▶';
+            }
+
+            // Update progress bar
+            const percent = (taCurrentIndex / (taTotalSlides - 1)) * 100;
+            taIndicatorFill.style.width = `${percent}%`;
+        }
+
+        // Event listener tombol navigasi
+        taBtnNext.addEventListener('click', () => {
+            if (taCurrentIndex < taTotalSlides - 1) {
+                taCurrentIndex++;
+            } else {
+                taCurrentIndex = 0; // Loop kembali ke awal
+            }
+            updateTaSlides();
+        });
+
+        taBtnPrev.addEventListener('click', () => {
+            if (taCurrentIndex > 0) {
+                taCurrentIndex--;
+            }
+            updateTaSlides();
+        });
+
+        // Dukungan navigasi panah keyboard kiri/kanan
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowRight' || event.key === ' ') {
+                if (taCurrentIndex < taTotalSlides - 1) {
+                    taCurrentIndex++;
+                } else {
+                    taCurrentIndex = 0;
+                }
+                updateTaSlides();
+            } else if (event.key === 'ArrowLeft') {
+                if (taCurrentIndex > 0) {
+                    taCurrentIndex--;
+                }
+                updateTaSlides();
+            }
+        });
+
+        // Inisialisasi
+        updateTaSlides();
+    </script>
+</body>
+
+</html>

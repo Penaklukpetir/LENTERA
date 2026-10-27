@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentasi PKL - LENTERA Desa Wisata Kucur</title>
+
+    <!-- Reveal.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/simple.min.css"
+        id="theme">
+
+    <!-- Theme overrides and custom styles -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/monokai.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --mc-blue: #0A3966;
+            --mc-cyan: #007799;
+            --mc-green: #28A745;
+            --mc-dark-green: #1E6B30;
+            --mc-bg-light: #EFF6FF;
+            --mc-text-dark: #1E293B;
+            --mc-text-muted: #475569;
+
+            --r-main-font: 'Outfit', sans-serif;
+            --r-heading-font: 'Montserrat', sans-serif;
+            --r-heading-color: var(--mc-blue);
+            --r-background-color: #F8FAFC;
+        }
+
+        body {
+            background-color: #F8FAFC !important;
+        }
+
+        .reveal {
+            font-family: var(--r-main-font);
+            color: var(--mc-text-dark);
+            background-color: #F8FAFC;
+            /* Global background for all slides */
+        }
+
+        /* Slide Header inside slides to scale with the content */
+        .slide-header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            border-bottom: 2px solid #E2E8F0;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            background: transparent;
+            width: 100%;
+        }
+
+        .slide-header-title {
+            color: var(--mc-blue);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Slide content styling - only apply flex to active (.present) slide to prevent layout stacking */
+        .reveal .slides section.present {
+            display: flex !important;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: stretch;
+            height: 100% !important;
+        }
+
+        .reveal .slides section {
+            padding: 40px 60px !important;
+            box-sizing: border-box;
+            background-color: transparent !important;
+        }
+
+        /* Title Slide Dark styling */
+        .title-slide {
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: center !important;
+            height: 100% !important;
+            padding: 40px !important;
+            box-sizing: border-box;
+            text-align: center;
+            color: #FFFFFF !important;
+        }
+
+        .title-slide .main-title {
+            font-size: 64px !important;
+            font-weight: 800 !important;
+            color: #FFFFFF !important;
+            margin: 0 !important;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Montserrat', sans-serif;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .title-slide .sub-title {
+            font-size: 24px !important;
+            color: #38BDF8 !important;
+            /* Soft light blue/cyan */
+            font-weight: 500;
+            margin-top: 20px !important;
+            margin-bottom: 40px !important;
+            max-width: 950px;
+            line-height: 1.4;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .title-slide .presenter-info {
+            font-size: 20px;
+            color: #E2E8F0 !important;
+            font-weight: 500;
+            border-top: 2px solid rgba(255, 255, 255, 0.15);
+            padding-top: 20px;
+            display: inline-block;
+        }
+
+        /* TOC Slide Layout */
+        .toc-slide {
+            padding: 0 !important;
+            height: 100% !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: stretch !important;
+        }
+
+        .toc-left {
+            width: 35%;
+            background: linear-gradient(135deg, #E2E8F0 0%, #CBD5E1 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 50px 40px;
+            box-sizing: border-box;
+            border-right: 5px solid var(--mc-blue);
+            text-align: center;
+        }
+
+        .toc-main-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 44px !important;
+            font-weight: 800 !important;
+            color: var(--mc-blue);
+            line-height: 1.2;
+            text-decoration: underline;
+            text-underline-offset: 8px;
+            text-decoration-color: var(--mc-cyan);
+            margin: 0 !important;
+        }
+
+        .toc-right {
+            width: 65%;
+            padding: 60px 60px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-column-gap: 50px;
+            grid-row-gap: 30px;
+            text-align: left;
+        }
+
+        /* Clickable TOC Items */
+        .toc-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none !important;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .toc-item:hover {
+            transform: translateX(5px);
+        }
+
+        .toc-number {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--mc-text-muted);
+            width: 35px;
+        }
+
+        .toc-text {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--mc-blue);
+            transition: color 0.2s ease;
+        }
+
+        .toc-item:hover .toc-text {
+            color: var(--mc-cyan);
+        }
+
+        /* General Content Styling */
+        .content-container {
+            display: flex;
+            gap: 40px;
+            align-items: stretch;
+            text-align: left;
+            flex: 1;
+            /* Automatically fill remaining height */
+            min-height: 0;
+        }
+
+        .col-left {
+            flex: 1.1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .col-right {
+            flex: 0.9;
+            background: var(--mc-bg-light);
+            border-radius: 16px;
+            padding: 30px;
+            box-sizing: border-box;
+            border-left: 6px solid var(--mc-cyan);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+        }
+
+        .slide-heading-main {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 30px !important;
+            font-weight: 700 !important;
+            color: var(--mc-blue);
+            margin-bottom: 20px !important;
+            line-height: 1.2 !important;
+            text-align: left;
+        }
+
+        .bullet-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .bullet-list li {
+            font-size: 20px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            color: var(--mc-text-dark);
+        }
+
+        .bullet-list li strong {
+            color: var(--mc-blue);
+        }
+
+        .reveal code {
+            font-family: monospace;
+            background-color: #E2E8F0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #0F172A;
+            font-weight: 600;
+            font-size: 90%;
+        }
+
+        .callout-box {
+            background: #DBEAFE;
+            border-left: 6px solid #2563EB;
+            padding: 18px 22px;
+            border-radius: 4px 12px 12px 4px;
+            font-size: 18px;
+            line-height: 1.5;
+            color: #1E40AF;
+            font-weight: 500;
+            margin-top: 15px;
+        }
+
+        /* Diagrams, Lists and UI Mockups styling */
+        .flowchart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #FFFFFF;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.05);
+            height: 380px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        /* Scale up Mermaid diagrams to make them larger and easily readable */
+        .flowchart-container .mermaid {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .flowchart-container .mermaid svg {
+            max-width: 95% !important;
+            max-height: 95% !important;
+            width: auto !important;
+            height: auto !important;
+            display: block;
+        }
+
+        /* Click-to-Focus Card styling layout */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            margin-top: 10px;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.02);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Card Focus & Dim states */
+        .grid-cards.has-focused .card:not(.focused) {
+            opacity: 0.25;
+            filter: blur(2px);
+            transform: scale(0.92);
+            pointer-events: none;
+            /* Disable other cards while one is active */
+        }
+
+        .card.focused {
+            transform: scale(1.15);
+            z-index: 10;
+            border-color: var(--mc-cyan) !important;
+            box-shadow: 0 20px 50px rgba(10, 57, 102, 0.2) !important;
+            background: #FFFFFF !important;
+        }
+
+        .card-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--mc-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            line-height: 1.4;
+            color: var(--mc-text-muted);
+            margin: 0;
+        }
+
+        .tag {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .tag-blue {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        .tag-green {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .tag-purple {
+            background: #F3E8FF;
+            color: #6B21A8;
+        }
+
+        /* Table styles */
+        .reveal table {
+            font-size: 15px !important;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .reveal th {
+            background: var(--mc-blue) !important;
+            color: #FFFFFF !important;
+            font-weight: 700 !important;
+            padding: 10px 14px !important;
+            border: 1px solid #E2E8F0 !important;
+        }
+
+        .reveal td {
+            padding: 10px 14px !important;
+            border: 1px solid #E2E8F0 !important;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-success {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        /* Dynamic Demo button styling */
+        .demo-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--mc-blue) 0%, var(--mc-cyan) 100%);
+            color: #FFFFFF !important;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            padding: 14px 28px;
+            border-radius: 30px;
+            text-decoration: none !important;
+            box-shadow: 0 4px 15px rgba(10, 57, 102, 0.3);
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .demo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(10, 57, 102, 0.4);
+            background: linear-gradient(135deg, var(--mc-cyan) 0%, var(--mc-blue) 100%);
+        }
+
+        /* Chrome-like tabs inside mockup browser */
+        .browser-tab {
+            padding: 6px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--mc-text-muted);
+            background: #E2E8F0;
+            border: 1px solid #CBD5E1;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+        }
+
+        .browser-tab:hover {
+            background: #F1F5F9;
+            color: var(--mc-blue);
+        }
+
+        .browser-tab.active-tab {
+            background: #FFFFFF !important;
+            color: var(--mc-blue) !important;
+            border-color: #CBD5E1 !important;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Persistent Global Footer styling */
+        .slide-footer {
+            position: absolute;
+            bottom: 20px;
+            left: 60px;
+            right: 120px;
+            /* Leaves space for Reveal.js navigation controls */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 99;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--mc-text-muted);
+            pointer-events: none;
+        }
+
+        .footer-help {
+            opacity: 0.65;
+            transition: color 0.3s ease;
+        }
+
+        .footer-counter {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            background: #E2E8F0;
+            padding: 4px 14px;
+            border-radius: 20px;
+            color: var(--mc-blue);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        /* Premium Customized Progress Bar */
+        .reveal .progress {
+            height: 6px !important;
+            background: rgba(226, 232, 240, 0.4) !important;
+        }
+
+        .reveal .progress span {
+            background: linear-gradient(90deg, var(--mc-blue) 0%, var(--mc-cyan) 100%) !important;
+            transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* Fragment support */
+        .fragment.fade-in-then-semi-out {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="reveal">
+
+        <!-- PERSISTENT GLOBAL FOOTER -->
+        <div class="slide-footer">
+            <span class="footer-help">◄ ► Gunakan tombol panah keyboard atau klik mouse untuk navigasi</span>
+            <span class="footer-counter"><span id="current-slide">01</span> / <span id="total-slides">12</span></span>
+        </div>
+
+        <div class="slides">
+
+            <!-- SLIDE 1: JUDUL UTAMA (Dark Premium Background) -->
+            <section class="title-slide" data-background-gradient="linear-gradient(135deg, #0A3966 0%, #111827 100%)"
+                data-transition="zoom">
+                <h1 class="main-title">LENTERA</h1>
+                <p class="sub-title">Location, Education, Navigation of Tourism, E-Resource Application:<br>Analisis dan
+                    Desain Sistem Informasi Manajemen Desa Wisata Kucur</p>
+
+                <div class="presenter-info">
+                    <strong>Alan Assidiqqi Pratama</strong><br>
+                    NIM: 322310022<br>
+                    Laporan Praktik Kerja Lapangan (PKL)
+                </div>
+            </section>
+
+
+            <!-- SLIDE 2: TABLE OF CONTENTS (Clickable items) -->
+            <section class="toc-slide" data-transition="slide-in fade-out">
+                <div class="toc-left">
+                    <div class="toc-main-title">TABLE OF<br>CONTENTS</div>
+                </div>
+                <div class="toc-right">
+                    <div class="toc-grid">
+                        <a href="#/2" class="toc-item">
+                            <span class="toc-number">01</span>
+                            <span class="toc-text">Latar Belakang Masalah</span>
+                        </a>
+                        <a href="#/7" class="toc-item">
+                            <span class="toc-number">06</span>
+                            <span class="toc-text">Use Case</span>
+                        </a>
+                        <a href="#/3" class="toc-item">
+                            <span class="toc-number">02</span>
+                            <span class="toc-text">Manfaat dan Tujuan</span>
+                        </a>
+                        <a href="#/8" class="toc-item">
+                            <span class="toc-number">07</span>
+                            <span class="toc-text">Demo</span>
+                        </a>
+                        <a href="#/4" class="toc-item">
+                            <span class="toc-number">03</span>
+                            <span class="toc-text">Profil Mitra</span>
+                        </a>
+                        <a href="#/9" class="toc-item">
+                            <span class="toc-number">08</span>
+                            <span class="toc-text">Dokumentasi SRS</span>
+                        </a>
+                        <a href="#/5" class="toc-item">
+                            <span class="toc-number">04</span>
+                            <span class="toc-text">Landasan Teori dan Teknologi</span>
+                        </a>
+                        <a href="#/10" class="toc-item">
+                            <span class="toc-number">09</span>
+                            <span class="toc-text">Hasil & Evaluasi</span>
+                        </a>
+                        <a href="#/6" class="toc-item">
+                            <span class="toc-number">05</span>
+                            <span class="toc-text">Metode Pengembangan (RAD)</span>
+                        </a>
+                        <a href="#/11" class="toc-item">
+                            <span class="toc-number">10</span>
+                            <span class="toc-text">Kesimpulan</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- SLIDE 3: 01. LATAR BELAKANG MASALAH -->
+            <section data-transition="slide-in fade-out">
+                <div class="slide-header">
+                    <span class="slide-header-title">01. Latar Belakang Masalah</span>
+                </div>
+
+                <h3 class="slide-heading-main">Kesenjangan Digital di Tingkat Pedesaan</h3>
+                <div class="content-container">
+                    <div class="col-left">
+                        <ul class="bullet-list">
+                            <li class="fragment fade-in-then-semi-out"><strong>Kesenjangan Digital:</strong> Pesatnya
+                                penetrasi seluler belum diiringi ekosistem digital terpadu untuk desa wisata.</li>
+                            <li class="fragment fade-in-then-semi-out"><strong>Keterbatasan Pemasaran:</strong>
+                                Informasi pariwisata terpecah-cepah di berbagai platform media sosial tidak terstruktur.
+                            </li>
+                            <li class="fragment fade-in-then-semi-out"><strong>Administrasi Konvensional:</strong> Tata
+                                kelola data ekonomi (UMKM) dan pengawasan dana kemitraan di kantor desa masih manual.
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-right">
+                        <h4 style="margin-top: 0; color: var(--mc-blue); font-weight: 700; font-size: 20px;">Urgensi
+                            Masalah di Desa Kucur</h4>
+                        <p style="font-size: 16px; line-height: 1.5; color: var(--mc-text-dark);">
+                            Desa Kucur memiliki potensi hortikultura (kopi ekspor & jeruk) dan wisata alam melimpah,
+                            namun:
+                        </p>
+                        <div class="callout-box" style="margin-top: 10px; font-size: 16px;">
+                            ❌ Peta wisata desa masih manual/gambar statis.<br>
+                            ❌ UMKM tidak memiliki katalog online yang terpusat.<br>
+                            ❌ Proses sponsorship dan monitoring data keuangan desa belum tercatat otomatis.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- SLIDE 4: 02. MANFAAT DAN TUJUAN -->
+            <section data-transition="slide-in fade-out">
+                <div class="slide-header">
+                    <span class="slide-header-title">02. Manfaat dan Tujuan</span>
+                </div>
+
+                <h3 class="slide-heading-main">Fokus Tujuan & Manfaat PKL</h3>
+                <div class="content-container">
+                    <div class="col-left">
+                        <div class="callout-box"
+                            style="background: #ECFDF5; border-left: 6px solid var(--mc-green); color: var(--mc-dark-green); font-size: 20px; line-height: 1.5; padding: 20px;">
+                            Menganalisis kebutuhan dan merancang arsitektur platform <strong>LENTERA</strong> guna
+                            menghasilkan draf blueprint spesifikasi sistem formal (SRS berbasis IEEE Std 830-1998) serta
+                            prototipe antarmuka web yang teruji.
+                        </div>
+                    </div>
+                    <div class="col-right" style="padding: 20px;">
+                        <h4
+                            style="margin-top: 0; color: var(--mc-blue); font-weight: 700; font-size: 20px; margin-bottom: 10px;">
+                            Manfaat Bagi Stakeholder</h4>
+                        <div
+                            style="font-size: 14px; display: flex; flex-direction: column; gap: 10px; line-height: 1.4;">
+                            <div>
+                                <strong style="color: var(--mc-cyan); font-size: 16px;">Mitra (Pemerintah Desa &
+                                    UMKM):</strong><br>
+                                Cetak biru sistem pariwisata terpadu & platform promosi katalog online terstruktur.
+                            </div>
+                            <div>
+                                <strong style="color: var(--mc-cyan); font-size: 16px;">Pengguna
+                                    (Wisatawan):</strong><br>
+                                Kemudahan akses panduan peta interaktif, pemesanan guide WA, dan artikel edukasi desa.
+                            </div>
+                            <div>
+                                <strong style="color: var(--mc-cyan); font-size: 16px;">Universitas & Prodi
+                                    SI:</strong><br>
+                                Kontribusi nyata pengabdian masyarakat & penyediaan studi kasus rekayasa perangkat
+                                lunak.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- SLIDE 5: 03. PROFIL MITRA -->
+            <section data-transition="slide-in fade-out">
+                <div class="slide-header">
+                    <span class="slide-header-title">03. Profil Mitra</span>
+                </div>
+
+                <h3 class="slide-heading-main">Profil Instansi Desa Kucur</h3>
+                <div class="content-container">
+                    <div class="col-left">
+                        <ul class="bullet-list">
+                            <li><strong>Instansi Kemitraan:</strong> Kantor Pemerintah Desa Kucur bekerja sama dengan
+                                Karang Taruna dan Kelompok Sadar Wisata (Pokdarwis).</li>
+                            <li><strong>Sektor Ekonomi Unggulan:</strong>
+                                <ul>
+                                    <li>Perkebunan kopi kelas ekspor dan jeruk organik.</li>
+                                    <li>Situs wisata alam penangkaran, outbound, dan budaya.</li>
+                                    <li>UMKM olahan pangan kreatif khas pedesaan.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-right"
+                        style="display: flex; flex-direction: column; justify-content: center; align-items: center; background: #FFF; border: 1px solid #E2E8F0; padding: 15px; border-radius: 16px;">
+                        <img src="map_kucur.jpeg" alt="Peta Batas Desa Wisata Kucur"
+                            style="width: 100%; max-height: 250px; object-fit: contain; border-radius: 8px; border: 1px solid #E2E8F0; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background: #0F172A;">
+                        <h4 style="margin: 12px 0 3px 0; color: var(--mc-blue); font-weight: 700; font-size: 18px;">
+                            Lokasi Instansi</h4>
+                        <p
+                            style="font-size: 14px; text-align: center; color: var(--mc-text-muted); margin: 0; line-height: 1.4;">
+                            Jl. Raya Kucur, Kec. Dau, Kabupaten Malang, Jawa Timur.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- SLIDE 6: 04. LANDASAN TEORI & TEKNOLOGI -->
+            <section data-transition="slide-in fade-out">
+                <div class="slide-header">
+                    <span class="slide-header-title">04. Landasan Teori & Teknologi</span>
+                </div>
+
+                <h3 class="slide-heading-main">Landasan Teori dan Kerangka Kerja LENTERA</h3>
+                <div class="content-container"
+                    style="flex-direction: column; justify-content: center; margin-top: 10px;">
+                    <div class="grid-cards">
+                        <div class="card">
+                            <div class="card-title">
+                                <span class="tag tag-blue">Arsitektur</span>
+                                <span>Three-Tier API</span>
+                            </div>
+                            <p class="card-desc">Pemisahan visual (Front-End) dan bisnis logika (Back-End) berbasis
+                                RESTful API dengan format transfer data JSON.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">
+                                <span class="tag tag-green">Keamanan</span>
+                                <span>JWT & RBAC</span>
+                            </div>
+                            <p class="card-desc">Sistem otentikasi stateless menggunakan JSON Web Token dan pembatasan
+                                hak akses dasbor berbasis peran pengguna.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">
+                                <span class="tag tag-purple">Keuangan</span>
+                                <span>DB ACID Lock</span>
+                            </div>
+                            <p class="card-desc">Konstrain database ACID (Atomicity, Consistency, Isolation, Durability)
+                                untuk mengunci transaksi withdrawal saldo UMKM.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">
+                                <span class="tag tag-blue">Geospasial</span>
+                                <span>GIS & Spasial</span>
+                            </div>
+                            <p class="card-desc">Pemetaan marker digital batas koordinat GPS wisata dengan pustaka peta
+                                interaktif Leaflet.js.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">
+                                <span class="tag tag-green">Dokumen</span>
+                                <span>IEEE 830 (SRS)</span>
+                            </div>
+                            <p class="card-desc">Penyusunan blueprint spesifikasi kebutuhan formal mengacu pada standar
+                                IEEE Std 830-1998.</p>
+                        </div>
+                        <div class="card">
+                            <div class="card-title">
+                                <span class="tag tag-purple">Metode</span>
+                                <span>RAD Model</span>
+                            </div>
+                            <p class="card-desc">Siklus hidup rekayasa perangkat lunak inkremental dengan perulangan
+                                masukan (feedback) pengguna yang cepat.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- SLIDE 7: 05. METODE PENGEMBANGAN (RAD) -->
+            <section data-transition="slide-in fade-out">
+                <div class="slide-header">
+                    <span class="slide-header-title">05. Metode Pengembangan (RAD)</span>
+                </div>
+
+                <h3 class="slide-heading-main">Siklus Rapid Application Development</h3>
+                <div class="content-container">
+                    <div class="col-left" style="flex: 1.2;">
+                        <div class="flowchart-container">
+                            <div class="mermaid">
+graph TD
+A([Mulai]) --> B["1. Perencanaan Kebutuhan"]
+B --> C["2. Desain Pengguna"]
+C --> D["3. Konstruksi Kode"]
+D --> E["4. Cutover (Pengujian)"]
+E -->|Umpan Balik| C
+E -->|Sesuai| F([Selesai])
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-right" style="flex: 0.8; padding: 25px;">
+                        <h4
+                            style="margin-top: 0; color: var(--mc-blue); font-weight: 700; font-size: 20px; margin-bottom: 15px;">
+                            4 Tahapan Pelaksanaan</h4>
+                        <ol
+                            style="font-size: 15px; padding-left: 15px; margin: 0; display: flex; flex-direction: column; gap: 12px; line-height: 1.5;">
+                            <li><strong>Requirements Planning:</strong> Observasi dan penentuan kebutuhan (SRS).</li>
+                            <li><strong>User Design:</strong> Pemodelan UML, perancangan basis data, dan antarmuka.</li>
+                            <li><strong>Construction:</strong> Pengkodean template web frontend LENTERA.</li>
+                            <li><strong>Cutover:</strong> Pengujian Black-box dan pemaparan hasil uji (evaluasi) kepada
+                                mitra.</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- SLIDE 8: 06. USE CASE DIAGRAM -->
+            <section data-transition="slide-in fade-out">
+                <div class="slide-header">
+                    <span class="slide-header-title">06. Use Case Diagram</span>
+                </div>
+
+                <h3 class="slide-heading-main">Otorisasi Peran Sistem LENTERA</h3>
+                <div class="content-container">
+                    <div class="col-left" style="flex: 1.3; overflow: hidden;">
+                        <div class="flowchart-container" style="background: #FFFFFF; display: flex; justify-content: center; align-items: center; padding: 10px; overflow: hidden; height: 380px;">
+                            <img src="WhatsApp Image 2026-07-12 at 12.53.02.jpeg" alt="Use Case Diagram LENTERA" style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;">
+                        </div>
+                    </div>
+                    <div class="col-right" style="flex: 0.7; padding: 25px;">
+                        <h4 style="margin-top: 0; color: var(--mc-blue); font-weight: 700; font-size: 20px; margin-bottom: 15px;">Aktor & Otoritas Sistem</h4>
+                        <ul style="font-size: 14px; padding-left: 15px; margin: 0; display: flex; flex-direction: column; gap: 8px; line-height: 1.4; text-align: left;">
+                            <li><strong>Pengunjung (Wisatawan):</strong> Tanpa login. Melihat peta, rute, katalog, detail produk, testimoni, dan checkout WhatsApp.</li>
+                            <li><strong>Sponsor (Investor B2B):</strong> Mengajukan proposal kemitraan sponsorship.</li>
+                            <li><strong>Penjual (Mitra UMKM):</strong> Autentikasi JWT. Mengelola produk toko (CRUD), pesanan masuk, dan mengajukan penarikan saldo.</li>
+                            <li><strong>Admin (Karang Taruna):</strong> Autentikasi JWT. Mengelola penanda peta (CRUD), artikel/buletin (CRUD), dan moderasi testimoni.</li>
+                            <li><strong>Desa (Kepala Desa):</strong> Autentikasi JWT. Mengelola akun admin (CRUD), verifikasi proposal, serta approval withdrawal & upload struk keuangan.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- SLIDE 9: 07. DEMO & PROTOTIPE ANTARMUKA (Wide Interactive Browser Mockup) -->
+            <section data-transition="slide-in fade-out">
+                <div class="slide-header">
+                    <span class="slide-header-title">07. Demo & Prototipe Antarmuka</span>
+                </div>
+
+                <div class="content-container"
+                    style="flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 15px;">
+                    <!-- Full-Width Browser Mockup -->
+                    <div
+                        style="width: 100%; display: flex; flex-direction: column; background: #FFF; border: 1px solid #CBD5E1; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); overflow: hidden; height: 460px; min-height: 0;">
+                        <!-- Browser Header: Window Dots and Tabs -->
+                        <div
+                            style="background: #F1F5F9; border-bottom: 1px solid #CBD5E1; padding: 8px 15px; display: flex; align-items: center; gap: 20px;">
+                            <!-- Dots -->
+                            <div style="display: flex; gap: 6px;">
+                                <span
+                                    style="width: 11px; height: 11px; background: #EF4444; border-radius: 50%;"></span>
+                                <span
+                                    style="width: 11px; height: 11px; background: #F59E0B; border-radius: 50%;"></span>
+                                <span
+                                    style="width: 11px; height: 11px; background: #10B981; border-radius: 50%;"></span>
+                            </div>
+
+                            <!-- Browser Tabs -->
+                            <div class="browser-tabs"
+                                style="display: flex; gap: 4px; overflow-x: auto; margin-bottom: -9px;">
+                                <div class="browser-tab active-tab" data-src="LENTERA/Home.html">Home</div>
+                                <div class="browser-tab" data-src="LENTERA/Catalog.html">Katalog UMKM</div>
+                                <div class="browser-tab" data-src="LENTERA/Location.html">Peta Wisata</div>
+                                <div class="browser-tab" data-src="LENTERA/Navigation.html">Navigasi Wisata</div>
+                                <div class="browser-tab" data-src="LENTERA/DashboardPerangkatDesa/index.html">Dasbor
+                                    Desa</div>
+                                <div class="browser-tab" data-src="LENTERA/DashboardUMKM.html">Dasbor UMKM</div>
+                            </div>
+                        </div>
+
+                        <!-- Browser Address Bar -->
+                        <div
+                            style="background: #F8FAFC; border-bottom: 1px solid #E2E8F0; padding: 6px 15px; display: flex; align-items: center; gap: 10px;">
+                            <!-- Navigation controls (statically styled) -->
+                            <div style="display: flex; gap: 8px; color: #94A3B8; font-size: 14px;">
+                                <span>◀</span>
+                                <span>▶</span>
+                                <span>🔄</span>
+                            </div>
+                            <!-- URL bar -->
+                            <div id="mockup-url-bar"
+                                style="flex-grow: 1; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 6px; padding: 4px 15px; font-family: monospace; font-size: 12px; color: #475569; text-align: left; box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);">
+                                LENTERA/Home.html
+                            </div>
+                        </div>
+
+                        <!-- Browser Body: Iframe -->
+                        <div style="flex-grow: 1; background: #FFFFFF; position: relative;">
+                            <iframe id="mockup-iframe" src="LENTERA/Home.html"
+                                style="width: 100%; height: 100%; border: none;"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Action Button -->
+                    <div style="display: flex; justify-content: center;">
+                        <a id="mockup-open-btn" href="LENTERA/Home.html" target="_blank" class="demo-btn"
+                            style="margin-top: 5px;">
+                            🚀 Buka Halaman Aktif di Tab Baru
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- SLIDE 10: 08. DOKUMENTASI SRS -->
+            <section data-transition="slide-in fade-out">
+                <div class="slide-header">
+                    <span class="slide-header-title">08. Dokumentasi SRS</span>
+                </div>
+
+                <h3 class="slide-heading-main">Spesifikasi Kebutuhan Perangkat Lunak</h3>
+                <div class="content-container">
+                    <div class="col-left">
+                        <p style="font-size: 18px; color: var(--mc-text-dark); font-weight: 600; margin-bottom: 10px;">
+                            Mengidentifikasi 7 Kebutuhan Fungsional Utama:</p>
+                        <div
+                            style="font-size: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; line-height: 1.4;">
+                            <div>• <strong>REQ-CAT:</strong> Katalog & Checkout WA</div>
+                            <div>• <strong>REQ-RES:</strong> E-Resource & Moderasi</div>
+                            <div>• <strong>REQ-AUTH:</strong> Login JWT & Otorisasi RBAC</div>
+                            <div>• <strong>REQ-LOC:</strong> Peta Penanda Spasial</div>
+                            <div>• <strong>REQ-NAV:</strong> Navigasi Pemandu WA</div>
+                            <div>• <strong>REQ-FIN:</strong> Withdrawal Kas & ACID Lock</div>
+                            <div>• <strong>REQ-SPO:</strong> Registrasi Kemitraan B2B</div>
+                        </div>
+                    </div>
+                    <div class="col-right" style="padding: 25px;">
+                        <h4
+                            style="margin-top: 0; color: var(--mc-blue); font-weight: 700; font-size: 20px; margin-bottom: 10px;">
+                            Spesifikasi Data & Non-Fungsional</h4>
+                        <ul
+                            style="font-size: 14px; padding-left: 15px; margin: 0; display: flex; flex-direction: column; gap: 8px; line-height: 1.4;">
+                            <li><strong>Entity Relationship Diagram (ERD):</strong> Model data relasional yang
+                                mendokumentasikan tabel <code>Users</code>, <code>Products</code>,
+                                <code>Locations</code>, <code>Sponsorships</code>, <code>Withdrawals</code>,
+                                <code>E_Resources</code>, dan <code>Audit_Logs</code>.</li>
+                            <li><strong>Struktur Tabel Fisik:</strong> Tipe spasial koordinat <code>POINT</code> pada
+                                database pariwisata.</li>
+                            <li><strong>Batasan Sistem (Non-Fungsional):</strong> Kinerja render halaman < 1.5 detik dan
+                                    proteksi sandi terenkripsi Bcrypt.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- SLIDE 11: 09. HASIL & EVALUASI -->
+            <section data-transition="slide-in fade-out">
+                <div class="slide-header">
+                    <span class="slide-header-title">09. Hasil & Evaluasi</span>
+                </div>
+
+                <h3 class="slide-heading-main">Evaluasi dan Hasil Uji Black-Box</h3>
+                <div class="content-container">
+                    <div class="col-left" style="flex: 1.1;">
+                        <h4
+                            style="margin-top: 0; color: var(--mc-blue); font-weight: 700; font-size: 20px; margin-bottom: 10px;">
+                            Masukan Mitra (Desa Kucur) & Revisi</h4>
+                        <div class="callout-box"
+                            style="background: #FFFBEB; border-left: 6px solid #D97706; color: #B45309; font-size: 15px; margin-bottom: 15px; margin-top: 0;">
+                            ⚠️ <strong>Kondisi Awal:</strong> Fitur navigasi dinamis berbasis Leaflet Routing Machine
+                            dinilai terlalu berat & rumit karena terkendala koneksi internet pedesaan yang tidak stabil.
+                        </div>
+                        <p style="font-size: 15px; margin: 0; line-height: 1.5; color: var(--mc-text-dark);">
+                            💡 <strong>Solusi Penyesuaian (Revisi Dosen & Mitra):</strong><br>
+                            Mengganti peta rute dinamis dengan **pilihan destinasi terstruktur** serta tombol cepat
+                            **"Hubungi Admin untuk Pemandu Wisata (Local Guide)"** via WhatsApp. Hal ini mempermudah
+                            pelancong sekaligus memberdayakan karang taruna setempat.
+                        </p>
+                    </div>
+                    <div class="col-right" style="flex: 0.9; padding: 20px;">
+                        <h4
+                            style="margin-top: 0; color: var(--mc-blue); font-weight: 700; font-size: 18px; margin-bottom: 10px;">
+                            Hasil Pengujian (Black-Box)</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Kasus Uji</th>
+                                    <th>Hasil</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>TC-CAT</td>
+                                    <td>Agregasi Cart</td>
+                                    <td>Total nominal sesuai</td>
+                                    <td><span class="status-badge status-success">OK</span></td>
+                                </tr>
+                                <tr>
+                                    <td>TC-AUTH</td>
+                                    <td>RBAC 403 Block</td>
+                                    <td>Akses ditolak</td>
+                                    <td><span class="status-badge status-success">OK</span></td>
+                                </tr>
+                                <tr>
+                                    <td>TC-FIN</td>
+                                    <td>Withdrawal limit</td>
+                                    <td>Blokir saldo &lt; 50k</td>
+                                    <td><span class="status-badge status-success">OK</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- SLIDE 12: 10. KESIMPULAN -->
+            <section data-transition="zoom">
+                <div class="slide-header">
+                    <span class="slide-header-title">10. Kesimpulan & Saran</span>
+                </div>
+
+                <h3 class="slide-heading-main">Kesimpulan Hasil PKL</h3>
+                <div class="content-container">
+                    <div class="col-left">
+                        <ul class="bullet-list">
+                            <li>Laporan dan draf spesifikasi (SRS) LENTERA berhasil disusun dengan lengkap sesuai
+                                standar internasional IEEE Std 830-1998.</li>
+                            <li>Prototipe web responsif terbukti sukses merepresentasikan proses bisnis digital
+                                pariwisata terpadu, katalog UMKM, dan pengawasan admin.</li>
+                        </ul>
+                    </div>
+                    <div class="col-right" style="padding: 25px;">
+                        <h4
+                            style="margin-top: 0; color: var(--mc-blue); font-weight: 700; font-size: 20px; margin-bottom: 10px;">
+                            Saran Pengembangan Selanjutnya</h4>
+                        <ul
+                            style="font-size: 14px; padding-left: 15px; margin: 0; display: flex; flex-direction: column; gap: 10px; line-height: 1.4;">
+                            <li><strong>Payment Gateway:</strong> Mengintegrasikan sistem pembayaran instan otomatis
+                                (Midtrans/Xendit) untuk memangkas pencatatan manual.</li>
+                            <li><strong>Integrasi NIK:</strong> Sinkronisasi database kependudukan desa dengan database
+                                pengguna untuk validitas akun mitra warga.</li>
+                            <li><strong>Mobile App:</strong> Pengembangan aplikasi mobile native untuk kemudahan akses
+                                GPS di lokasi wisata.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Reveal.js scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/markdown/markdown.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/highlight.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/notes/notes.js"></script>
+
+    <!-- Mermaid CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+
+    <script>
+        // Initialize Reveal.js to fill 100% of the viewport width and height
+        Reveal.initialize({
+            width: "100%",
+            height: "100%",
+            margin: 0,
+            minScale: 1,
+            maxScale: 1,
+            hash: true,
+            controls: true,
+            progress: true,
+            center: false,
+            transition: 'slide',
+            plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+        });
+
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+
+        // Helper function to update footer text and styling dynamically based on active slide index
+        function updateFooter(indexh) {
+            const total = Reveal.getTotalSlides();
+            document.getElementById('current-slide').textContent = String(indexh + 1).padStart(2, '0');
+            document.getElementById('total-slides').textContent = String(total).padStart(2, '0');
+
+            const footerHelp = document.querySelector('.footer-help');
+            const footerCounter = document.querySelector('.footer-counter');
+
+            if (indexh === 0) {
+                // Dark title slide theme styling
+                footerHelp.style.color = '#94A3B8';
+                footerCounter.style.background = 'rgba(255, 255, 255, 0.15)';
+                footerCounter.style.color = '#FFFFFF';
+            } else {
+                // Light content slide theme styling
+                footerHelp.style.color = 'var(--mc-text-muted)';
+                footerCounter.style.background = '#CBD5E1';
+                footerCounter.style.color = 'var(--mc-blue)';
+            }
+        }
+
+        // Initialize footer values on startup
+        updateFooter(0);
+
+        // Update footer styling and values whenever slide changes
+        Reveal.on('slidechanged', event => {
+            updateFooter(event.indexh);
+            mermaid.init(undefined, '.mermaid');
+        });
+
+        // Mouse click navigation: Right-click to go forward, Left-click to go backward
+        window.addEventListener('click', event => {
+            // Ignore if clicked on links, buttons, controls, cards, browser tabs, or iframe
+            if (
+                event.target.closest('a') ||
+                event.target.closest('button') ||
+                event.target.closest('.controls') ||
+                event.target.closest('.card') ||
+                event.target.closest('.browser-tabs') ||
+                event.target.closest('.browser-tab') ||
+                event.target.closest('#mockup-iframe')
+            ) {
+                return;
+            }
+
+            // Left click (button 0) moves slide backward
+            if (event.button === 0) {
+                Reveal.prev();
+            }
+        });
+
+        // Intercept right click (context menu) to navigate slide forward
+        window.addEventListener('contextmenu', event => {
+            // Ignore if clicked on interactive elements
+            if (
+                event.target.closest('a') ||
+                event.target.closest('button') ||
+                event.target.closest('.card') ||
+                event.target.closest('.browser-tabs') ||
+                event.target.closest('.browser-tab') ||
+                event.target.closest('#mockup-iframe')
+            ) {
+                return;
+            }
+
+            event.preventDefault(); // Prevent native right-click menu from showing
+            Reveal.next(); // Go to next slide
+        });
+
+        // Click-to-Focus cards on Slide 6 (Landasan Teori)
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', event => {
+                event.stopPropagation(); // Prevent triggering general window slide navigation
+
+                const container = card.closest('.grid-cards');
+                const isFocused = card.classList.contains('focused');
+
+                if (isFocused) {
+                    // Unfocus
+                    card.classList.remove('focused');
+                    container.classList.remove('has-focused');
+                } else {
+                    // Unfocus all others first
+                    container.querySelectorAll('.card').forEach(c => c.classList.remove('focused'));
+
+                    // Focus this card
+                    card.classList.add('focused');
+                    container.classList.add('has-focused');
+                }
+            });
+        });
+
+        // Click anywhere else on the document to unfocus the card
+        window.addEventListener('click', () => {
+            document.querySelectorAll('.grid-cards').forEach(container => {
+                container.classList.remove('has-focused');
+                container.querySelectorAll('.card').forEach(c => c.classList.remove('focused'));
+            });
+        });
+
+        // Browser tab trigger on Slide 9 (Demo)
+        document.querySelectorAll('.browser-tab').forEach(tab => {
+            tab.addEventListener('click', event => {
+                event.stopPropagation(); // Prevent general slide navigation
+
+                const src = tab.getAttribute('data-src');
+                const iframe = document.getElementById('mockup-iframe');
+                const urlBar = document.getElementById('mockup-url-bar');
+                const openBtn = document.getElementById('mockup-open-btn');
+
+                // Update iframe source
+                iframe.src = src;
+
+                // Update URL address bar
+                urlBar.textContent = src;
+
+                // Update the CTA button target
+                openBtn.href = src;
+
+                // Toggle active-tab class
+                document.querySelectorAll('.browser-tab').forEach(t => {
+                    t.classList.remove('active-tab');
+                });
+                tab.classList.add('active-tab');
+            });
+        });
+    </script>
+</body>
+
+</html>
