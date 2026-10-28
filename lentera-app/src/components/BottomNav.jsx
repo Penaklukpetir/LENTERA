@@ -1,6 +1,9 @@
 import React from 'react';
 
 export default function BottomNav({ activeView, setActiveView, role }) {
+  // Admin dashboard is a full-screen workspace: never show the public dock there.
+  if (activeView === 'dashboard') return null;
+
   const navItems = [
     { id: 'home', label: 'Home', icon: 'home' },
     { id: 'location', label: 'Peta SIG', icon: 'map' },
@@ -10,7 +13,10 @@ export default function BottomNav({ activeView, setActiveView, role }) {
   ];
 
   return (
-    <nav className="lg:hidden fixed bottom-3 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md bg-slate-900/90 dark:bg-slate-950/90 backdrop-blur-xl border border-primary/30 rounded-2xl shadow-2xl px-3 py-2 text-white animate-in slide-in-from-bottom duration-200">
+    <nav
+      className="lg:hidden fixed left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-md bg-slate-900/90 dark:bg-slate-950/90 backdrop-blur-xl border border-primary/30 rounded-2xl shadow-2xl px-3 py-2 text-white animate-in slide-in-from-bottom duration-200"
+      style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
+    >
       <div className="flex items-center justify-around">
         {navItems.slice(0, 5).map((item) => {
           const isActive = activeView === item.id;

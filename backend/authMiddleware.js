@@ -21,6 +21,23 @@ export const authenticateToken = (req, res, next) => {
   });
 };
 
+// Middleware that attaches the user when a valid token is present, but
+// still allows anonymous requests (used by public sponsorship submission).
+export const optionalAuth = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    req.user = null;
+    return next();
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decodedUser) => {
+    req.user = err ? null : decodedUser;
+    next();
+  });
+};
+
 // Middleware for Role-Based Access Control (RBAC) checks
 export const requireRole = (allowedRoles) => {
   return (req, res, next) => {

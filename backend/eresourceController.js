@@ -3,7 +3,7 @@ import pool from './db.js';
 export const getEResources = async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT id, title, slug, type, status, content, attachment_url, created_at FROM e_resources ORDER BY id DESC'
+      'SELECT id, title, slug, type, status, content, attachment_url, created_at FROM e_resources WHERE deleted_at IS NULL ORDER BY id DESC'
     );
     return res.status(200).json(result.rows);
   } catch (err) {
@@ -37,7 +37,7 @@ export const updateEResource = async (req, res) => {
 
   try {
     const result = await pool.query(
-      'UPDATE e_resources SET title = COALESCE($1, title), type = COALESCE($2, type), status = COALESCE($3, status), content = COALESCE($4, content) WHERE id = $5 RETURNING *',
+      'UPDATE e_resources SET title = COALESCE($1, title), type = COALESCE($2, type), status = COALESCE($3, status), content = COALESCE($4, content), updated_at = CURRENT_TIMESTAMP WHERE id = $5 AND deleted_at IS NULL RETURNING *',
       [title, type, status, content, id]
     );
     if (result.rows.length === 0) {
@@ -53,8 +53,14 @@ export const updateEResource = async (req, res) => {
 export const deleteEResource = async (req, res) => {
   const { id } = req.params;
   try {
-    await pool.query('DELETE FROM e_resources WHERE id = $1', [id]);
-    return res.status(200).json({ message: 'E-Resource deleted successfully.' });
+    const result = await pool.query(
+      'UPDATE e_resources SET deleted_at = CURRENT_TIMESTAMP WHERE id = $1 AND deleted_at IS NULL RETURNING id',
+      [id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'E-Resource not found.' });
+    }
+    return res.status(200).json({ message: 'E-Resource deleted successfully (soft delete).' });
   } catch (err) {
     console.error('Delete e_resource error:', err);
     return res.status(500).json({ error: 'Failed to delete e-resource.' });

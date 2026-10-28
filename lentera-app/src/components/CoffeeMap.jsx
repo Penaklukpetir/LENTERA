@@ -328,15 +328,16 @@ export default function CoffeeMap({
 
       {/* Admin Click Instruction Alert Banner */}
       {(role === 'admin' || role === 'village') && !showAddForm && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 bg-slate-900/90 text-white border border-primary/40 px-3.5 py-1.5 rounded-full z-10 shadow-2xl flex items-center gap-2 text-xs font-bold backdrop-blur-md">
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 bg-slate-900/95 text-white border border-primary/40 px-3 py-1.5 rounded-full z-10 shadow-2xl flex items-center gap-2 text-xs font-bold backdrop-blur-md max-w-[calc(100vw-32px)]">
           <span className="material-symbols-outlined text-primary text-sm">add_location_alt</span>
-          <span>Klik lokasi di peta atau</span>
+          <span className="hidden sm:inline">Klik lokasi di peta atau</span>
           {onOpenAddPlot && (
             <button
               type="button"
               onClick={onOpenAddPlot}
-              className="bg-primary hover:bg-primary/90 text-slate-950 font-extrabold px-2.5 py-0.5 rounded-full text-[11px] border-none cursor-pointer flex items-center gap-1 shadow-sm transition-all"
+              className="bg-primary hover:bg-primary/90 text-slate-950 font-extrabold px-3 py-1 rounded-full text-[11px] border-none cursor-pointer flex items-center gap-1 shadow-sm transition-all shrink-0"
             >
+              <span className="material-symbols-outlined text-xs">edit_location</span>
               <span>+ Ketik Titik Koordinat</span>
             </button>
           )}
@@ -640,15 +641,15 @@ export default function CoffeeMap({
         </button>
       </div>
 
-      {/* Coordinates Status Bar at the bottom-left */}
-      <div className="absolute bottom-20 sm:bottom-6 left-3 sm:left-6 z-10 max-w-[calc(100vw-24px)]">
-        <div className="px-3 py-1.5 sm:px-4 sm:py-2.5 rounded-xl shadow-2xl border border-primary/20 flex items-center gap-2 sm:gap-4 bg-slate-900/90 backdrop-blur-md text-white overflow-hidden text-ellipsis whitespace-nowrap">
+      {/* Coordinates Status Bar — desktop only, so it never collides with the mobile Aset Desa pill */}
+      <div className="hidden lg:flex absolute bottom-6 left-6 z-10 max-w-[calc(100vw-24px)] pointer-events-none">
+        <div className="px-4 sm:px-5 py-2.5 rounded-xl shadow-2xl border border-primary/20 flex items-center gap-3.5 bg-slate-900/90 backdrop-blur-md text-white overflow-hidden text-ellipsis whitespace-nowrap">
           <div className="flex items-center gap-1.5 shrink-0">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span className="text-[9px] sm:text-[10px] font-extrabold uppercase text-slate-300 tracking-wider">{currentProvider.name}</span>
+            <span className="text-[10px] font-extrabold uppercase text-slate-300 tracking-wider">{currentProvider.name}</span>
           </div>
           <div className="h-3 w-px bg-slate-700 shrink-0"></div>
-          <span className="text-[9px] sm:text-[10px] font-bold text-slate-300 font-mono truncate">
+          <span className="text-[10px] font-bold text-slate-300 font-mono truncate px-0.5">
             Lat: {mapCenterCoords.lat.toFixed(5)}°, Long: {mapCenterCoords.lng.toFixed(5)}°
           </span>
         </div>

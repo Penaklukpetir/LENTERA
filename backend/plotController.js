@@ -9,6 +9,7 @@ import {
   runMobileNetV2Inference,
   scanLeafDiseaseEnsemble,
 } from './inferenceService.js';
+import { calculateYield, VALID_COFFEE_TYPES } from './mlrService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,7 +20,9 @@ export { loadAIModels, getAIStatus };
 export const getPlots = async (req, res) => {
   try {
     const queryResult = await pool.query(
-      'SELECT id, farmer_name, ST_Y(geom) AS lat, ST_X(geom) AS lng, coffee_type, tree_count, elevation, land_area, predicted_yield, status, description, created_by, created_at FROM coffee_plots ORDER BY id ASC'
+      `SELECT id, farmer_name, (geom)[1] AS lat, (geom)[0] AS lng, coffee_type, tree_count,
+              elevation, land_area, predicted_yield, status, description, created_by, created_at
+       FROM coffee_plots WHERE deleted_at IS NULL ORDER BY id ASC`
     );
     return res.status(200).json(queryResult.rows);
   } catch (err) {
@@ -35,24 +38,44 @@ export const createPlot = async (req, res) => {
     return res.status(400).json({ error: 'Missing parameters. All plot details, including land area, are required.' });
   }
 
-  if (!['Robusta', 'Arabica', 'Liberica', 'Excelsa'].includes(coffee_type)) {
+  if (!VALID_COFFEE_TYPES.includes(coffee_type)) {
     return res.status(400).json({ error: 'Invalid coffee type variety selection.' });
+  }
+
+  let mlr;
+  try {
+    mlr = calculateYield({ land_area, tree_count, elevation });
+  } catch (validationError) {
+    return res.status(400).json({ error: validationError.message });
   }
 
   try {
     const creatorId = req.user ? req.user.id : null;
-    const calculatedYield = Math.max(0, -245.50 + (0.12 * parseFloat(land_area)) + (1.85 * parseInt(tree_count)) - (0.08 * parseInt(elevation)));
-
     const queryResult = await pool.query(
-      'INSERT INTO coffee_plots (farmer_name, geom, coffee_type, tree_count, elevation, land_area, predicted_yield, status, description, created_by) VALUES ($1, ST_SetSRID(ST_Point($2, $3), 4326), $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id, farmer_name, ST_Y(geom) AS lat, ST_X(geom) AS lng, coffee_type, tree_count, elevation, land_area, predicted_yield, status, description, created_by, created_at',
-      [farmer_name, lng, lat, coffee_type, tree_count, elevation, land_area, calculatedYield.toFixed(2), 'Sehat', description, creatorId]
+      `INSERT INTO coffee_plots
+         (farmer_name, geom, coffee_type, tree_count, elevation, land_area, predicted_yield, status, description, created_by)
+       VALUES ($1, ST_SetSRID(ST_Point($2, $3), 4326), $4, $5, $6, $7, $8, 'Sehat', $9, $10)
+       RETURNING id, farmer_name, (geom)[1] AS lat, (geom)[0] AS lng, coffee_type, tree_count,
+                 elevation, land_area, predicted_yield, status, description, created_by, created_at`,
+      [farmer_name, lng, lat, coffee_type, mlr.inputs.tree_count, mlr.inputs.elevation,
+        mlr.inputs.land_area, mlr.predicted_yield, description, creatorId]
+    );
+
+    const plot = queryResult.rows[0];
+    const history = await pool.query(
+      `INSERT INTO mlr_yield_predictions
+         (plot_id, land_area_input, elevation_input, tree_count_input, mlr_formula_version, predicted_kg, calculated_by)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING *`,
+      [plot.id, mlr.inputs.land_area, mlr.inputs.elevation, mlr.inputs.tree_count,
+        mlr.model_version, mlr.predicted_yield, creatorId]
     );
 
     return res.status(201).json({
       message: 'Plot registered successfully.',
-      plot: queryResult.rows[0]
+      plot,
+      mlr_prediction: history.rows[0],
     });
-
   } catch (err) {
     console.error('Insert spatial plot coordinate database exception:', err);
     return res.status(500).json({ error: 'Internal server error while registering coffee plot.' });
@@ -63,7 +86,7 @@ export const scanPlotLeaf = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const plotCheck = await pool.query('SELECT id, farmer_name FROM coffee_plots WHERE id = $1', [id]);
+    const plotCheck = await pool.query('SELECT id, farmer_name FROM coffee_plots WHERE id = $1 AND deleted_at IS NULL', [id]);
     if (plotCheck.rows.length === 0) {
       return res.status(404).json({ error: 'Coffee plot location not found.' });
     }
@@ -116,7 +139,7 @@ export const scanPlotLeaf = async (req, res) => {
 export const getDiseaseDetectionsForPlot = async (req, res) => {
   const { id } = req.params;
   try {
-    const plotCheck = await pool.query('SELECT id FROM coffee_plots WHERE id = $1', [id]);
+    const plotCheck = await pool.query('SELECT id FROM coffee_plots WHERE id = $1 AND deleted_at IS NULL', [id]);
     if (plotCheck.rows.length === 0) {
       return res.status(404).json({ error: 'Plot not found.' });
     }
@@ -135,7 +158,7 @@ export const resolvePlotLeaf = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const plotCheck = await pool.query('SELECT id FROM coffee_plots WHERE id = $1', [id]);
+    const plotCheck = await pool.query('SELECT id FROM coffee_plots WHERE id = $1 AND deleted_at IS NULL', [id]);
     if (plotCheck.rows.length === 0) {
       return res.status(404).json({ error: 'Coffee plot location not found.' });
     }
@@ -153,28 +176,49 @@ export const updatePlot = async (req, res) => {
   const { id } = req.params;
   const { farmer_name, coffee_type, tree_count, elevation, land_area, description } = req.body;
 
-  try {
-    const area = parseFloat(land_area) || 0;
-    const trees = parseInt(tree_count) || 0;
-    const elev = parseInt(elevation) || 0;
-    // Official MLR Yield Formula: Y = -245.50 + 0.12*X1 + 1.85*X2 - 0.08*X3
-    const calculatedYield = Math.max(0, -245.50 + (0.12 * area) + (1.85 * trees) - (0.08 * elev));
+  if (!farmer_name || !coffee_type) {
+    return res.status(400).json({ error: 'Nama petani dan varietas kopi wajib diisi.' });
+  }
+  if (!VALID_COFFEE_TYPES.includes(coffee_type)) {
+    return res.status(400).json({ error: 'Invalid coffee type variety selection.' });
+  }
 
+  let mlr;
+  try {
+    mlr = calculateYield({ land_area, tree_count, elevation });
+  } catch (validationError) {
+    return res.status(400).json({ error: validationError.message });
+  }
+
+  try {
     const result = await pool.query(
-      `UPDATE coffee_plots 
-       SET farmer_name = $1, coffee_type = $2, tree_count = $3, elevation = $4, land_area = $5, predicted_yield = $6, description = $7, updated_at = NOW() 
-       WHERE id = $8 
-       RETURNING id, farmer_name, ST_Y(geom) AS lat, ST_X(geom) AS lng, coffee_type, tree_count, elevation, land_area, predicted_yield, status, description, created_by, created_at`,
-      [farmer_name, coffee_type, trees, elev, area, calculatedYield.toFixed(2), description, id]
+      `UPDATE coffee_plots
+       SET farmer_name = $1, coffee_type = $2, tree_count = $3, elevation = $4, land_area = $5,
+           predicted_yield = $6, description = $7, updated_at = NOW()
+       WHERE id = $8 AND deleted_at IS NULL
+       RETURNING id, farmer_name, (geom)[1] AS lat, (geom)[0] AS lng, coffee_type, tree_count,
+                 elevation, land_area, predicted_yield, status, description, created_by, created_at`,
+      [farmer_name, coffee_type, mlr.inputs.tree_count, mlr.inputs.elevation, mlr.inputs.land_area,
+        mlr.predicted_yield, description, id]
     );
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Plot tidak ditemukan.' });
     }
 
+    const history = await pool.query(
+      `INSERT INTO mlr_yield_predictions
+         (plot_id, land_area_input, elevation_input, tree_count_input, mlr_formula_version, predicted_kg, calculated_by)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING *`,
+      [id, mlr.inputs.land_area, mlr.inputs.elevation, mlr.inputs.tree_count,
+        mlr.model_version, mlr.predicted_yield, req.user ? req.user.id : null]
+    );
+
     return res.status(200).json({
       message: 'Plot lahan dan prediksi hasil panen MLR berhasil diperbarui.',
-      plot: result.rows[0]
+      plot: result.rows[0],
+      mlr_prediction: history.rows[0],
     });
   } catch (err) {
     console.error('Update plot error:', err);
@@ -182,14 +226,45 @@ export const updatePlot = async (req, res) => {
   }
 };
 
+export const getMlrHistory = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const plot = await pool.query(
+      'SELECT id FROM coffee_plots WHERE id = $1 AND deleted_at IS NULL',
+      [id]
+    );
+    if (plot.rows.length === 0) {
+      return res.status(404).json({ error: 'Plot tidak ditemukan.' });
+    }
+
+    const result = await pool.query(
+      `SELECT m.id, m.plot_id, m.land_area_input, m.elevation_input, m.tree_count_input,
+              m.mlr_formula_version, m.predicted_kg, m.calculated_at, u.full_name AS calculated_by_name
+       FROM mlr_yield_predictions m
+       LEFT JOIN users u ON m.calculated_by = u.id
+       WHERE m.plot_id = $1
+       ORDER BY m.calculated_at DESC, m.id DESC
+       LIMIT 20`,
+      [id]
+    );
+    return res.status(200).json(result.rows);
+  } catch (err) {
+    console.error('MLR history query error:', err);
+    return res.status(500).json({ error: 'Gagal mengambil riwayat prediksi MLR.' });
+  }
+};
+
 export const deletePlot = async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await pool.query('DELETE FROM coffee_plots WHERE id = $1 RETURNING id', [id]);
+    const result = await pool.query(
+      'UPDATE coffee_plots SET deleted_at = NOW() WHERE id = $1 AND deleted_at IS NULL RETURNING id',
+      [id]
+    );
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Plot tidak ditemukan.' });
     }
-    return res.status(200).json({ message: 'Plot lahan berhasil dihapus.' });
+    return res.status(200).json({ message: 'Plot lahan berhasil dihapus (soft delete).' });
   } catch (err) {
     console.error('Delete plot error:', err);
     return res.status(500).json({ error: 'Internal server error while deleting plot.' });

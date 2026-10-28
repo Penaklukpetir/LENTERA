@@ -2,55 +2,34 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Home from './components/Home';
 import Sidebar from './components/Sidebar';
-import CoffeeMap from './components/CoffeeMap';
 import DetailsPanel from './components/DetailsPanel';
-import Education from './components/Education';
-import Navigation from './components/Navigation';
-import EResourceView from './components/EResourceView';
-import SponsorView from './components/SponsorView';
-import AdminPlotForm from './components/AdminPlotForm';
 import SponsorModal from './components/SponsorModal';
-import Profile from './components/Profile';
-import DashboardView from './components/DashboardView';
 import LoginModal from './components/LoginModal';
 import AdminLoginModal from './components/AdminLoginModal';
 import BottomNav from './components/BottomNav';
 import SosButton from './components/SosButton';
+import ChangePasswordModal from './components/ChangePasswordModal';
+
+const CoffeeMap = React.lazy(() => import('./components/CoffeeMap'));
+const DashboardView = React.lazy(() => import('./components/DashboardView'));
+const Education = React.lazy(() => import('./components/Education'));
+const Navigation = React.lazy(() => import('./components/Navigation'));
+const EResourceView = React.lazy(() => import('./components/EResourceView'));
+const SponsorView = React.lazy(() => import('./components/SponsorView'));
+const Profile = React.lazy(() => import('./components/Profile'));
 
 const API_BASE_URL = 'http://localhost:5000/api';
-
-const INITIAL_PLOTS = [
-  {
-    id: 1,
-    farmer_name: 'Pak Mulyono (Offline)',
-    lat: -7.9130,
-    lng: 112.5180,
-    coffee_type: 'Robusta',
-    tree_count: 1500,
-    elevation: 720,
-    description: 'Perkebunan kopi Robusta tradisional tumpang sari dengan pohon sengon untuk naungan alami.',
-  },
-  {
-    id: 2,
-    farmer_name: 'Bu Sumiati (Offline)',
-    lat: -7.9190,
-    lng: 112.5230,
-    coffee_type: 'Arabica',
-    tree_count: 800,
-    elevation: 1120,
-    description: 'Lahan kopi Arabika organik pada lereng tinggi. Menghasilkan biji kopi specialty grade berkualitas tinggi.',
-  }
-];
 
 export default function App() {
   const [theme, setTheme] = useState('light');
   const [role, setRole] = useState('visitor'); // visitor, admin, village
   const [token, setToken] = useState(null); // Auth JWT Token
+  const [mustChangePassword, setMustChangePassword] = useState(false);
   const [activeView, setActiveView] = useState('home'); // home, location, education, navigation, eresource, sponsor, profile
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('All');
   const [selectedPlot, setSelectedPlot] = useState(null);
-  const [plots, setPlots] = useState(INITIAL_PLOTS);
+  const [plots, setPlots] = useState([]);
   
   // Admin Form State for mapping new plots
   const [showAddForm, setShowAddForm] = useState(false);
@@ -69,109 +48,52 @@ export default function App() {
   const handleLogout = () => {
     setRole('visitor');
     setToken(null);
+    setMustChangePassword(false);
     setActiveView('home');
     setShowAddForm(false);
   };
 
-  // Destinasi Wisata Tani & Agrowisata State
-  const [destinations, setDestinations] = useState([
-    {
-      id: 1,
-      name: 'Terasering Zamrud Kucur',
-      tag: 'Alam & Fotografi',
-      elevation: '950 MDPL',
-      price: 'Rp 15.000 / orang',
-      hours: '08:00 - 18:00 WIB',
-      img: 'https://images.unsplash.com/photo-1578507065211-17b2d564c20f?auto=format&fit=crop&q=80&w=600',
-      desc: 'Pemandangan panorama menakjubkan dari lereng Gunung Kawi dengan sistem irigasi subak pegunungan alami.',
-      highlights: ['Spot Foto Panoramic', 'Udara Segar Pegunungan', 'Dekat Parkir Utama']
-    },
-    {
-      id: 2,
-      name: 'Kebun Kopi High Altitude (1.250 MDPL)',
-      tag: 'Edukasi Tani',
-      elevation: '1250 MDPL',
-      price: 'Rp 25.000 / orang (Termasuk Seduh Kopi)',
-      hours: '08:00 - 16:30 WIB',
-      img: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&q=80&w=600',
-      desc: 'Jelajah hamparan kebun kopi Arabika organik lereng tinggi, belajar perwatan bibit & pemetikan ceri pilihan.',
-      highlights: ['Petik Ceri Kopi', 'Edukasi Agronomi', 'Free Coffee Tasting']
-    },
-    {
-      id: 3,
-      name: 'Greenhouse Penjemuran Ceri Natural',
-      tag: 'Pasca-Panen',
-      elevation: '1100 MDPL',
-      price: 'Gratis (Kunjungan Edukasi)',
-      hours: '09:00 - 16:00 WIB',
-      img: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=600',
-      desc: 'Melihat langsung proses pengeringan ceri kopi Natural, Washed, & Honey Process di atas meja gantung higienis.',
-      highlights: ['Proses Olah Kopi', 'Aroma Kopi Alami', 'Panduan Petani']
-    },
-    {
-      id: 4,
-      name: 'Sentra UMKM Kriya & Kopi Kucur',
-      tag: 'Budaya & Belanja',
-      elevation: '850 MDPL',
-      price: 'Gratis Masuk',
-      hours: '08:00 - 20:00 WIB',
-      img: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=600',
-      desc: 'Pusat oleh-oleh bubuk kopi kemasan asli Desa Kucur, kerajinan anyaman kriya bambu, dan kuliner tradisional.',
-      highlights: ['Oleh-oleh Asli Desa', 'Kerajinan Bambu', 'Kedai Kopi Pokdarwis']
-    },
-    {
-      id: 5,
-      name: 'Wisata Edukasi Petik Ceri Merah',
-      tag: 'Edukasi Tani',
-      elevation: '1200 MDPL',
-      price: 'Rp 35.000 / orang',
-      hours: 'Panen Raya (08:00 - 14:00)',
-      img: 'https://images.unsplash.com/photo-1587734195503-904fca47e0e9?auto=format&fit=crop&q=80&w=600',
-      desc: 'Pengalaman interaktif memetik buah ceri merah matang langsung di pohon bersama bimbingan petani lokal Kucur.',
-      highlights: ['Pengalaman Petik Langsung', 'Keranjang Tradisional', 'Sertifikat Edukasi']
-    },
-    {
-      id: 6,
-      name: 'Spot Sunset Lereng Gunung Kawi',
-      tag: 'Alam & Fotografi',
-      elevation: '1350 MDPL',
-      price: 'Rp 10.000 / kendaraan',
-      hours: '15:30 - 18:30 WIB',
-      img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=600',
-      desc: 'Titik pandang tertinggi Desa Kucur untuk menikmati matahari terbenam dengan latar belakang samudera awan.',
-      highlights: ['Sunrise/Sunset Point', 'Area Camping Light', 'Warung Kopi Hangat']
-    }
-  ]);
+  // Destinasi Wisata Tani & Agrowisata State (fetched from PostgreSQL)
+  const [destinations, setDestinations] = useState([]);
 
   // B2B Sponsorship State
   const [showSponsorModal, setShowSponsorModal] = useState(false);
-  const [sponsorships, setSponsorships] = useState([
-    { id: 1, sponsor_name: 'PT Kopi Nusa (Offline)', plot_owner: 'Bu Sumiati', amount: 15000000, status: 'APPROVED' }
-  ]);
+  const [sponsorships, setSponsorships] = useState([]);
   const [newSponsorName, setNewSponsorName] = useState('');
+  const [sponsorContact, setSponsorContact] = useState('');
   const [selectedSponsorPlot, setSelectedSponsorPlot] = useState(1);
   const [sponsorAmount, setSponsorAmount] = useState(5000000);
-  const [proposalFile, setProposalFile] = useState('proposal_kemitraan.pdf');
+  const [proposalFile, setProposalFile] = useState(null);
 
-  // Load plots and sponsorships from backend API
+  // Load plots, sponsorships, and destinations from backend API
   const loadData = async () => {
     try {
-      const plotsRes = await fetch(`${API_BASE_URL}/plots`);
+      const [plotsRes, sponRes, destRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/plots`),
+        fetch(`${API_BASE_URL}/sponsorships`),
+        fetch(`${API_BASE_URL}/destinations`)
+      ]);
+
       if (plotsRes.ok) {
         const plotsData = await plotsRes.json();
+        setPlots(plotsData);
         if (plotsData.length > 0) {
-          setPlots(plotsData);
-          setSelectedSponsorPlot(plotsData[0].id);
+          setSelectedSponsorPlot((current) =>
+            plotsData.some((p) => p.id === current) ? current : plotsData[0].id
+          );
         }
       }
-      
-      const sponRes = await fetch(`${API_BASE_URL}/sponsorships`);
+
       if (sponRes.ok) {
-        const sponData = await sponRes.json();
-        setSponsorships(sponData);
+        setSponsorships(await sponRes.json());
+      }
+
+      if (destRes.ok) {
+        const destData = await destRes.json();
+        setDestinations(destData.data || []);
       }
     } catch (err) {
-      console.warn('Backend server offline. Running in sandbox offline mode with pre-seeded data.', err);
+      console.error('Gagal memuat data dari backend:', err);
     }
   };
 
@@ -183,74 +105,16 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
-  // Handle Dynamic Role Changes and simulate authentication
-  const handleRoleChange = async (newRole) => {
-    setRole(newRole);
-    if (newRole === 'village' || newRole === 'admin') {
+  const handleAuthenticated = ({ token: nextToken, user }) => {
+    setToken(nextToken);
+    setMustChangePassword(Boolean(user?.must_change_password));
+
+    if (user?.role === 'village' || user?.role === 'admin') {
+      setRole(user.role);
       setActiveView('dashboard');
-    }
-    if (newRole === 'visitor') {
-      setToken(null);
-      return;
-    }
-
-    let credentials = { username: 'admin', password: 'adminpassword' };
-    let regDetails = {
-      username: 'admin',
-      password: 'adminpassword',
-      email: 'admin@lentera.com',
-      role: 'admin',
-      full_name: 'Admin Karang Taruna'
-    };
-
-    if (newRole === 'village') {
-      credentials = { username: 'kades', password: 'kadespassword' };
-      regDetails = {
-        username: 'kades',
-        password: 'kadespassword',
-        email: 'kades@lentera.com',
-        role: 'village',
-        full_name: 'Kepala Desa Kucur'
-      };
-    }
-
-    const login = async () => {
-      const res = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials)
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setToken(data.token);
-        console.log(`Auto-authenticated as ${newRole} in backend.`);
-        if (newRole === 'village' || newRole === 'admin') {
-          setActiveView('dashboard');
-        }
-        return true;
-      }
-      return false;
-    };
-
-    try {
-      const isLoginOk = await login();
-      if (!isLoginOk) {
-        console.log(`Registering seed account for role ${newRole}...`);
-        const regRes = await fetch(`${API_BASE_URL}/auth/register`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(regDetails)
-        });
-        if (regRes.ok) {
-          await login();
-        }
-      }
-    } catch (err) {
-      console.warn('Backend server offline. Simulating mock authorization JWT.', err);
-      setToken('mock-offline-token');
-      if (newRole === 'village' || newRole === 'admin') {
-        setActiveView('dashboard');
-      }
+    } else {
+      setRole('visitor');
+      setActiveView('sponsor');
     }
   };
 
@@ -308,151 +172,105 @@ export default function App() {
         alert(`Gagal merekam data spasial: ${errData.error}`);
       }
     } catch (err) {
-      console.warn('Backend offline. Adding plot locally to state.', err);
-      const localYield = Math.max(0, -245.50 + (0.12 * Number(formArea)) + (1.85 * Number(formCount)) - (0.08 * Number(formElevation)));
-      const newPlot = {
-        id: plots.length + 1,
-        farmer_name: formFarmer + ' (Offline)',
-        lat: newPlotCoords.lat,
-        lng: newPlotCoords.lng,
-        coffee_type: formType,
-        tree_count: Number(formCount),
-        elevation: Number(formElevation),
-        land_area: Number(formArea),
-        predicted_yield: localYield,
-        status: 'Sehat',
-        description: formDesc
-      };
-      setPlots([...plots, newPlot]);
-      setSelectedPlot(newPlot);
-      setShowAddForm(false);
-      setNewPlotCoords(null);
-      setFormFarmer('');
-      setFormArea(1000);
-      setFormDesc('');
+      console.error('Gagal menyimpan plot ke backend:', err);
+      alert('Gagal menghubungi server. Plot tidak tersimpan.');
     }
   };
 
-  // Submit sponsorship proposal B2B
+  // Submit sponsorship proposal B2B (multipart PDF upload + company identity)
   const handleSponsorSubmit = async (e) => {
     e.preventDefault();
-    
-    let activeSponsorToken = token;
-    if (!activeSponsorToken) {
-      try {
-        const regDetails = {
-          username: 'sponsor',
-          password: 'sponsorpassword',
-          email: 'sponsor@lentera.com',
-          role: 'sponsor',
-          full_name: 'PT Kopi Nusantara'
-        };
-        const credentials = { username: 'sponsor', password: 'sponsorpassword' };
-        
-        const login = async () => {
-          const loginRes = await fetch(`${API_BASE_URL}/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(credentials)
-          });
-          if (loginRes.ok) {
-            const loginData = await loginRes.json();
-            return loginData.token;
-          }
-          return null;
-        };
 
-        activeSponsorToken = await login();
-        if (!activeSponsorToken) {
-          await fetch(`${API_BASE_URL}/auth/register`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(regDetails)
-          });
-          activeSponsorToken = await login();
-        }
-      } catch (err) {
-        console.warn('Failed connection for sponsor login auth', err);
-      }
+    if (!proposalFile) {
+      alert('Dokumen proposal PDF wajib diunggah.');
+      return;
     }
 
-    const payload = {
-      plot_id: Number(selectedSponsorPlot),
-      funding_amount: Number(sponsorAmount),
-      proposal_url: proposalFile
-    };
+    const formData = new FormData();
+    formData.append('sponsor_name', newSponsorName.trim());
+    formData.append('contact', sponsorContact.trim());
+    formData.append('plot_id', String(Number(selectedSponsorPlot)));
+    formData.append('funding_amount', String(Number(sponsorAmount)));
+    formData.append('proposal', proposalFile);
 
     try {
       const res = await fetch(`${API_BASE_URL}/sponsorships`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${activeSponsorToken}`
-        },
-        body: JSON.stringify(payload)
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        body: formData
       });
 
-      if (res.ok) {
-        const reloadRes = await fetch(`${API_BASE_URL}/sponsorships`);
-        if (reloadRes.ok) {
-          const reloadData = await reloadRes.json();
-          setSponsorships(reloadData);
-        }
-        setShowSponsorModal(false);
-        setNewSponsorName('');
-        console.log('B2B sponsorship registered in database.');
-      } else {
-        const errData = await res.json();
-        alert(`Gagal mengajukan proposal: ${errData.error}`);
+      const data = await res.json();
+      if (!res.ok) {
+        alert(`Gagal mengajukan proposal: ${data.error || 'Terjadi kesalahan.'}`);
+        return;
       }
-    } catch (err) {
-      console.warn('Backend offline. Adding proposal locally.', err);
-      const targetPlot = plots.find(p => p.id === Number(selectedSponsorPlot));
-      const newSpon = {
-        id: sponsorships.length + 1,
-        sponsor_name: newSponsorName || 'PT Kopi Nusantara',
-        plot_owner: targetPlot ? targetPlot.farmer_name : 'Unknown',
-        amount: Number(sponsorAmount),
-        status: 'PENDING'
-      };
-      setSponsorships([...sponsorships, newSpon]);
+
+      setSponsorships((current) => [data.sponsorship, ...current]);
       setShowSponsorModal(false);
       setNewSponsorName('');
+      setSponsorContact('');
+      setProposalFile(null);
+      alert('Proposal kemitraan terkirim dan menunggu kurasi Karang Taruna.');
+    } catch (err) {
+      console.error('Gagal mengirim proposal sponsorship:', err);
+      alert('Gagal menghubungi server. Proposal tidak terkirim.');
     }
   };
 
-  // Approve sponsorship (Village Mayor role only)
-  const approveSponsorship = async (id) => {
+  const refreshSponsorships = async () => {
+    const res = await fetch(`${API_BASE_URL}/sponsorships`);
+    if (res.ok) setSponsorships(await res.json());
+  };
+
+  const sponsorshipTransition = async (id, action, body = {}) => {
+    if (!token) {
+      alert('Sesi otentikasi tidak tersedia. Silakan masuk kembali.');
+      return false;
+    }
+
     try {
-      const res = await fetch(`${API_BASE_URL}/sponsorships/${id}/approve`, {
+      const res = await fetch(`${API_BASE_URL}/sponsorships/${id}/${action}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(body)
       });
+      const data = await res.json();
 
-      if (res.ok) {
-        const reloadRes = await fetch(`${API_BASE_URL}/sponsorships`);
-        if (reloadRes.ok) {
-          const reloadData = await reloadRes.json();
-          setSponsorships(reloadData);
-        }
-        console.log('Proposal approved successfully.');
-      } else {
-        const errData = await res.json();
-        alert(`Gagal menyetujui proposal: ${errData.error}`);
+      if (!res.ok) {
+        alert(`Gagal memproses proposal: ${data.error || 'Terjadi kesalahan.'}`);
+        return false;
       }
+
+      await refreshSponsorships();
+      return true;
     } catch (err) {
-      console.warn('Backend offline. Approving locally.', err);
-      setSponsorships(sponsorships.map(s => s.id === id ? { ...s, status: 'APPROVED' } : s));
+      console.error('Sponsorship transition failed:', err);
+      alert('Gagal menghubungi server. Status proposal tidak berubah.');
+      return false;
     }
   };
+
+  const curateSponsorship = (id) => sponsorshipTransition(id, 'curate');
+  const approveSponsorship = (id) => sponsorshipTransition(id, 'approve');
+  const disburseSponsorship = (id) => sponsorshipTransition(id, 'disburse');
+  const rejectSponsorship = (id, stage = 'pending') => {
+    const reason = window.prompt('Alasan penolakan proposal wajib diisi:');
+    if (!reason || !reason.trim()) return false;
+    return sponsorshipTransition(id, stage === 'curated' ? 'reject-curated' : 'reject', {
+      reason: reason.trim()
+    });
+  };
+
+  const floatingUiHidden = showSponsorModal || showLoginModal || showAdminLoginModal || (mustChangePassword && token);
 
   // Filter logic
   const filteredPlots = plots.filter(plot => {
     const matchesSearch = plot.farmer_name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          plot.description.toLowerCase().includes(searchQuery.toLowerCase());
+                          (plot.description || '').toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = filterType === 'All' || plot.coffee_type === filterType;
     return matchesSearch && matchesType;
   });
@@ -474,9 +292,10 @@ export default function App() {
 
       {/* CORE CONTAINER */}
       <div className="app-container flex-grow overflow-hidden flex flex-col">
+        <React.Suspense fallback={<div className="flex-1 flex items-center justify-center py-24 text-xs font-bold text-slate-400">Memuat halaman...</div>}>
         
         {/* VIEW 1: HOME PAGE */}
-        {activeView === 'home' && <Home setActiveView={setActiveView} />}
+        {activeView === 'home' && <Home setActiveView={setActiveView} destinations={destinations} />}
 
         {/* VIEW 2: LOCATION MAP */}
         {activeView === 'location' && (
@@ -525,6 +344,9 @@ export default function App() {
             sponsorships={sponsorships}
             setSponsorships={setSponsorships}
             approveSponsorship={approveSponsorship}
+            curateSponsorship={curateSponsorship}
+            rejectSponsorship={rejectSponsorship}
+            disburseSponsorship={disburseSponsorship}
             setShowSponsorModal={setShowSponsorModal}
 
             searchQuery={searchQuery}
@@ -582,6 +404,7 @@ export default function App() {
         {/* VIEW 7: PROFIL PAGE */}
         {activeView === 'profile' && <Profile />}
 
+        </React.Suspense>
       </div>
 
       {/* POPUP MODAL: SPONSOR PROPOSAL SUBMISSION */}
@@ -590,6 +413,8 @@ export default function App() {
           plots={plots}
           newSponsorName={newSponsorName}
           setNewSponsorName={setNewSponsorName}
+          sponsorContact={sponsorContact}
+          setSponsorContact={setSponsorContact}
           selectedSponsorPlot={selectedSponsorPlot}
           setSelectedSponsorPlot={setSelectedSponsorPlot}
           sponsorAmount={sponsorAmount}
@@ -605,8 +430,7 @@ export default function App() {
       {showLoginModal && (
         <LoginModal 
           setShowLoginModal={setShowLoginModal}
-          handleRoleChange={handleRoleChange}
-          role={role}
+          onAuthenticated={handleAuthenticated}
           openAdminModal={() => setShowAdminLoginModal(true)}
         />
       )}
@@ -615,19 +439,30 @@ export default function App() {
       {showAdminLoginModal && (
         <AdminLoginModal 
           setShowAdminLoginModal={setShowAdminLoginModal}
-          handleRoleChange={handleRoleChange}
+          onAuthenticated={handleAuthenticated}
         />
       )}
 
-      {/* GLOBAL FLOATING SOS EMERGENCY BUTTON */}
-      {activeView !== 'dashboard' && <SosButton />}
+      {/* FORCED PASSWORD CHANGE FOR NEWLY PROVISIONED ACCOUNTS */}
+      {mustChangePassword && token && (
+        <ChangePasswordModal
+          token={token}
+          onChanged={() => setMustChangePassword(false)}
+          onLogout={handleLogout}
+        />
+      )}
 
-      {/* FLOATING MOBILE BOTTOM NAVIGATION DOCK BAR */}
-      <BottomNav 
-        activeView={activeView}
-        setActiveView={setActiveView}
-        role={role}
-      />
+      {/* GLOBAL FLOATING SOS EMERGENCY BUTTON (PUBLIC TOURIST ONLY) */}
+      {activeView !== 'dashboard' && role === 'visitor' && !floatingUiHidden && <SosButton />}
+
+      {/* FLOATING MOBILE BOTTOM NAVIGATION DOCK BAR (ONLY FOR PUBLIC/TOURIST VIEWS) */}
+      {activeView !== 'dashboard' && !floatingUiHidden && (
+        <BottomNav 
+          activeView={activeView}
+          setActiveView={setActiveView}
+          role={role}
+        />
+      )}
 
     </div>
   );

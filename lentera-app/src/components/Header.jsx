@@ -67,9 +67,9 @@ export default function Header({
           {/* Right Controls */}
           <div className="flex items-center gap-2 shrink-0">
 
-            {/* Auth Buttons / User Profile Badge */}
+            {/* Auth Buttons / User Profile Badge (Desktop only — mobile uses drawer) */}
             {role === 'visitor' ? (
-              <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="hidden lg:flex items-center gap-1.5 sm:gap-2">
                 <button
                   onClick={() => setShowLoginModal(true)}
                   className="bg-primary hover:bg-primary/90 text-slate-900 px-3 sm:px-3.5 py-1.5 rounded-full text-xs font-extrabold shadow-sm flex items-center gap-1 sm:gap-1.5 transition-all transform hover:scale-[1.02] shrink-0"
@@ -88,7 +88,7 @@ export default function Header({
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="hidden lg:flex items-center gap-1.5 sm:gap-2">
                 <button
                   onClick={() => handleNav('dashboard')}
                   className={`px-2.5 sm:px-3 py-1.5 rounded-full border border-primary/30 text-xs font-extrabold flex items-center gap-1 sm:gap-1.5 transition-all shrink-0 ${
@@ -117,8 +117,8 @@ export default function Header({
               </div>
             )}
 
-            {/* Live Weather Widget Desa Kucur (hidden on tiny mobile screens) */}
-            <div className="hidden md:block">
+            {/* Live Weather Widget Desa Kucur (desktop only) */}
+            <div className="hidden lg:block">
               <WeatherWidget />
             </div>
 
@@ -234,6 +234,19 @@ export default function Header({
                   </button>
                 );
               })}
+            </div>
+
+            {/* Drawer Footer */}
+            <div className="px-3 py-3 border-t border-slate-100 dark:border-slate-800">
+              <button
+                onClick={toggleTheme}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+              >
+                <span className="material-symbols-outlined text-lg text-slate-400">
+                  {theme === 'light' ? 'dark_mode' : 'light_mode'}
+                </span>
+                Mode {theme === 'light' ? 'Gelap' : 'Terang'}
+              </button>
             </div>
           </div>
         </div>

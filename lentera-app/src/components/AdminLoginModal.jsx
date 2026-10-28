@@ -1,38 +1,43 @@
 import React, { useState } from 'react';
 
-export default function AdminLoginModal({ setShowAdminLoginModal, handleRoleChange }) {
+const API_BASE_URL = 'http://localhost:5000/api';
+
+export default function AdminLoginModal({ setShowAdminLoginModal, onAuthenticated }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleQuickLogin = (selectedRole) => {
-    setLoading(true);
-    setErrorMsg('');
-    setTimeout(() => {
-      handleRoleChange(selectedRole);
-      setLoading(false);
-      setShowAdminLoginModal(false);
-    }, 400);
-  };
-
-  const handleCustomSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg('');
-    setTimeout(() => {
-      const userLower = username.toLowerCase();
-      if (userLower === 'kades' || userLower === 'village') {
-        handleRoleChange('village');
-        setShowAdminLoginModal(false);
-      } else if (userLower === 'admin') {
-        handleRoleChange('admin');
-        setShowAdminLoginModal(false);
-      } else {
-        setErrorMsg('Kredensial tidak terverifikasi. Gunakan username "admin" atau "kades".');
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: username.trim(), password })
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setErrorMsg(data.error || 'Kredensial tidak terverifikasi.');
+        return;
       }
+
+      if (data.user?.role !== 'admin' && data.user?.role !== 'village') {
+        setErrorMsg('Akun ini tidak memiliki akses ke dasbor perangkat desa.');
+        return;
+      }
+
+      onAuthenticated({ token: data.token, user: data.user });
+      setShowAdminLoginModal(false);
+    } catch (err) {
+      setErrorMsg('Gagal menghubungi server otentikasi.');
+    } finally {
       setLoading(false);
-    }, 500);
+    }
   };
 
   return (
@@ -68,17 +73,16 @@ export default function AdminLoginModal({ setShowAdminLoginModal, handleRoleChan
           </p>
         </div>
 
-        {/* Quick Role Selection - Compact Grid */}
+        {/* Username shortcut (does not bypass authentication) */}
         <div className="space-y-2 mb-4">
           <div className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">
-            AKSES CEPAT OTORISASI DESA:
+            ISI CEPAT USERNAME:
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
-              onClick={() => handleQuickLogin('village')}
-              disabled={loading}
+              onClick={() => setUsername('kades')}
               className="flex items-center gap-2 p-2.5 rounded-xl border border-primary/40 bg-primary/10 hover:bg-primary/20 transition-all text-left group"
             >
               <div className="w-8 h-8 rounded-lg bg-primary/20 text-primary flex items-center justify-center font-bold shrink-0">
@@ -86,14 +90,13 @@ export default function AdminLoginModal({ setShowAdminLoginModal, handleRoleChan
               </div>
               <div className="min-w-0">
                 <h4 className="text-xs font-extrabold text-white truncate">Kepala Desa</h4>
-                <p className="text-[9px] text-emerald-400 font-semibold truncate">Masuk Kades</p>
+                <p className="text-[9px] text-emerald-400 font-semibold truncate">Username: kades</p>
               </div>
             </button>
 
             <button
               type="button"
-              onClick={() => handleQuickLogin('admin')}
-              disabled={loading}
+              onClick={() => setUsername('admin')}
               className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-700 bg-slate-800/60 hover:bg-slate-800 hover:border-sky-500/40 transition-all text-left group"
             >
               <div className="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold shrink-0">
@@ -101,7 +104,7 @@ export default function AdminLoginModal({ setShowAdminLoginModal, handleRoleChan
               </div>
               <div className="min-w-0">
                 <h4 className="text-xs font-extrabold text-white truncate">Admin GIS</h4>
-                <p className="text-[9px] text-sky-400 font-semibold truncate">Masuk Admin</p>
+                <p className="text-[9px] text-sky-400 font-semibold truncate">Username: admin</p>
               </div>
             </button>
           </div>
@@ -113,12 +116,12 @@ export default function AdminLoginModal({ setShowAdminLoginModal, handleRoleChan
             <div className="w-full border-t border-slate-800"></div>
           </div>
           <div className="relative flex justify-center text-[9px] uppercase font-bold tracking-wider">
-            <span className="bg-slate-900 px-2 text-slate-500">Atau Kredensial Pegawai</span>
+            <span className="bg-slate-900 px-2 text-slate-500">Kredensial Pegawai</span>
           </div>
         </div>
 
         {/* Form Login Admin */}
-        <form onSubmit={handleCustomSubmit} className="space-y-2.5">
+        <form onSubmit={handleSubmit} className="space-y-2.5">
           {errorMsg && (
             <div className="p-2 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-[11px] font-semibold flex items-center gap-1.5">
               <span className="material-symbols-outlined text-sm">error</span>
@@ -128,12 +131,13 @@ export default function AdminLoginModal({ setShowAdminLoginModal, handleRoleChan
 
           <div>
             <label className="block text-[9px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">
-              Username NIK
+              Username
             </label>
             <input
               type="text"
               required
-              placeholder="Gunakan 'kades' atau 'admin'"
+              autoComplete="username"
+              placeholder="Username akun perangkat desa"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full px-3 py-2 bg-slate-800/80 border border-slate-700 rounded-lg text-xs font-bold text-white focus:outline-none focus:border-primary placeholder:text-slate-500"
@@ -147,6 +151,7 @@ export default function AdminLoginModal({ setShowAdminLoginModal, handleRoleChan
             <input
               type="password"
               required
+              autoComplete="current-password"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -157,7 +162,7 @@ export default function AdminLoginModal({ setShowAdminLoginModal, handleRoleChan
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 bg-gradient-to-r from-primary to-emerald-400 hover:from-primary/90 hover:to-emerald-400/90 text-slate-950 font-extrabold rounded-lg text-xs shadow-lg transition-all flex items-center justify-center gap-1.5 mt-1"
+            className="w-full py-2.5 bg-gradient-to-r from-primary to-emerald-400 hover:from-primary/90 hover:to-emerald-400/90 text-slate-950 font-extrabold rounded-lg text-xs shadow-lg transition-all flex items-center justify-center gap-1.5 mt-1 disabled:opacity-60"
           >
             {loading ? (
               <span className="material-symbols-outlined animate-spin text-base">sync</span>

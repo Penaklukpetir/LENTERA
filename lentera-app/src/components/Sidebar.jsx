@@ -9,7 +9,10 @@ export default function Sidebar({
   selectedPlot,
   setSelectedPlot,
   role,
-  onOpenAddPlot
+  onOpenAddPlot,
+  collapsible = false,
+  collapsed = false,
+  onToggleCollapse
 }) {
   const [mobileExpanded, setMobileExpanded] = useState(false);
 
@@ -17,11 +20,23 @@ export default function Sidebar({
     <>
       {/* Title */}
       <div className="p-4 sm:p-6">
-        <div className="flex items-center justify-between mb-1">
+        <div className="flex items-center justify-between mb-1 gap-2">
           <h2 className="text-base sm:text-lg font-bold text-slate-950 dark:text-white">Aset Desa</h2>
-          <span className="text-[10px] bg-primary/20 text-primary px-2.5 py-0.5 rounded-full font-extrabold">
-            {filteredPlots.length} Plot Spasial
-          </span>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <span className="text-[10px] bg-primary/20 text-primary px-2.5 py-0.5 rounded-full font-extrabold">
+              {filteredPlots.length} Plot Spasial
+            </span>
+            {collapsible && (
+              <button
+                type="button"
+                onClick={onToggleCollapse}
+                className="hidden md:flex w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-primary items-center justify-center border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer"
+                title="Lipat Panel Aset Desa (Perlebar Peta)"
+              >
+                <span className="material-symbols-outlined text-base">chevron_left</span>
+              </button>
+            )}
+          </div>
         </div>
         <p className="text-xs text-slate-500 mb-3 sm:mb-4">Jelajahi titik wisata dan edukasi</p>
 
@@ -113,7 +128,7 @@ export default function Sidebar({
                 setSelectedPlot(plot);
                 setMobileExpanded(false);
               }}
-              className={`p-3 rounded-xl border transition-all cursor-pointer ${
+              className={`p-3 rounded-xl border transition-all cursor-pointer card-hover ${
                 selectedPlot?.id === plot.id
                   ? 'bg-white border-primary shadow-md dark:bg-slate-900' 
                   : 'bg-slate-50/50 border-slate-200/60 dark:border-slate-800 dark:bg-slate-900/30 hover:border-slate-300'
@@ -163,22 +178,47 @@ export default function Sidebar({
 
   return (
     <>
-      {/* Desktop Sidebar Layout */}
-      <aside className="hidden md:flex w-72 lg:w-80 bg-white dark:bg-background-dark border-r border-primary/10 z-40 flex-col shadow-xl shrink-0">
-        {sidebarContent}
+      {/* Desktop Sidebar Layout (collapsible in admin GIS workspace) */}
+      <aside className={`hidden md:flex ${collapsed ? 'w-16' : 'w-72 lg:w-80'} bg-white dark:bg-background-dark border-r border-primary/10 z-40 flex-col shadow-xl shrink-0 transition-all duration-300 overflow-hidden`}>
+        {collapsed ? (
+          <div className="w-full flex flex-col items-center py-4 gap-3">
+            <button
+              type="button"
+              onClick={onToggleCollapse}
+              className="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-primary flex items-center justify-center border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer"
+              title="Perlebar Panel Aset Desa"
+            >
+              <span className="material-symbols-outlined text-base">chevron_right</span>
+            </button>
+            <div className="h-px w-8 bg-primary/15" />
+            <span
+              className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 select-none"
+              style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+            >
+              Aset Desa
+            </span>
+            <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[9px] font-extrabold">
+              {filteredPlots.length}
+            </span>
+          </div>
+        ) : (
+          sidebarContent
+        )}
       </aside>
 
-      {/* Mobile Slide-Up Bottom Sheet Trigger Pill */}
-      <div className="md:hidden fixed bottom-20 left-3 z-[45]">
-        <button
-          onClick={() => setMobileExpanded(!mobileExpanded)}
-          className="flex items-center gap-2 bg-slate-900/95 text-white px-3.5 py-2 rounded-full border border-primary/40 shadow-2xl backdrop-blur-md text-xs font-black hover:border-primary transition-all"
-        >
-          <span className="material-symbols-outlined text-primary text-base">format_list_bulleted</span>
-          <span>Aset Desa ({filteredPlots.length})</span>
-          <span className="material-symbols-outlined text-sm">{mobileExpanded ? 'expand_more' : 'expand_less'}</span>
-        </button>
-      </div>
+      {/* Mobile Slide-Up Bottom Sheet Trigger Pill (hidden while sheet is open) */}
+      {!mobileExpanded && (
+        <div className="md:hidden fixed bottom-24 left-3 z-[45]">
+          <button
+            onClick={() => setMobileExpanded(true)}
+            className="flex items-center gap-2 bg-slate-900/95 text-white px-3.5 py-2 rounded-full border border-primary/40 shadow-2xl backdrop-blur-md text-xs font-black hover:border-primary transition-all"
+          >
+            <span className="material-symbols-outlined text-primary text-base">format_list_bulleted</span>
+            <span>Aset Desa ({filteredPlots.length})</span>
+            <span className="material-symbols-outlined text-sm">expand_less</span>
+          </button>
+        </div>
+      )}
 
       {/* Mobile Slide-Up Bottom Sheet Modal */}
       {mobileExpanded && (

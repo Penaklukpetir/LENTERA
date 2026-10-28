@@ -22,6 +22,7 @@ export default function DetailsPanel({
   });
 
   const [plotBatches, setPlotBatches] = useState([]);
+  const [mlrHistory, setMlrHistory] = useState([]);
   const [showAddHarvestModal, setShowAddHarvestModal] = useState(false);
   const [newHarvest, setNewHarvest] = useState({
     process_method: 'Natural Process',
@@ -54,6 +55,11 @@ export default function DetailsPanel({
           }
         })
         .catch(() => setPlotBatches([]));
+
+      fetch(`${API_BASE_URL}/plots/${selectedPlot.id}/mlr-history`)
+        .then(res => (res.ok ? res.json() : []))
+        .then(data => setMlrHistory(Array.isArray(data) ? data : []))
+        .catch(() => setMlrHistory([]));
     }
   }, [selectedPlot]);
 
@@ -63,8 +69,6 @@ export default function DetailsPanel({
     if (!selectedPlot) return;
     const payload = {
       plot_id: selectedPlot.id,
-      farmer_name: selectedPlot.farmer_name,
-      coffee_type: selectedPlot.coffee_type,
       process_method: newHarvest.process_method,
       weight_kg: parseFloat(newHarvest.weight_kg) || 0,
       drying_days: parseInt(newHarvest.drying_days) || 14,
@@ -76,29 +80,35 @@ export default function DetailsPanel({
     try {
       const res = await fetch(`${API_BASE_URL}/scm/batches`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(payload)
       });
       const data = await res.json();
-      if (data.status === 'SUCCESS') {
-        setPlotBatches([data.data, ...plotBatches]);
-        setShowAddHarvestModal(false);
-        setNewHarvest({ process_method: 'Natural Process', weight_kg: '', drying_days: 14, grade: 'Specialty Grade', cupping_score: 85.0, status: 'Pengeringan' });
-        alert('Pencatatan hasil panen realisasi berhasil disimpan!');
+      if (!res.ok) {
+        alert(`Gagal menyimpan panen: ${data.error || 'Terjadi kesalahan.'}`);
+        return;
       }
+      setPlotBatches([data.data, ...plotBatches]);
+      setShowAddHarvestModal(false);
+      setNewHarvest({ process_method: 'Natural Process', weight_kg: '', drying_days: 14, grade: 'Specialty Grade', cupping_score: 85.0, status: 'Pengeringan' });
+      alert('Pencatatan hasil panen realisasi berhasil disimpan!');
     } catch (err) {
       console.error('Error creating harvest batch:', err);
+      alert('Gagal menghubungi server. Panen tidak tersimpan.');
     }
   };
 
-  // Calculate MLR yield prediction strictly following ISO/IEEE paper formula
+  // MLR v1.3: linear regression with biological floor (0.4 kg/tree)
   const calculateMLRYield = (area, trees, elev) => {
     const a = parseFloat(area) || 0;
     const t = parseInt(trees) || 0;
     const e = parseInt(elev) || 0;
-    // Y = -245.50 + 0.12*X1 + 1.85*X2 - 0.08*X3
-    const yieldVal = -245.50 + (0.12 * a) + (1.85 * t) - (0.08 * e);
-    return Math.max(0, parseFloat(yieldVal.toFixed(2)));
+    if (a <= 0 || t < 1 || e < 400 || e > 3000) return 0;
+    const linear = -45.50 + (0.12 * a) + (1.85 * t) - (0.08 * e);
+    return parseFloat(Math.max(t * 0.4, linear, 0).toFixed(2));
   };
 
   // Handle Edit Plot Save with Backend API Persistence
@@ -109,7 +119,6 @@ export default function DetailsPanel({
     const area = parseFloat(editForm.land_area) || 0;
     const trees = parseInt(editForm.tree_count) || 0;
     const elev = parseInt(editForm.elevation) || 0;
-    const predicted = calculateMLRYield(area, trees, elev);
 
     const payload = {
       farmer_name: editForm.farmer_name,
@@ -117,68 +126,60 @@ export default function DetailsPanel({
       tree_count: trees,
       elevation: elev,
       land_area: area,
-      predicted_yield: predicted,
       description: editForm.description
     };
 
     try {
-      if (token) {
-        const res = await fetch(`${API_BASE_URL}/plots/${selectedPlot.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (res.ok && data.plot) {
-          const updatedPlots = plots.map(p => p.id === selectedPlot.id ? data.plot : p);
-          setPlots(updatedPlots);
-          setSelectedPlot(data.plot);
-          setIsEditing(false);
-          alert('Data plot lahan & peramalan hasil panen MLR berhasil diperbarui!');
-          return;
-        }
+      const res = await fetch(`${API_BASE_URL}/plots/${selectedPlot.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok || !data.plot) {
+        alert(`Gagal memperbarui plot: ${data.error || 'Terjadi kesalahan.'}`);
+        return;
       }
+
+      const updatedPlots = plots.map(p => p.id === selectedPlot.id ? data.plot : p);
+      setPlots(updatedPlots);
+      setSelectedPlot(data.plot);
+      setIsEditing(false);
+      alert('Data plot lahan & peramalan hasil panen MLR berhasil diperbarui!');
     } catch (err) {
-      console.warn('Backend update plot fallback to local state:', err);
+      console.error('Gagal update plot:', err);
+      alert('Gagal menghubungi server. Perubahan tidak tersimpan.');
     }
-
-    // Local fallback update
-    const updatedPlot = {
-      ...selectedPlot,
-      ...payload
-    };
-
-    const updatedPlots = plots.map(p => p.id === selectedPlot.id ? updatedPlot : p);
-    setPlots(updatedPlots);
-    setSelectedPlot(updatedPlot);
-    setIsEditing(false);
-    alert('Data plot lahan & peramalan hasil panen MLR berhasil diperbarui!');
   };
 
   // Handle Delete Plot with Backend API Persistence
   const handleDeletePlot = async () => {
     if (!selectedPlot) return;
-    if (window.confirm(`Apakah Anda yakin ingin menghapus plot lahan "${selectedPlot.farmer_name}" secara permanen?`)) {
+    if (window.confirm(`Nonaktifkan plot lahan "${selectedPlot.farmer_name}"? Data akan diarsipkan (soft delete).`)) {
       try {
-        if (token) {
-          await fetch(`${API_BASE_URL}/plots/${selectedPlot.id}`, {
-            method: 'DELETE',
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
+        const res = await fetch(`${API_BASE_URL}/plots/${selectedPlot.id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          alert(`Gagal menonaktifkan plot: ${data.error || 'Terjadi kesalahan.'}`);
+          return;
         }
-      } catch (err) {
-        console.warn('Backend delete plot fallback:', err);
-      }
 
-      const updatedPlots = plots.filter(p => p.id !== selectedPlot.id);
-      setPlots(updatedPlots);
-      setSelectedPlot(null);
-      alert('Plot lahan berhasil dihapus!');
+        const updatedPlots = plots.filter(p => p.id !== selectedPlot.id);
+        setPlots(updatedPlots);
+        setSelectedPlot(null);
+        alert('Plot lahan berhasil dinonaktifkan (soft delete).');
+      } catch (err) {
+        console.error('Gagal menghapus plot:', err);
+        alert('Gagal menghubungi server. Plot tidak dinonaktifkan.');
+      }
     }
   };
 
@@ -311,7 +312,7 @@ export default function DetailsPanel({
                   <input 
                     type="number" 
                     required 
-                    min="0"
+                    min="1"
                     value={editForm.tree_count}
                     onChange={(e) => setEditForm({ ...editForm, tree_count: e.target.value })}
                     style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-main)', fontSize: '12px', boxSizing: 'border-box' }}
@@ -323,7 +324,8 @@ export default function DetailsPanel({
                   <input 
                     type="number" 
                     required 
-                    min="0"
+                    min="400"
+                    max="3000"
                     value={editForm.elevation}
                     onChange={(e) => setEditForm({ ...editForm, elevation: e.target.value })}
                     style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-main)', fontSize: '12px', boxSizing: 'border-box' }}
@@ -340,10 +342,10 @@ export default function DetailsPanel({
                 fontSize: '11px',
                 color: '#34D399'
               }}>
-                <div style={{ fontWeight: 700, marginBottom: '2px' }}>📊 Estimasi MLR Realtime:</div>
-                Y = -245.50 + (0.12 × {editForm.land_area || 0}) + (1.85 × {editForm.tree_count || 0}) - (0.08 × {editForm.elevation || 0})
+                <div style={{ fontWeight: 700, marginBottom: '2px' }}>📊 Estimasi MLR v1.3 Realtime:</div>
+                Y = max(0.4 × pohon, -45.50 + (0.12 × {editForm.land_area || 0}) + (1.85 × {editForm.tree_count || 0}) - (0.08 × {editForm.elevation || 0}))
                 <div style={{ fontWeight: 800, fontSize: '13px', marginTop: '4px', color: '#F8FAFC' }}>
-                  = {calculateMLRYield(editForm.land_area, editForm.tree_count, editForm.elevation).toLocaleString()} Kg/tahun
+                  = {calculateMLRYield(editForm.land_area, editForm.tree_count, editForm.elevation).toLocaleString('id-ID')} Kg/tahun
                 </div>
               </div>
 
@@ -396,7 +398,7 @@ export default function DetailsPanel({
                     </span>
                   </div>
                   <span style={{ fontSize: '10px', background: 'rgba(52, 211, 153, 0.2)', color: '#34D399', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
-                    ISO 29148 MLR
+                    MLR-v1.3-Kucur
                   </span>
                 </div>
 
@@ -417,7 +419,7 @@ export default function DetailsPanel({
                   <div style={{ fontWeight: 700, color: '#34D399', marginBottom: '4px' }}>Rincian Parameter Regresi (Y = a + b₁X₁ + b₂X₂ + b₃X₃):</div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>• Intercept (a):</span>
-                    <span style={{ fontWeight: 600 }}>-245.50 Kg</span>
+                    <span style={{ fontWeight: 600 }}>-45.50 Kg</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>• X₁ Luas ({currentArea} m² × 0.12):</span>
@@ -431,7 +433,58 @@ export default function DetailsPanel({
                     <span>• X₃ Elevasi ({currentElev} m × -0.08):</span>
                     <span style={{ fontWeight: 600, color: '#F87171' }}>-{mlrElevPenalty} Kg</span>
                   </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed rgba(255,255,255,0.15)', marginTop: '4px', paddingTop: '4px' }}>
+                    <span>• Batas biologis ({currentTrees} phn × 0.4):</span>
+                    <span style={{ fontWeight: 600, color: '#34D399' }}>≥ {(currentTrees * 0.4).toFixed(1)} Kg</span>
+                  </div>
                 </div>
+              </div>
+
+              {/* MLR MODEL GOVERNANCE: PREDICTION HISTORY */}
+              <div style={{
+                background: 'rgba(15, 23, 42, 0.5)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '14px',
+                padding: '14px',
+                marginTop: '12px'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span className="material-symbols-outlined" style={{ color: '#94A3B8', fontSize: '18px' }}>history</span>
+                    <span style={{ fontSize: '11px', fontWeight: 800, color: '#CBD5E1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      Riwayat Prediksi MLR
+                    </span>
+                  </div>
+                  <span style={{ fontSize: '10px', color: '#94A3B8' }}>{mlrHistory.length} entri</span>
+                </div>
+
+                {mlrHistory.length === 0 ? (
+                  <p style={{ fontSize: '11px', color: '#64748B', margin: 0 }}>
+                    Belum ada riwayat prediksi tersimpan untuk lahan ini.
+                  </p>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    {mlrHistory.slice(0, 4).map((entry) => (
+                      <div key={entry.id} style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        gap: '8px',
+                        fontSize: '10px',
+                        color: '#94A3B8',
+                        borderBottom: '1px solid rgba(255,255,255,0.05)',
+                        paddingBottom: '4px'
+                      }}>
+                        <span>
+                          {new Date(entry.calculated_at).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                          {' • '}{entry.mlr_formula_version}
+                        </span>
+                        <span style={{ color: '#34D399', fontWeight: 700 }}>
+                          {Number(entry.predicted_kg).toLocaleString('id-ID')} Kg
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* 2. KARTU PENCATATAN HASIL PANEN REALISASI */}
@@ -516,7 +569,7 @@ export default function DetailsPanel({
                     <span className="material-symbols-outlined">aspect_ratio</span>
                   </div>
                   <div className="info-details">
-                    <span className="info-label">Luas Lahan (PostGIS ST_Area)</span>
+                    <span className="info-label">Luas Lahan (m²)</span>
                     <span className="info-value">{currentArea.toLocaleString()} m²</span>
                   </div>
                 </div>
@@ -546,7 +599,7 @@ export default function DetailsPanel({
                     <span className="material-symbols-outlined">pin_drop</span>
                   </div>
                   <div className="info-details">
-                    <span className="info-label">Koordinat Spasial Poligon</span>
+                    <span className="info-label">Koordinat Spasial (Titik)</span>
                     <span className="info-value" style={{ fontSize: '11px' }}>
                       Lat: {Number(selectedPlot.lat).toFixed(6)}<br />
                       Lng: {Number(selectedPlot.lng).toFixed(6)}

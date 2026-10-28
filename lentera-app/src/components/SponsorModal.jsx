@@ -4,11 +4,14 @@ export default function SponsorModal({
   plots,
   newSponsorName,
   setNewSponsorName,
+  sponsorContact,
+  setSponsorContact,
   selectedSponsorPlot,
   setSelectedSponsorPlot,
   sponsorAmount,
   setSponsorAmount,
   proposalFile,
+  setProposalFile,
   handleSponsorSubmit,
   setShowSponsorModal
 }) {
@@ -31,6 +34,18 @@ export default function SponsorModal({
               placeholder="Contoh: PT Kopi Java Mandiri"
               value={newSponsorName}
               onChange={(e) => setNewSponsorName(e.target.value)}
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Kontak Penanggung Jawab</label>
+            <input 
+              type="text" 
+              required
+              className="form-input" 
+              placeholder="Nama PIC • 0812xxxxxxx / email"
+              value={sponsorContact || ''}
+              onChange={(e) => setSponsorContact(e.target.value)}
             />
           </div>
 
@@ -66,13 +81,24 @@ export default function SponsorModal({
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <input 
                 type="file" 
-                accept=".pdf" 
+                accept="application/pdf,.pdf" 
                 id="proposal-pdf-input"
+                required
                 style={{ display: 'none' }}
                 onChange={(e) => {
                   const file = e.target.files[0];
                   if (file && setProposalFile) {
-                    setProposalFile(file.name);
+                    if (file.type !== 'application/pdf') {
+                      alert('Berkas proposal wajib berformat PDF.');
+                      e.target.value = '';
+                      return;
+                    }
+                    if (file.size > 5 * 1024 * 1024) {
+                      alert('Ukuran berkas proposal maksimal 5 MB.');
+                      e.target.value = '';
+                      return;
+                    }
+                    setProposalFile(file);
                   }
                 }}
               />
@@ -84,7 +110,7 @@ export default function SponsorModal({
                   gap: '10px', 
                   padding: '10px 14px', 
                   backgroundColor: 'var(--bg-secondary)', 
-                  border: '1px border-slate-700', 
+                  border: '1px solid var(--border-color)', 
                   borderRadius: '10px', 
                   cursor: 'pointer',
                   fontSize: '13px',
@@ -92,7 +118,7 @@ export default function SponsorModal({
                 }}
               >
                 <span className="material-symbols-outlined text-rose-500" style={{ fontSize: '24px' }}>picture_as_pdf</span>
-                <span>{proposalFile ? `File Dipilih: ${proposalFile}` : 'Pilih File PDF Proposal...'}</span>
+                <span>{proposalFile ? `File Dipilih: ${proposalFile.name}` : 'Pilih File PDF Proposal (Maks. 5 MB)...'}</span>
               </label>
             </div>
           </div>

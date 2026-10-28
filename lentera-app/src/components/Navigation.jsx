@@ -1,8 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Pagination from './Pagination';
+
+const API_BASE_URL = 'http://localhost:5000/api';
+const DESTINATION_PAGE_SIZE = 6;
 
 export default function Navigation({ destinations = [] }) {
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [selectedDest, setSelectedDest] = useState(null);
+  const [destPage, setDestPage] = useState(1);
+  const [guides, setGuides] = useState([]);
+  const [selectedGuideId, setSelectedGuideId] = useState('');
+  const [bookingState, setBookingState] = useState({ loading: false, error: '', success: '' });
   const [guideForm, setGuideForm] = useState({
     name: '',
     phone: '',
@@ -11,20 +19,66 @@ export default function Navigation({ destinations = [] }) {
     notes: ''
   });
 
-  const handleOpenGuideModal = (dest) => {
-    setSelectedDest(dest);
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/guides`)
+      .then((res) => (res.ok ? res.json() : { data: [] }))
+      .then((data) => setGuides(data.data || []))
+      .catch(() => setGuides([]));
+  }, []);
+
+  const handleOpenGuideModal = (dest) => {    setSelectedDest(dest);
+    setBookingState({ loading: false, error: '', success: '' });
     setShowGuideModal(true);
   };
 
-  const handleSendGuideRequest = (e) => {
+  const handleSendGuideRequest = async (e) => {
     e.preventDefault();
-    const destName = selectedDest ? selectedDest.name : 'Destinasi Wisata Desa Kucur';
-    const message = `Halo Pemandu Wisata Desa Kucur!\n\nSaya ingin memesan pendampingan wisata:\n• *Nama Pemesan*: ${guideForm.name}\n• *Destinasi Target*: ${destName}\n• *Tanggal Kunjungan*: ${guideForm.date || 'Besok'}\n• *Jumlah Rombongan*: ${guideForm.guests} Orang\n• *No HP/WA*: ${guideForm.phone}\n• *Catatan Tambahan*: ${guideForm.notes || '-'}\n\nMohon konfirmasi ketersediaan pemandu lokal. Terima kasih!`;
+    setBookingState({ loading: true, error: '', success: '' });
 
-    window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(message)}`, '_blank');
-    setShowGuideModal(false);
-    setGuideForm({ name: '', phone: '', date: '', guests: 2, notes: '' });
+    const destName = selectedDest ? selectedDest.name : 'Destinasi Wisata Desa Kucur';
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/guides`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          guide_id: selectedGuideId ? Number(selectedGuideId) : null,
+          visitor_name: guideForm.name,
+          phone: guideForm.phone,
+          visit_date: guideForm.date,
+          visitors_count: Number(guideForm.guests),
+          target_dest: destName,
+          notes: guideForm.notes
+        })
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setBookingState({ loading: false, error: data.error || 'Gagal menyimpan permintaan pemandu.', success: '' });
+        return;
+      }
+
+      const message = `Halo Pemandu Wisata Desa Kucur!\n\nSaya ingin memesan pendampingan wisata:\n• *Nama Pemesan*: ${guideForm.name}\n• *Destinasi Target*: ${destName}\n• *Tanggal Kunjungan*: ${guideForm.date}\n• *Jumlah Rombongan*: ${guideForm.guests} Orang\n• *No HP/WA*: ${guideForm.phone}\n• *Catatan Tambahan*: ${guideForm.notes || '-'}\n\nMohon konfirmasi ketersediaan pemandu lokal. Terima kasih!`;
+
+      setBookingState({
+        loading: false,
+        error: '',
+        success: 'Permintaan pemandu tercatat di sistem. Lanjutkan konfirmasi via WhatsApp bila diperlukan.'
+      });
+      window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(message)}`, '_blank');
+      setGuideForm({ name: '', phone: '', date: '', guests: 2, notes: '' });
+      setSelectedGuideId('');
+    } catch (err) {
+      setBookingState({ loading: false, error: 'Gagal menghubungi server. Permintaan tidak tersimpan.', success: '' });
+    }
   };
+
+  const destPageCount = Math.max(1, Math.ceil(destinations.length / DESTINATION_PAGE_SIZE));
+  const safeDestPage = Math.min(destPage, destPageCount);
+  const pagedDestinations = destinations.slice(
+    (safeDestPage - 1) * DESTINATION_PAGE_SIZE,
+    safeDestPage * DESTINATION_PAGE_SIZE
+  );
 
   return (
     <div className="flex-grow overflow-y-auto max-w-7xl mx-auto px-4 sm:px-6 py-6 pb-28 lg:pb-12 font-display space-y-8">
@@ -56,10 +110,10 @@ export default function Navigation({ destinations = [] }) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {destinations.map((dest) => (
+          {pagedDestinations.map((dest) => (
             <div
               key={dest.id}
-              className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col group"
+              className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg card-hover transition-all duration-300 flex flex-col group"
             >
               <div className="relative h-48 overflow-hidden">
                 <img
@@ -117,6 +171,16 @@ export default function Navigation({ destinations = [] }) {
             </div>
           ))}
         </div>
+
+        <Pagination
+          page={safeDestPage}
+          pageCount={destPageCount}
+          total={destinations.length}
+          pageSize={DESTINATION_PAGE_SIZE}
+          onPageChange={setDestPage}
+          itemLabel="destinasi"
+          className="mt-4 border-t border-slate-200 dark:border-slate-800"
+        />
       </section>
 
       {/* REQUEST GUIDE MODAL OVERLAY */}
@@ -137,6 +201,37 @@ export default function Navigation({ destinations = [] }) {
             </div>
 
             <form onSubmit={handleSendGuideRequest} className="space-y-3 text-xs">
+              {bookingState.error && (
+                <div className="p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-[11px] font-semibold flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-sm">error</span>
+                  <span>{bookingState.error}</span>
+                </div>
+              )}
+              {bookingState.success && (
+                <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-sm">check_circle</span>
+                  <span>{bookingState.success}</span>
+                </div>
+              )}
+
+              {guides.length > 0 && (
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Pilih Pemandu (Opsional)</label>
+                  <select
+                    value={selectedGuideId}
+                    onChange={(e) => setSelectedGuideId(e.target.value)}
+                    className="w-full px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white outline-none focus:border-emerald-400 font-semibold"
+                  >
+                    <option value="">Ditentukan Pokdarwis</option>
+                    {guides.map((guide) => (
+                      <option key={guide.id} value={guide.id}>
+                        {guide.guide_name} • {guide.rating ? `${guide.rating}★` : 'Pemandu Lokal'}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               <div>
                 <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Nama Pemesan / Ketua Rombongan</label>
                 <input
@@ -199,9 +294,15 @@ export default function Navigation({ destinations = [] }) {
 
               <button
                 type="submit"
-                className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 rounded-xl font-extrabold text-xs shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all cursor-pointer mt-2"
+                disabled={bookingState.loading}
+                className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 rounded-xl font-extrabold text-xs shadow-lg shadow-emerald-500/20 hover:opacity-95 transition-all cursor-pointer mt-2 flex items-center justify-center gap-2 disabled:opacity-60"
               >
-                Kirim Booking Pemandu via WhatsApp
+                {bookingState.loading ? (
+                  <span className="material-symbols-outlined animate-spin text-base">sync</span>
+                ) : (
+                  <span className="material-symbols-outlined text-base">send</span>
+                )}
+                <span>Simpan &amp; Kirim Booking Pemandu</span>
               </button>
             </form>
           </div>

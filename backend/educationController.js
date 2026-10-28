@@ -3,7 +3,7 @@ import pool from './db.js';
 export const getEducationModules = async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT id, slug, title, category, sub_info, description, image_url, created_at FROM education_modules ORDER BY id DESC'
+      'SELECT id, slug, title, category, sub_info, description, image_url, created_at FROM education_modules WHERE deleted_at IS NULL ORDER BY id DESC'
     );
     return res.status(200).json(result.rows);
   } catch (err) {
@@ -34,8 +34,14 @@ export const createEducationModule = async (req, res) => {
 export const deleteEducationModule = async (req, res) => {
   const { id } = req.params;
   try {
-    await pool.query('DELETE FROM education_modules WHERE id = $1', [id]);
-    return res.status(200).json({ message: 'Education module deleted.' });
+    const result = await pool.query(
+      'UPDATE education_modules SET deleted_at = CURRENT_TIMESTAMP WHERE id = $1 AND deleted_at IS NULL RETURNING id',
+      [id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Education module not found.' });
+    }
+    return res.status(200).json({ message: 'Education module deleted (soft delete).' });
   } catch (err) {
     console.error('Delete education_module error:', err);
     return res.status(500).json({ error: 'Failed to delete education module.' });

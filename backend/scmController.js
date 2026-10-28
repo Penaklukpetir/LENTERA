@@ -1,257 +1,290 @@
 import pool from './db.js';
 
-// In-Memory Fallback Seed Data for SCM Hub (if Postgres table is not populated yet)
-let dummyBatches = [
-  {
-    id: 1,
-    batch_code: 'KCR-2026-001',
-    plot_id: 1,
-    farmer_name: 'Pak Sugeng (Poktan Gemah Ripah 1)',
-    coffee_type: 'Arabica',
-    process_method: 'Natural Process',
-    weight_kg: 850,
-    drying_days: 18,
-    grade: 'Specialty Grade',
-    cupping_score: 87.5,
-    status: 'Gudang Green Bean',
-    created_at: '2026-08-10T08:00:00.000Z'
-  },
-  {
-    id: 2,
-    batch_code: 'KCR-2026-002',
-    plot_id: 2,
-    farmer_name: 'Ibu Sumiati (KWT 1)',
-    coffee_type: 'Robusta',
-    process_method: 'Full Washed',
-    weight_kg: 1200,
-    drying_days: 12,
-    grade: 'Specialty Grade',
-    cupping_score: 84.0,
-    status: 'Pengeringan',
-    created_at: '2026-08-15T09:30:00.000Z'
-  },
-  {
-    id: 3,
-    batch_code: 'KCR-2026-003',
-    plot_id: 3,
-    farmer_name: 'Pak Bambang (Poktan Gemah Ripah 3)',
-    coffee_type: 'Arabica',
-    process_method: 'Honey Process',
-    weight_kg: 650,
-    drying_days: 15,
-    grade: 'Specialty Grade',
-    cupping_score: 88.0,
-    status: 'Siap Kirim',
-    created_at: '2026-08-18T11:00:00.000Z'
-  },
-  {
-    id: 4,
-    batch_code: 'KCR-2026-004',
-    plot_id: 4,
-    farmer_name: 'Pak Slamet (Poktan Gemah Ripah 2)',
-    coffee_type: 'Robusta',
-    process_method: 'Natural Process',
-    weight_kg: 1400,
-    drying_days: 14,
-    grade: 'Commercial Grade',
-    cupping_score: 79.5,
-    status: 'Gudang Green Bean',
-    created_at: '2026-08-20T14:15:00.000Z'
-  }
-];
+const VALID_PROCESS_METHODS = ['Natural Process', 'Full Washed', 'Honey Process', 'Wet Hulled'];
+const VALID_BATCH_STATUSES = ['Pengeringan', 'Gudang Green Bean', 'Siap Kirim', 'Terjual'];
+const VALID_GRADES = ['Specialty Grade', 'Commercial Grade'];
+const FORMULA_VERSION = 'MLR-v1.2-Kucur';
 
-let dummyOfftakers = [
-  {
-    id: 1,
-    contract_code: 'CTR-2026-01',
-    buyer_name: 'Roastery Kopi Senja Malang',
-    coffee_type: 'Arabica Specialty',
-    volume_kg: 500,
-    price_per_kg: 125000,
-    total_value: 62500000,
-    delivery_date: '2026-09-15',
-    status: 'AKTIF'
-  },
-  {
-    id: 2,
-    contract_code: 'CTR-2026-02',
-    buyer_name: 'PT Indokopi Ekspor Surabaya',
-    coffee_type: 'Robusta Washed',
-    volume_kg: 2000,
-    price_per_kg: 75000,
-    total_value: 150000000,
-    delivery_date: '2026-10-01',
-    status: 'AKTIF'
-  },
-  {
-    id: 3,
-    contract_code: 'CTR-2026-03',
-    buyer_name: 'Kedai Kopi Lereng Kawi',
-    coffee_type: 'Arabica Honey Process',
-    volume_kg: 300,
-    price_per_kg: 140000,
-    total_value: 42000000,
-    delivery_date: '2026-08-25',
-    status: 'TERKIRIM'
-  }
-];
+const BATCH_COLUMNS = `
+  b.id, b.batch_code, b.plot_id, b.weight_kg, b.drying_days, b.grade,
+  b.process_method, b.cupping_score, b.status, b.harvest_date, b.created_at,
+  p.farmer_name, p.coffee_type, p.elevation,
+  (p.geom)[0] AS lng, (p.geom)[1] AS lat
+`;
 
-// Price Trends & Demand Forecast Data
-const priceTrendsAndForecast = {
-  price_history: [
-    { month: 'Jan', arabica: 110000, robusta: 62000 },
-    { month: 'Feb', arabica: 112000, robusta: 63500 },
-    { month: 'Mar', arabica: 115000, robusta: 65000 },
-    { month: 'Apr', arabica: 118000, robusta: 66000 },
-    { month: 'Mei', arabica: 120000, robusta: 68000 },
-    { month: 'Jun', arabica: 122000, robusta: 70000 },
-    { month: 'Jul', arabica: 125000, robusta: 72000 },
-    { month: 'Agu', arabica: 128000, robusta: 75000 }
-  ],
-  demand_forecast: [
-    { month: 'Sep 2026', forecast_kg: 4200, price_projected: 130000, target_buyer: 'Roastery Malang & Surabaya' },
-    { month: 'Okt 2026', forecast_kg: 4800, price_projected: 132000, target_buyer: 'Eksportir PT Indokopi' },
-    { month: 'Nov 2026', forecast_kg: 3900, price_projected: 135000, target_buyer: 'Kafe Agrowisata Local' },
-    { month: 'Des 2026', forecast_kg: 5500, price_projected: 138000, target_buyer: 'Festival Kopi Kawi' },
-    { month: 'Jan 2027', forecast_kg: 3200, price_projected: 140000, target_buyer: 'Stok Cadangan Gudang' },
-    { month: 'Feb 2027', forecast_kg: 3600, price_projected: 142000, target_buyer: 'Mitra Kedai Nasional' }
-  ]
+const BATCH_FROM = `
+  FROM harvest_batches b
+  LEFT JOIN coffee_plots p ON b.plot_id = p.id AND p.deleted_at IS NULL
+`;
+
+const BATCH_SELECT = `SELECT ${BATCH_COLUMNS} ${BATCH_FROM}`;
+
+const BATCH_PAGE_SIZE = 8;
+const MAX_BATCH_PAGE_SIZE = 100;
+
+const parsePositiveInt = (value, fallback) => {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
 };
 
-// GET /api/scm/batches
+const toSearchPattern = (value) => {
+  const term = String(value || '').trim().slice(0, 100);
+  if (!term) return '';
+  return `%${term.replace(/[\\%_]/g, (char) => `\\${char}`)}%`;
+};
+
+// GET /api/scm/batches?page=1&pageSize=8&search=
 export const getScmBatches = async (req, res) => {
+  const page = parsePositiveInt(req.query.page, 1);
+  const pageSize = Math.min(parsePositiveInt(req.query.pageSize, BATCH_PAGE_SIZE), MAX_BATCH_PAGE_SIZE);
+  const searchPattern = toSearchPattern(req.query.search);
+
   try {
-    const result = await pool.query('SELECT * FROM harvest_batches ORDER BY created_at DESC');
-    if (result.rows && result.rows.length > 0) {
-      return res.status(200).json({ status: 'SUCCESS', data: result.rows });
+    const [summaryResult, countResult] = await Promise.all([
+      pool.query(`
+        SELECT COUNT(*)::int AS total_batches,
+               COALESCE(SUM(b.weight_kg), 0)::float8 AS total_weight_kg,
+               COALESCE(SUM(b.weight_kg) FILTER (WHERE b.status IN ('Gudang Green Bean', 'Siap Kirim')), 0)::float8 AS green_bean_stock_kg,
+               COUNT(*) FILTER (WHERE b.grade = 'Specialty Grade')::int AS specialty_count
+        FROM harvest_batches b
+        WHERE b.deleted_at IS NULL
+      `),
+      pool.query(
+        `SELECT COUNT(*)::int AS total
+         ${BATCH_FROM}
+         WHERE b.deleted_at IS NULL
+           AND ($1::text = '' OR b.batch_code ILIKE $1 OR p.farmer_name ILIKE $1 OR b.process_method ILIKE $1)`,
+        [searchPattern]
+      ),
+    ]);
+
+    const total = countResult.rows[0]?.total || 0;
+    const pageCount = Math.max(1, Math.ceil(total / pageSize));
+    const safePage = Math.min(page, pageCount);
+
+    let rows = [];
+    if (total > 0) {
+      const result = await pool.query(
+        `${BATCH_SELECT}
+         WHERE b.deleted_at IS NULL
+           AND ($1::text = '' OR b.batch_code ILIKE $1 OR p.farmer_name ILIKE $1 OR b.process_method ILIKE $1)
+         ORDER BY b.created_at DESC, b.id DESC
+         LIMIT $2 OFFSET $3`,
+        [searchPattern, pageSize, (safePage - 1) * pageSize]
+      );
+      rows = result.rows;
     }
-    return res.status(200).json({ status: 'SUCCESS', data: dummyBatches });
+
+    return res.status(200).json({
+      status: 'SUCCESS',
+      data: rows,
+      pagination: { page: safePage, pageSize, pageCount, total },
+      summary: summaryResult.rows[0],
+      formula_version: FORMULA_VERSION,
+    });
   } catch (err) {
-    console.warn('Postgres harvest_batches query fallback to memory:', err.message);
-    return res.status(200).json({ status: 'SUCCESS', data: dummyBatches });
+    console.error('Fetch SCM batches error:', err);
+    return res.status(500).json({ error: 'Gagal mengambil data batch panen.' });
   }
 };
 
 // POST /api/scm/batches
 export const createScmBatch = async (req, res) => {
-  const { farmer_name, coffee_type, process_method, weight_kg, drying_days, grade, cupping_score, status, plot_id } = req.body;
-  const newId = dummyBatches.length + 1;
-  const batch_code = `KCR-2026-${String(newId).padStart(3, '0')}`;
+  const { plot_id, weight_kg, drying_days, grade, process_method, cupping_score, status, harvest_date } = req.body;
 
-  const newBatch = {
-    id: newId,
-    batch_code,
-    plot_id: plot_id || 1,
-    farmer_name: farmer_name || 'Petani Kucur',
-    coffee_type: coffee_type || 'Arabica',
-    process_method: process_method || 'Natural Process',
-    weight_kg: parseFloat(weight_kg) || 500,
-    drying_days: parseInt(drying_days) || 14,
-    grade: grade || 'Specialty Grade',
-    cupping_score: parseFloat(cupping_score) || 85.0,
-    status: status || 'Pengeringan',
-    created_at: new Date().toISOString()
-  };
+  if (!plot_id) {
+    return res.status(400).json({ error: 'Lahan (plot_id) wajib dipilih untuk mencatat batch panen.' });
+  }
+
+  const weight = Number(weight_kg);
+  const drying = drying_days === undefined ? 14 : Number(drying_days);
+  const cupping = cupping_score === undefined || cupping_score === '' ? null : Number(cupping_score);
+  const method = process_method || 'Natural Process';
+  const batchStatus = status || 'Pengeringan';
+  const batchGrade = grade || 'Specialty Grade';
+
+  if (!Number.isFinite(weight) || weight <= 0) {
+    return res.status(400).json({ error: 'Berat panen harus lebih besar dari nol.' });
+  }
+  if (!Number.isInteger(drying) || drying < 0 || drying > 60) {
+    return res.status(400).json({ error: 'Lama pengeringan harus 0-60 hari.' });
+  }
+  if (!VALID_PROCESS_METHODS.includes(method)) {
+    return res.status(400).json({ error: 'Metode proses tidak valid.' });
+  }
+  if (!VALID_BATCH_STATUSES.includes(batchStatus)) {
+    return res.status(400).json({ error: 'Status batch tidak valid.' });
+  }
+  if (!VALID_GRADES.includes(batchGrade)) {
+    return res.status(400).json({ error: 'Grade kopi tidak valid.' });
+  }
+  if (cupping !== null && (!Number.isFinite(cupping) || cupping < 0 || cupping > 100)) {
+    return res.status(400).json({ error: 'Skor cupping harus 0-100.' });
+  }
 
   try {
-    const query = `
-      INSERT INTO harvest_batches (batch_code, plot_id, farmer_name, coffee_type, process_method, weight_kg, drying_days, grade, cupping_score, status)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-      RETURNING *;
-    `;
-    const values = [batch_code, newBatch.plot_id, newBatch.farmer_name, newBatch.coffee_type, newBatch.process_method, newBatch.weight_kg, newBatch.drying_days, newBatch.grade, newBatch.cupping_score, newBatch.status];
-    const result = await pool.query(query, values);
+    const plot = await pool.query(
+      'SELECT id FROM coffee_plots WHERE id = $1 AND deleted_at IS NULL',
+      [plot_id]
+    );
+    if (plot.rows.length === 0) {
+      return res.status(404).json({ error: 'Lahan panen tidak ditemukan.' });
+    }
+
+    const seq = await pool.query("SELECT nextval('harvest_batch_code_seq') AS seq");
+    const year = new Date().getFullYear();
+    const batchCode = `KCR-${year}-${String(seq.rows[0].seq).padStart(3, '0')}`;
+
+    const result = await pool.query(
+      `WITH inserted AS (
+         INSERT INTO harvest_batches
+           (batch_code, plot_id, weight_kg, drying_days, grade, process_method, cupping_score, status, harvest_date)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, COALESCE($9, CURRENT_DATE))
+         RETURNING *
+       )
+       SELECT i.id, i.batch_code, i.plot_id, i.weight_kg, i.drying_days, i.grade,
+              i.process_method, i.cupping_score, i.status, i.harvest_date, i.created_at,
+              p.farmer_name, p.coffee_type, p.elevation,
+              (p.geom)[0] AS lng, (p.geom)[1] AS lat
+       FROM inserted i
+       LEFT JOIN coffee_plots p ON i.plot_id = p.id`,
+      [batchCode, plot_id, weight, drying, batchGrade, method, cupping, batchStatus, harvest_date || null]
+    );
+
     return res.status(201).json({ status: 'SUCCESS', data: result.rows[0] });
   } catch (err) {
-    console.warn('Postgres harvest_batches insert fallback to memory:', err.message);
-    dummyBatches.unshift(newBatch);
-    return res.status(201).json({ status: 'SUCCESS', data: newBatch });
+    console.error('Create SCM batch error:', err);
+    return res.status(500).json({ error: 'Gagal menyimpan batch panen.' });
   }
+};
+
+const buildTraceability = (batch) => {
+  const baseUrl = process.env.PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
+  const traceUrl = `${baseUrl.replace(/\/$/, '')}/trace/${encodeURIComponent(batch.batch_code)}`;
+  return {
+    ...batch,
+    origin_village: 'Desa Kucur, Kec. Dau, Kab. Malang',
+    origin_coordinates:
+      batch.lat !== null && batch.lng !== null ? { lat: Number(batch.lat), lng: Number(batch.lng) } : null,
+    elevation_mdpl: batch.elevation,
+    certification: 'Organik Desa Kucur & Indikasi Geografis Gunung Kawi',
+    trace_url: traceUrl,
+    qr_code_url: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(traceUrl)}`,
+  };
 };
 
 // GET /api/scm/traceability/:batchCode
 export const getTraceability = async (req, res) => {
   const { batchCode } = req.params;
-  let batch = dummyBatches.find(b => b.batch_code.toLowerCase() === batchCode.toLowerCase());
-
   try {
-    const result = await pool.query('SELECT * FROM harvest_batches WHERE LOWER(batch_code) = LOWER($1)', [batchCode]);
-    if (result.rows && result.rows.length > 0) {
-      batch = result.rows[0];
+    const result = await pool.query(
+      `${BATCH_SELECT} WHERE LOWER(b.batch_code) = LOWER($1) AND b.deleted_at IS NULL`,
+      [batchCode]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ status: 'ERROR', message: 'Batch SCM tidak ditemukan' });
     }
+    return res.status(200).json({ status: 'SUCCESS', data: buildTraceability(result.rows[0]) });
   } catch (err) {
-    console.warn('Postgres traceability query fallback:', err.message);
+    console.error('Traceability query error:', err);
+    return res.status(500).json({ error: 'Gagal mengambil data traceability.' });
   }
-
-  if (!batch) {
-    return res.status(404).json({ status: 'ERROR', message: 'Batch SCM tidak ditemukan' });
-  }
-
-  // Attach spatial origin metadata (Kebun Desa Kucur)
-  const traceabilityResponse = {
-    ...batch,
-    origin_village: 'Desa Kucur, Kec. Dau, Kab. Malang',
-    origin_coordinates: { lat: -7.9152, lng: 112.5201 },
-    elevation_mdpl: batch.coffee_type === 'Arabica' ? 1250 : 850,
-    certification: 'Organik Desa Kucur & Indikasi Geografis Gunung Kawi',
-    qr_code_url: `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://lentera-kucur.desa.id/trace/${batch.batch_code}`
-  };
-
-  return res.status(200).json({ status: 'SUCCESS', data: traceabilityResponse });
 };
 
 // GET /api/scm/offtakers
 export const getOfftakers = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM scm_contracts ORDER BY created_at DESC');
-    if (result.rows && result.rows.length > 0) {
-      return res.status(200).json({ status: 'SUCCESS', data: result.rows });
-    }
-    return res.status(200).json({ status: 'SUCCESS', data: dummyOfftakers });
+    const result = await pool.query(
+      'SELECT * FROM scm_contracts WHERE deleted_at IS NULL ORDER BY created_at DESC, id DESC'
+    );
+    return res.status(200).json({ status: 'SUCCESS', data: result.rows });
   } catch (err) {
-    console.warn('Postgres scm_contracts query fallback:', err.message);
-    return res.status(200).json({ status: 'SUCCESS', data: dummyOfftakers });
+    console.error('Fetch SCM contracts error:', err);
+    return res.status(500).json({ error: 'Gagal mengambil data kontrak offtaker.' });
   }
 };
 
 // POST /api/scm/offtakers
 export const createOfftaker = async (req, res) => {
   const { buyer_name, coffee_type, volume_kg, price_per_kg, delivery_date } = req.body;
-  const newId = dummyOfftakers.length + 1;
-  const contract_code = `CTR-2026-${String(newId).padStart(2, '0')}`;
-  const vol = parseFloat(volume_kg) || 500;
-  const price = parseFloat(price_per_kg) || 100000;
-  const total_value = vol * price;
 
-  const newContract = {
-    id: newId,
-    contract_code,
-    buyer_name: buyer_name || 'Mitra Roastery Kopi',
-    coffee_type: coffee_type || 'Arabica Specialty',
-    volume_kg: vol,
-    price_per_kg: price,
-    total_value,
-    delivery_date: delivery_date || '2026-10-15',
-    status: 'AKTIF'
-  };
+  if (!buyer_name || !delivery_date) {
+    return res.status(400).json({ error: 'Nama pembeli dan tanggal pengiriman wajib diisi.' });
+  }
+
+  const volume = Number(volume_kg);
+  const price = Number(price_per_kg);
+  if (!Number.isFinite(volume) || volume <= 0) {
+    return res.status(400).json({ error: 'Volume kontrak harus lebih besar dari nol.' });
+  }
+  if (!Number.isFinite(price) || price <= 0) {
+    return res.status(400).json({ error: 'Harga per kg harus lebih besar dari nol.' });
+  }
 
   try {
-    const query = `
-      INSERT INTO scm_contracts (contract_code, buyer_name, coffee_type, volume_kg, price_per_kg, total_value, delivery_date, status)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-      RETURNING *;
-    `;
-    const values = [contract_code, newContract.buyer_name, newContract.coffee_type, vol, price, total_value, newContract.delivery_date, 'AKTIF'];
-    const result = await pool.query(query, values);
+    const seq = await pool.query("SELECT nextval('scm_contract_code_seq') AS seq");
+    const year = new Date().getFullYear();
+    const contractCode = `CTR-${year}-${String(seq.rows[0].seq).padStart(2, '0')}`;
+
+    const result = await pool.query(
+      `INSERT INTO scm_contracts
+         (contract_code, buyer_name, coffee_type, volume_kg, price_per_kg, total_value, delivery_date, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, 'AKTIF')
+       RETURNING *`,
+      [contractCode, buyer_name, coffee_type || null, volume, price, volume * price, delivery_date]
+    );
+
     return res.status(201).json({ status: 'SUCCESS', data: result.rows[0] });
   } catch (err) {
-    console.warn('Postgres scm_contracts insert fallback:', err.message);
-    dummyOfftakers.unshift(newContract);
-    return res.status(201).json({ status: 'SUCCESS', data: newContract });
+    console.error('Create SCM contract error:', err);
+    return res.status(500).json({ error: 'Gagal menyimpan kontrak offtaker.' });
   }
 };
 
 // GET /api/scm/forecast
+// Real series derived from recorded contracts; no hardcoded price history.
 export const getForecast = async (req, res) => {
-  return res.status(200).json({ status: 'SUCCESS', data: priceTrendsAndForecast });
+  try {
+    const history = await pool.query(`
+      SELECT to_char(date_trunc('month', created_at), 'YYYY-MM') AS period,
+             ROUND(AVG(price_per_kg) FILTER (WHERE coffee_type ILIKE 'Arabica%')) AS arabica,
+             ROUND(AVG(price_per_kg) FILTER (WHERE coffee_type ILIKE 'Robusta%')) AS robusta
+      FROM scm_contracts
+      WHERE deleted_at IS NULL AND created_at >= date_trunc('month', CURRENT_DATE) - INTERVAL '7 months'
+      GROUP BY date_trunc('month', created_at)
+      ORDER BY date_trunc('month', created_at) ASC
+    `);
+
+    const upcoming = await pool.query(`
+      SELECT to_char(date_trunc('month', delivery_date), 'YYYY-MM') AS period,
+             SUM(volume_kg) AS forecast_kg,
+             ROUND(AVG(price_per_kg)) AS price_projected,
+             STRING_AGG(DISTINCT buyer_name, ', ') AS target_buyer
+      FROM scm_contracts
+      WHERE deleted_at IS NULL AND status = 'AKTIF' AND delivery_date >= CURRENT_DATE
+      GROUP BY date_trunc('month', delivery_date)
+      ORDER BY date_trunc('month', delivery_date) ASC
+    `);
+
+    return res.status(200).json({
+      status: 'SUCCESS',
+      data: {
+        basis: 'Realisasi harga & volume kontrak offtaker tersimpan',
+        price_history: history.rows.map((r) => ({
+          month: r.period,
+          arabica: r.arabica === null ? null : Number(r.arabica),
+          robusta: r.robusta === null ? null : Number(r.robusta),
+        })),
+        demand_forecast: upcoming.rows.map((r) => ({
+          month: r.period,
+          forecast_kg: Number(r.forecast_kg),
+          price_projected: Number(r.price_projected),
+          target_buyer: r.target_buyer,
+        })),
+      },
+    });
+  } catch (err) {
+    console.error('Forecast query error:', err);
+    return res.status(500).json({ error: 'Gagal menghitung proyeksi SCM.' });
+  }
 };

@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import Pagination from './Pagination';
+
+const MODULE_PAGE_SIZE = 6;
 
 export default function Education() {
   const [activeSlide, setActiveSlide] = useState(0);
   const [activeCategory, setActiveCategory] = useState('Semua');
+  const [modulePage, setModulePage] = useState(1);
   const [modules, setModules] = useState([]);
   const [selectedModule, setSelectedModule] = useState(null);
 
@@ -82,8 +86,15 @@ export default function Education() {
     return (m.category || '').toUpperCase() === activeCategory.toUpperCase();
   });
 
+  const modulePageCount = Math.max(1, Math.ceil(filteredModules.length / MODULE_PAGE_SIZE));
+  const safeModulePage = Math.min(modulePage, modulePageCount);
+  const pagedModules = filteredModules.slice(
+    (safeModulePage - 1) * MODULE_PAGE_SIZE,
+    safeModulePage * MODULE_PAGE_SIZE
+  );
+
   return (
-    <div className="flex-grow overflow-y-auto max-w-7xl mx-auto px-4 sm:px-6 py-4 pb-32 sm:pb-36 font-display">
+    <div className="flex-grow overflow-y-auto max-w-7xl mx-auto px-4 sm:px-6 py-4 pb-28 sm:pb-32 font-display">
       
       <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 mb-4 sm:mb-6">
         <a className="hover:text-primary" href="#">LENTERA</a>
@@ -160,7 +171,10 @@ export default function Education() {
             {['Semua', 'Kopi', 'Tani', 'Produksi'].map(cat => (
               <button
                 key={cat}
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => {
+                  setActiveCategory(cat);
+                  setModulePage(1);
+                }}
                 className={`px-3 py-1.5 sm:px-4 sm:py-2 text-[11px] sm:text-xs font-extrabold rounded-lg transition-all shrink-0 cursor-pointer ${
                   activeCategory.toLowerCase() === cat.toLowerCase() 
                     ? 'bg-primary text-slate-900 shadow-sm' 
@@ -180,8 +194,8 @@ export default function Education() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
-            {filteredModules.map(mod => (
-              <div key={mod.id} className="bg-white dark:bg-slate-900 border border-primary/10 rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm sm:shadow-md flex flex-col hover:border-primary/40 transition-all">
+            {pagedModules.map(mod => (
+              <div key={mod.id} className="bg-white dark:bg-slate-900 border border-primary/10 rounded-2xl sm:rounded-3xl overflow-hidden shadow-sm sm:shadow-md flex flex-col hover:border-primary/40 card-hover transition-all">
                 <div className="h-36 sm:h-48 overflow-hidden relative">
                   <img src={mod.image_url || 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=300'} alt={mod.title} className="w-full h-full object-cover" />
                   <span className="absolute top-3 left-3 bg-primary text-slate-900 text-[9px] sm:text-[10px] font-black px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase shadow-sm">
@@ -205,6 +219,16 @@ export default function Education() {
             ))}
           </div>
         )}
+
+        <Pagination
+          page={safeModulePage}
+          pageCount={modulePageCount}
+          total={filteredModules.length}
+          pageSize={MODULE_PAGE_SIZE}
+          onPageChange={setModulePage}
+          itemLabel="modul"
+          className="mt-6 border-t border-slate-100 dark:border-slate-800"
+        />
       </section>
 
       {/* Modal Detail Reader Modul Edukasi */}

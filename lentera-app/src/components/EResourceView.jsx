@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import Pagination from './Pagination';
+
+const REVIEW_PAGE_SIZE = 6;
+const INFO_PAGE_SIZE = 6;
 
 export default function EResourceView() {
   const [reviews, setReviews] = useState([]);
   const [eresources, setEresources] = useState([]);
   const [filterRating, setFilterRating] = useState('ALL');
+  const [reviewPage, setReviewPage] = useState(1);
+  const [infoPage, setInfoPage] = useState(1);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [selectedResource, setSelectedResource] = useState(null);
 
@@ -76,6 +82,20 @@ export default function EResourceView() {
     return r.rating === parseInt(filterRating);
   });
 
+  const reviewPageCount = Math.max(1, Math.ceil(filteredReviews.length / REVIEW_PAGE_SIZE));
+  const safeReviewPage = Math.min(reviewPage, reviewPageCount);
+  const pagedReviews = filteredReviews.slice(
+    (safeReviewPage - 1) * REVIEW_PAGE_SIZE,
+    safeReviewPage * REVIEW_PAGE_SIZE
+  );
+
+  const infoPageCount = Math.max(1, Math.ceil(eresources.length / INFO_PAGE_SIZE));
+  const safeInfoPage = Math.min(infoPage, infoPageCount);
+  const pagedEresources = eresources.slice(
+    (safeInfoPage - 1) * INFO_PAGE_SIZE,
+    safeInfoPage * INFO_PAGE_SIZE
+  );
+
   const defaultAvatars = [
     'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
     'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
@@ -83,7 +103,7 @@ export default function EResourceView() {
   ];
 
   return (
-    <div className="flex-grow overflow-y-auto max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-10 sm:space-y-16 font-display">
+    <div className="flex-grow overflow-y-auto max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 pb-28 sm:pb-36 space-y-10 sm:space-y-16 font-display">
       
       {toastMsg && (
         <div className="fixed top-5 right-5 z-50 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-primary/30 font-extrabold text-xs flex items-center gap-2 animate-bounce">
@@ -108,7 +128,10 @@ export default function EResourceView() {
               <span className="font-bold text-slate-500 hidden xs:inline">Bintang:</span>
               <select 
                 value={filterRating} 
-                onChange={e => setFilterRating(e.target.value)}
+                onChange={e => {
+                  setFilterRating(e.target.value);
+                  setReviewPage(1);
+                }}
                 className="bg-transparent font-extrabold text-slate-900 dark:text-white focus:outline-none cursor-pointer"
               >
                 <option value="ALL">Semua Rating</option>
@@ -135,8 +158,8 @@ export default function EResourceView() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {filteredReviews.map((rev, idx) => (
-              <div key={rev.id || idx} className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm flex flex-col justify-between hover:border-primary/30 transition-all">
+            {pagedReviews.map((rev, idx) => (
+              <div key={rev.id || idx} className="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm flex flex-col justify-between hover:border-primary/30 card-hover transition-all">
                 <div>
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex gap-3">
@@ -165,6 +188,16 @@ export default function EResourceView() {
             ))}
           </div>
         )}
+
+        <Pagination
+          page={safeReviewPage}
+          pageCount={reviewPageCount}
+          total={filteredReviews.length}
+          pageSize={REVIEW_PAGE_SIZE}
+          onPageChange={setReviewPage}
+          itemLabel="ulasan"
+          className="mt-4 border-t border-slate-100 dark:border-slate-700/60"
+        />
       </section>
 
       {/* Section 2: Informasi & Pengumuman Resmi Desa Kucur (Terhubung langsung ke E-Resource yang diunggah Kades dari Dasbor) */}
@@ -190,8 +223,8 @@ export default function EResourceView() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {eresources.map((item) => (
-              <div key={item.id} className="p-6 rounded-2xl bg-slate-50/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 flex flex-col justify-between space-y-4 hover:border-primary/40 transition-all shadow-sm">
+            {pagedEresources.map((item) => (
+              <div key={item.id} className="p-6 rounded-2xl bg-slate-50/70 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700/80 flex flex-col justify-between space-y-4 hover:border-primary/40 card-hover transition-all shadow-sm">
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <div className="w-10 h-10 rounded-xl bg-primary/20 text-primary flex items-center justify-center font-bold">
@@ -225,6 +258,16 @@ export default function EResourceView() {
             ))}
           </div>
         )}
+
+        <Pagination
+          page={safeInfoPage}
+          pageCount={infoPageCount}
+          total={eresources.length}
+          pageSize={INFO_PAGE_SIZE}
+          onPageChange={setInfoPage}
+          itemLabel="informasi"
+          className="mt-4 border-t border-slate-100 dark:border-slate-700/80"
+        />
       </section>
 
       {/* Modal Form Tambah Ulasan */}
