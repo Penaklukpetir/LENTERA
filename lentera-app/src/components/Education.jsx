@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Pagination from './Pagination';
+import { API_BASE_URL } from '../lib/api';
 
 const MODULE_PAGE_SIZE = 6;
 
@@ -16,7 +17,7 @@ export default function Education() {
 
   const fetchEducationModules = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/education');
+      const res = await fetch(`${API_BASE_URL}/education`);
       if (res.ok) {
         const data = await res.json();
         setModules(data);
@@ -39,7 +40,7 @@ export default function Education() {
       id: 1,
       tag: 'Jeruk Organik',
       title: 'Perkebunan Jeruk Kucur',
-      desc: 'Sentra budidaya jeruk unggulan bebas bahan kimia. Pelajari bagaimana sistem pertanian presisi ramah lingkungan mampu melestarikan hara tanah dan memproduksi buah manis berkualitas tinggi.',
+      desc: 'Sentra budidaya jeruk unggulan bebas bahan kimia. Pelajari cara merawat kebun jeruk yang ramah lingkungan agar tanah tetap subur dan buah tumbuh manis berkualitas tinggi.',
       img: 'https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?auto=format&fit=crop&q=80&w=1200',
       color: 'bg-orange-500'
     },
@@ -163,7 +164,7 @@ export default function Education() {
       <section className="mb-12 sm:mb-20">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-3 sm:gap-4">
           <div>
-            <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">TERINTEGRASI DASBOR</div>
+            <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">MODUL EDUKASI DESA</div>
             <h2 className="text-lg sm:text-3xl font-black text-slate-900 dark:text-white mt-0.5">Katalog Edukasi Resmi Desa Kucur</h2>
             <p className="text-slate-500 mt-0.5 font-medium text-[11px] sm:text-xs">Pelajari lebih dalam kearifan pertanian lokal dari modul yang dikelola Perangkat Desa</p>
           </div>

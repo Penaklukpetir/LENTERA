@@ -9,7 +9,13 @@ import {
   runMobileNetV2Inference,
   scanLeafDiseaseEnsemble,
 } from './inferenceService.js';
-import { calculateYield, VALID_COFFEE_TYPES, MLR_MODEL_VERSION } from './mlrService.js';
+import {
+  calculateYield,
+  calibratePrediction,
+  VALID_COFFEE_TYPES,
+  MLR_MODEL_VERSION,
+  PREDICTION_RANGE,
+} from './mlrService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,14 +37,50 @@ const parsePlantingYear = (value) => {
   return { year };
 };
 
+const loadHarvestSeasons = async (plotId = null) => {
+  const result = await pool.query(
+    `SELECT plot_id, EXTRACT(YEAR FROM harvest_date)::int AS season, SUM(weight_kg)::float8 AS harvested_kg
+     FROM harvest_batches
+     WHERE deleted_at IS NULL AND harvest_date IS NOT NULL
+       AND ($1::int IS NULL OR plot_id = $1)
+     GROUP BY plot_id, EXTRACT(YEAR FROM harvest_date)
+     ORDER BY plot_id, season ASC`,
+    [plotId]
+  );
+  const seasonsByPlot = new Map();
+  result.rows.forEach((row) => {
+    if (!seasonsByPlot.has(row.plot_id)) seasonsByPlot.set(row.plot_id, []);
+    seasonsByPlot.get(row.plot_id).push({ season: row.season, harvested_kg: Number(row.harvested_kg) });
+  });
+  return seasonsByPlot;
+};
+
+const withCalibration = (plot, seasons) => {
+  const baseline = Number(plot.predicted_yield) || 0;
+  const { ratio, seasons: usedSeasons, calibrated_kg } = calibratePrediction(baseline, seasons);
+  return {
+    ...plot,
+    calibrated_yield: calibrated_kg,
+    calibration_ratio: Math.round(ratio * 100) / 100,
+    calibration_seasons: usedSeasons,
+    range_low: Math.round(calibrated_kg * PREDICTION_RANGE.low),
+    range_high: Math.round(calibrated_kg * PREDICTION_RANGE.high),
+  };
+};
+
 export const getPlots = async (req, res) => {
   try {
-    const queryResult = await pool.query(
-      `SELECT id, farmer_name, (geom)[1] AS lat, (geom)[0] AS lng, coffee_type, tree_count,
-              elevation, land_area, planting_year, predicted_yield, status, description, created_by, created_at
-       FROM coffee_plots WHERE deleted_at IS NULL ORDER BY id ASC`
+    const [queryResult, seasonsByPlot] = await Promise.all([
+      pool.query(
+        `SELECT id, farmer_name, (geom)[1] AS lat, (geom)[0] AS lng, coffee_type, tree_count,
+                elevation, land_area, planting_year, predicted_yield, status, description, created_by, created_at
+         FROM coffee_plots WHERE deleted_at IS NULL ORDER BY id ASC`
+      ),
+      loadHarvestSeasons(),
+    ]);
+    return res.status(200).json(
+      queryResult.rows.map((plot) => withCalibration(plot, seasonsByPlot.get(plot.id) || []))
     );
-    return res.status(200).json(queryResult.rows);
   } catch (err) {
     console.error('Fetch spatial plots query exception:', err);
     return res.status(500).json({ error: 'Internal server error while fetching coffee plots.' });
@@ -63,7 +105,7 @@ export const createPlot = async (req, res) => {
 
   let mlr;
   try {
-    mlr = calculateYield({ land_area, tree_count, elevation });
+    mlr = calculateYield({ land_area, tree_count, elevation, coffee_type });
   } catch (validationError) {
     return res.status(400).json({ error: validationError.message });
   }
@@ -92,7 +134,7 @@ export const createPlot = async (req, res) => {
 
     return res.status(201).json({
       message: 'Plot registered successfully.',
-      plot,
+      plot: withCalibration(plot, []),
       mlr_prediction: history.rows[0],
     });
   } catch (err) {
@@ -210,7 +252,7 @@ export const updatePlot = async (req, res) => {
 
   let mlr;
   try {
-    mlr = calculateYield({ land_area, tree_count, elevation });
+    mlr = calculateYield({ land_area, tree_count, elevation, coffee_type });
   } catch (validationError) {
     return res.status(400).json({ error: validationError.message });
   }
@@ -242,9 +284,11 @@ export const updatePlot = async (req, res) => {
         mlr.model_version, mlr.predicted_yield, req.user ? req.user.id : null]
     );
 
+    const seasons = (await loadHarvestSeasons(id)).get(Number(id)) || [];
+
     return res.status(200).json({
       message: 'Plot lahan dan prediksi hasil panen MLR berhasil diperbarui.',
-      plot: result.rows[0],
+      plot: withCalibration(result.rows[0], seasons),
       mlr_prediction: history.rows[0],
     });
   } catch (err) {
@@ -285,37 +329,44 @@ const ACCURACY_TOLERANCE_PCT = 25;
 
 const round1 = (value) => Math.round(value * 10) / 10;
 
-// Bandingkan prediksi MLR per lahan dengan total panen realisasi (harvest_batches).
-// Lahan tanpa batch panen tidak dihitung agar error palsu 100% tidak muncul.
+// Akurasi dinilai pada musim panen terakhir tiap lahan. Prediksi untuk musim itu
+// hanya boleh memakai musim-musim sebelumnya, sehingga kalibrasi tidak menilai
+// dirinya sendiri. Lahan tanpa batch panen tidak dihitung.
 export const getPredictionAccuracy = async (req, res) => {
   try {
-    const [matched, totals] = await Promise.all([
+    const [plotRows, totals, seasonsByPlot] = await Promise.all([
       pool.query(
-        `SELECT p.id, p.farmer_name, p.coffee_type, p.planting_year,
-                p.predicted_yield::float8 AS predicted_kg,
-                SUM(b.weight_kg)::float8 AS harvested_kg
-         FROM coffee_plots p
-         JOIN harvest_batches b ON b.plot_id = p.id AND b.deleted_at IS NULL
-         WHERE p.deleted_at IS NULL
-         GROUP BY p.id, p.farmer_name, p.coffee_type, p.planting_year, p.predicted_yield
-         HAVING SUM(b.weight_kg) > 0 AND COALESCE(p.predicted_yield, 0) > 0
-         ORDER BY p.id ASC`
+        `SELECT id, farmer_name, coffee_type, planting_year, predicted_yield::float8 AS baseline_kg
+         FROM coffee_plots
+         WHERE deleted_at IS NULL AND COALESCE(predicted_yield, 0) > 0
+         ORDER BY id ASC`
       ),
       pool.query('SELECT COUNT(*)::int AS total_plots FROM coffee_plots WHERE deleted_at IS NULL'),
+      loadHarvestSeasons(),
     ]);
 
-    const rows = matched.rows.map((row) => {
-      const predicted = Number(row.predicted_kg);
-      const harvested = Number(row.harvested_kg);
-      return {
+    const rows = plotRows.rows.flatMap((row) => {
+      const seasons = seasonsByPlot.get(row.id) || [];
+      const latest = seasons[seasons.length - 1];
+      if (!latest || latest.harvested_kg <= 0) return [];
+
+      const baseline = Number(row.baseline_kg);
+      const { ratio, seasons: usedSeasons, calibrated_kg } = calibratePrediction(baseline, seasons, latest.season);
+      const harvested = latest.harvested_kg;
+
+      return [{
         plot_id: row.id,
         farmer_name: row.farmer_name,
         coffee_type: row.coffee_type,
         planting_year: row.planting_year,
-        predicted_kg: predicted,
+        season: latest.season,
+        baseline_kg: baseline,
+        predicted_kg: calibrated_kg,
         harvested_kg: harvested,
-        error_pct: (Math.abs(harvested - predicted) / harvested) * 100,
-      };
+        calibration_seasons: usedSeasons,
+        calibration_ratio: Math.round(ratio * 100) / 100,
+        error_pct: (Math.abs(harvested - calibrated_kg) / harvested) * 100,
+      }];
     });
 
     const measured = rows.length;
@@ -344,6 +395,7 @@ export const getPredictionAccuracy = async (req, res) => {
       tolerance_pct: ACCURACY_TOLERANCE_PCT,
       total_plots: totals.rows[0]?.total_plots || 0,
       measured_plots: measured,
+      calibrated_plots: rows.filter((row) => row.calibration_seasons > 0).length,
       median_ape_pct: medianApe === null ? null : round1(medianApe),
       mape_pct: mape === null ? null : round1(mape),
       within_tolerance_pct: withinTolerance === null ? null : round1(withinTolerance),
@@ -364,7 +416,7 @@ export const getPlotHarvests = async (req, res) => {
   const { id } = req.params;
   try {
     const plot = await pool.query(
-      'SELECT id, farmer_name, coffee_type FROM coffee_plots WHERE id = $1 AND deleted_at IS NULL',
+      'SELECT id, farmer_name, coffee_type, predicted_yield FROM coffee_plots WHERE id = $1 AND deleted_at IS NULL',
       [id]
     );
     if (plot.rows.length === 0) {
@@ -382,10 +434,26 @@ export const getPlotHarvests = async (req, res) => {
 
     const totalKg = result.rows.reduce((sum, row) => sum + Number(row.weight_kg || 0), 0);
 
+    // Profil musim dipakai kartu panen: membandingkan panen musim terakhir
+    // dengan prediksi musim itu (dikalibrasi hanya dari musim sebelumnya).
+    const seasons = (await loadHarvestSeasons(Number(id))).get(Number(id)) || [];
+    const latest = seasons[seasons.length - 1] || null;
+    const baseline = Number(plot.rows[0].predicted_yield) || 0;
+    const seasonCalibration = latest
+      ? calibratePrediction(baseline, seasons, latest.season)
+      : calibratePrediction(baseline, seasons);
+
     return res.status(200).json({
       status: 'SUCCESS',
       data: result.rows,
       total_kg: Math.round(totalKg * 100) / 100,
+      baseline_kg: baseline,
+      seasons,
+      latest_season: latest ? latest.season : null,
+      latest_kg: latest ? latest.harvested_kg : 0,
+      season_predicted_kg: seasonCalibration.calibrated_kg,
+      calibration_seasons: seasonCalibration.seasons,
+      calibration_ratio: Math.round(seasonCalibration.ratio * 100) / 100,
     });
   } catch (err) {
     console.error('Fetch plot harvests error:', err);

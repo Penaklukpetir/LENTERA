@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import { API_BASE_URL } from '../lib/api';
 
 export default function LoginModal({ setShowLoginModal, onAuthenticated, openAdminModal }) {
   const [isRegisterMode, setIsRegisterMode] = useState(false);
@@ -33,7 +32,7 @@ export default function LoginModal({ setShowLoginModal, onAuthenticated, openAdm
       onAuthenticated({ token: data.token, user: data.user });
       setShowLoginModal(false);
     } catch (err) {
-      setErrorMsg('Gagal menghubungi server otentikasi.');
+      setErrorMsg('Koneksi terputus. Coba lagi.');
     } finally {
       setLoading(false);
     }
@@ -70,7 +69,7 @@ export default function LoginModal({ setShowLoginModal, onAuthenticated, openAdm
       setIsRegisterMode(false);
       setPassword('');
     } catch (err) {
-      setErrorMsg('Gagal menghubungi server pendaftaran.');
+      setErrorMsg('Koneksi terputus. Coba lagi.');
     } finally {
       setLoading(false);
     }

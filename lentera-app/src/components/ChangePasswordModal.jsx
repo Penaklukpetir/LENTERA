@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import { API_BASE_URL } from '../lib/api';
 
 export default function ChangePasswordModal({ token, onChanged, onLogout }) {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -44,7 +43,7 @@ export default function ChangePasswordModal({ token, onChanged, onLogout }) {
 
       onChanged();
     } catch (err) {
-      setErrorMsg('Gagal menghubungi server. Coba lagi.');
+      setErrorMsg('Koneksi terputus. Coba lagi.');
     } finally {
       setLoading(false);
     }

@@ -46,6 +46,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const PUBLIC_BASE_URL = (process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/+$/, '');
 
 app.use(cors());
 app.use(express.json());
@@ -109,7 +110,7 @@ app.post('/api/upload', authenticateToken, requireRole(['admin', 'village']), ha
   if (!req.file) {
     return res.status(400).json({ error: 'Tidak ada file yang diunggah.' });
   }
-  const fileUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+  const fileUrl = `${PUBLIC_BASE_URL}/uploads/${req.file.filename}`;
   return res.status(200).json({ status: 'SUCCESS', url: fileUrl, filename: req.file.filename });
 });
 
@@ -207,7 +208,7 @@ app.get('/', (req, res) => {
   }
   app.listen(PORT, () => {
     console.log(`LENTERA GIS Backend server started successfully on port ${PORT}`);
-    console.log(`-> Visit http://localhost:${PORT}/ for API health check & AI status`);
+    console.log(`-> Visit ${PUBLIC_BASE_URL}/ for API health check & AI status`);
   });
 })();
 

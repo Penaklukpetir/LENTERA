@@ -71,10 +71,10 @@ export default function WeatherWidget() {
             {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <div>
-                <div className="text-[10px] font-extrabold text-primary uppercase tracking-widest">LIVE OPEN-METEO API</div>
+                <div className="text-[10px] font-extrabold text-primary uppercase tracking-widest">CUACA DESA KUCUR</div>
                 <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5 flex items-center gap-2">
                   <span className="material-symbols-outlined text-sky-500">thermostat</span>
-                  <span>Cuaca & Forecast Desa Kucur</span>
+                  <span>Prakiraan Cuaca Desa Kucur</span>
                 </h3>
               </div>
               <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600">
@@ -99,7 +99,7 @@ export default function WeatherWidget() {
                 <div className="text-right space-y-1 text-xs">
                   <div className="text-slate-400 font-semibold">Kecepatan Angin: <span className="text-slate-900 dark:text-white font-bold">{currentWeather.windspeed} km/j</span></div>
                   <div className="text-slate-400 font-semibold">Koordinat: <span className="text-slate-900 dark:text-white font-bold">7.953° S, 112.535° E</span></div>
-                  <div className="text-emerald-500 font-bold text-[10px] mt-2">✓ Kondisi Lahan Ter-update</div>
+                  <div className="text-emerald-500 font-bold text-[10px] mt-2">✓ Data cuaca terkini</div>
                 </div>
               </div>
             )}
@@ -108,12 +108,12 @@ export default function WeatherWidget() {
             <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs space-y-1.5">
               <div className="font-extrabold text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-base">eco</span>
-                <span>Rekomendasi Agronomi Kopi Hari Ini</span>
+                <span>Saran Perawatan Kopi Hari Ini</span>
               </div>
               <p className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
                 {currentWeather && currentWeather.weathercode >= 51
-                  ? '🌧️ Terjadi curah hujan tinggi. Hindari penjemuran biji kopi (sun-drying) di area terbuka dan waspadai kelembaban tinggi memicu jamur Karat Daun (Hemileia vastatrix).'
-                  : '☀️ Cuaca cerah dan mendukung! Sangat ideal untuk proses pemangkasan tunas air, penjemuran biji kopi hasil panen, dan aplikasi pupuk organik.'}
+                  ? '🌧️ Curah hujan tinggi. Hindari penjemuran biji kopi di area terbuka dan waspadai kelembapan tinggi yang memicu jamur karat daun.'
+                  : '☀️ Cuaca cerah dan mendukung! Waktu yang tepat untuk memangkas tunas air, menjemur biji kopi hasil panen, dan memberi pupuk organik.'}
               </p>
             </div>
 

@@ -3,6 +3,14 @@ import Pagination from './Pagination';
 
 const SPONSOR_PAGE_SIZE = 10;
 
+const STATUS_LABELS = {
+  PENDING: 'Menunggu',
+  CURATED: 'Dikurasi',
+  APPROVED: 'Disetujui',
+  DISBURSED: 'Dana Disalurkan',
+  REJECTED: 'Ditolak',
+};
+
 export default function SponsorView({ role, sponsorships = [], setShowSponsorModal, approveSponsorship, inDashboard = false }) {
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [page, setPage] = useState(1);
@@ -42,7 +50,7 @@ export default function SponsorView({ role, sponsorships = [], setShowSponsorMod
                 <span>Program Investasi Hijau</span>
               </div>
               <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white leading-tight">
-                Sponsorship Hub &amp; Kemitraan B2B
+                Sponsorship &amp; Kemitraan Petani
               </h1>
               <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
                 Platform pengelolaan kemitraan bisnis antara perusahaan mitra dengan petani kopi Desa Kucur. Investasikan dana Anda untuk masa depan pertanian berkelanjutan.
@@ -84,7 +92,7 @@ export default function SponsorView({ role, sponsorships = [], setShowSponsorMod
 
           <div className="bg-white dark:bg-slate-950 border border-amber-500/10 rounded-2xl p-5 shadow-sm card-hover">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Menunggu Approval</span>
+              <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">Menunggu Persetujuan</span>
               <span className="material-symbols-outlined text-amber-500">pending</span>
             </div>
             <div className="mt-3 text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
@@ -112,7 +120,7 @@ export default function SponsorView({ role, sponsorships = [], setShowSponsorMod
                   }}
                   className={`px-3 py-1 text-[10px] font-extrabold rounded-lg transition-all cursor-pointer ${filterStatus === s ? 'bg-primary text-slate-900 shadow-sm' : 'text-slate-500 hover:text-primary'}`}
                 >
-                  {s === 'ALL' ? 'Semua' : s}
+                  {s === 'ALL' ? 'Semua' : STATUS_LABELS[s]}
                 </button>
               ))}
             </div>
@@ -157,7 +165,7 @@ export default function SponsorView({ role, sponsorships = [], setShowSponsorMod
                       </td>
                       <td className="px-5 py-4">
                         <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-extrabold border ${statusColors[spon.status] || 'bg-slate-100 text-slate-500'}`}>
-                          {spon.status?.toUpperCase()}
+                          {STATUS_LABELS[spon.status?.toUpperCase()] || 'Menunggu'}
                         </span>
                       </td>
                       {role === 'village' && inDashboard && (
@@ -167,7 +175,7 @@ export default function SponsorView({ role, sponsorships = [], setShowSponsorMod
                               onClick={() => approveSponsorship(spon.id)}
                               className="px-3.5 py-1.5 bg-primary text-slate-900 font-extrabold rounded-xl text-[10px] hover:bg-primary/90 transition-all shadow-sm cursor-pointer"
                             >
-                              ✓ Approve &amp; TTD
+                              Setujui &amp; Tandatangani
                             </button>
                           ) : (
                             <span className="text-slate-400 text-[11px] font-semibold">Selesai</span>
@@ -196,8 +204,8 @@ export default function SponsorView({ role, sponsorships = [], setShowSponsorMod
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
             { icon: 'eco', color: 'text-emerald-500', title: 'Pertanian Berkelanjutan', desc: 'Setiap investasi Anda secara langsung mendukung praktik pertanian kopi organik tanpa pestisida berbahaya.' },
-            { icon: 'verified_user', color: 'text-blue-500', title: 'Tata Kelola Transparan', desc: 'Semua transaksi tercatat secara digital di blockchain-ready dan dapat diaudit melalui laporan berkala.' },
-            { icon: 'workspace_premium', color: 'text-primary', title: 'ISO 29148 Compliant', desc: 'Standar dokumen dan SLA kemitraan kami telah memenuhi standar internasional requirement engineering.' }
+            { icon: 'verified_user', color: 'text-blue-500', title: 'Tata Kelola Transparan', desc: 'Setiap dana yang masuk tercatat dan dilaporkan secara berkala kepada mitra.' },
+            { icon: 'workspace_premium', color: 'text-primary', title: 'Pendampingan Petani', desc: 'Setiap kemitraan didampingi perangkat desa dan kelompok tani setempat.' }
           ].map((card, i) => (
             <div key={i} className="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-5 shadow-sm card-hover">
               <span className={`material-symbols-outlined text-2xl ${card.color}`}>{card.icon}</span>

@@ -67,7 +67,7 @@ export default function Profile() {
               Di Balik Inovasi <span className="text-primary">LENTERA</span>
             </h1>
             <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Kami adalah Software House yang berdedikasi untuk menciptakan solusi digital yang berdampak positif bagi masyarakat, khususnya dalam memajukan potensi pariwisata dan edukasi di pedesaan.
+              Kami adalah tim pengembang yang berdedikasi menciptakan solusi digital berdampak positif bagi masyarakat, khususnya dalam memajukan potensi pariwisata dan edukasi di pedesaan.
             </p>
           </section>
 
@@ -99,7 +99,7 @@ export default function Profile() {
                     </div>
                     <div>
                       <h4 className="font-bold text-lg text-slate-900 dark:text-white">Pertumbuhan Ekonomi</h4>
-                      <p className="text-slate-500 text-sm">Membantu kelompok tani desa menjangkau investor B2B secara lebih transparan melalui pemetaan spasial.</p>
+                      <p className="text-slate-500 text-sm">Membantu kelompok tani desa menjangkau mitra usaha secara lebih transparan melalui peta lahan.</p>
                     </div>
                   </div>
                   <div className="flex gap-4">

@@ -6,21 +6,21 @@ import L from 'leaflet';
 const BASEMAP_PROVIDERS = {
   satellite: {
     id: 'satellite',
-    name: 'Satelit HD (Esri)',
+    name: 'Satelit',
     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     attribution: '&copy; Esri World Imagery',
     icon: 'satellite_alt'
   },
   osm: {
     id: 'osm',
-    name: 'Vektor (OSM)',
+    name: 'Jalan',
     url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution: '&copy; OpenStreetMap',
     icon: 'map'
   },
   topo: {
     id: 'topo',
-    name: 'Topografi (Elevasi)',
+    name: 'Topografi',
     url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
     attribution: '&copy; OpenTopoMap',
     icon: 'terrain'
@@ -261,7 +261,7 @@ export default function CoffeeMap({
   // Real GPS Geolocation Trigger Handler
   const handleLocateUserGPS = () => {
     if (!navigator.geolocation) {
-      alert('Geolocation GPS tidak didukung oleh browser Anda.');
+      alert('Perangkat atau browser ini tidak mendukung deteksi lokasi.');
       return;
     }
     setGpsLoading(true);
@@ -291,7 +291,7 @@ export default function CoffeeMap({
   const avgElevation = filteredPlots.length > 0 
     ? Math.round(filteredPlots.reduce((acc, p) => acc + (parseFloat(p.elevation) || 0), 0) / filteredPlots.length) 
     : 0;
-  const totalYield = filteredPlots.reduce((acc, p) => acc + (parseFloat(p.predicted_yield) || 0), 0);
+  const totalYield = filteredPlots.reduce((acc, p) => acc + (parseFloat(p.calibrated_yield ?? p.predicted_yield) || 0), 0);
 
   const currentProvider = BASEMAP_PROVIDERS[activeBasemap];
 
@@ -306,7 +306,7 @@ export default function CoffeeMap({
               <span className="material-symbols-outlined text-lg">public</span>
             </div>
             <div>
-              <div className="text-[8px] font-extrabold text-primary uppercase tracking-widest whitespace-nowrap">SISTEM INFORMASI GEOGRAFIS</div>
+              <div className="text-[8px] font-extrabold text-primary uppercase tracking-widest whitespace-nowrap">PETA DESA KUCUR</div>
               <div className="text-[11px] font-bold text-slate-100 whitespace-nowrap">Desa Kucur, Malang</div>
             </div>
           </div>
@@ -321,7 +321,7 @@ export default function CoffeeMap({
               <span className="text-sky-400 font-extrabold">{avgElevation} MDPL</span>
             </div>
             <div className="hidden xl:block whitespace-nowrap">
-              <span className="text-slate-400 text-[9px] block leading-tight">ESTIMASI PANEN MLR</span>
+              <span className="text-slate-400 text-[9px] block leading-tight">PERKIRAAN PANEN</span>
               <span className="text-amber-400 font-extrabold">{totalYield.toFixed(1)} kg</span>
             </div>
           </div>
@@ -331,11 +331,11 @@ export default function CoffeeMap({
         <div className="pointer-events-auto flex flex-col items-end gap-2 shrink-0">
         <button
           onClick={() => setShowLayerPanel(!showLayerPanel)}
-          title="Layer & Basemap SIG"
+          title="Lapisan Peta"
           className="flex items-center gap-2 px-2.5 py-2 bg-slate-900/90 text-white rounded-xl border border-primary/30 shadow-2xl text-xs font-extrabold backdrop-blur-md hover:border-primary transition-all"
         >
           <span className="material-symbols-outlined text-primary text-base">layers</span>
-          <span className={showAddForm ? 'hidden' : 'hidden xl:inline'}>Layer & Basemap SIG</span>
+          <span className={showAddForm ? 'hidden' : 'hidden xl:inline'}>Lapisan Peta</span>
           <span className="material-symbols-outlined text-sm">{showLayerPanel ? 'expand_less' : 'expand_more'}</span>
         </button>
 
@@ -343,7 +343,7 @@ export default function CoffeeMap({
         {showLayerPanel && (
           <div className="bg-slate-900/95 backdrop-blur-md p-4 rounded-2xl border border-slate-700 shadow-2xl text-white w-72 space-y-4 animate-in fade-in zoom-in duration-150">
             <div>
-              <div className="text-[10px] font-extrabold text-primary uppercase tracking-wider mb-2">PILIH BASEMAP SPASIAL</div>
+              <div className="text-[10px] font-extrabold text-primary uppercase tracking-wider mb-2">PILIH TAMPILAN PETA</div>
               <div className="grid grid-cols-3 gap-1.5">
                 {Object.values(BASEMAP_PROVIDERS).map((bm) => (
                   <button
@@ -363,7 +363,7 @@ export default function CoffeeMap({
             </div>
 
             <div className="border-t border-slate-800 pt-3">
-              <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">OVERLAY LAYER SIG</div>
+              <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">LAPISAN PETA</div>
               <div className="space-y-2 text-xs">
                 <label className="flex items-center justify-between cursor-pointer p-1.5 rounded-lg hover:bg-slate-800/50">
                   <span className="flex items-center gap-2">
@@ -544,7 +544,10 @@ export default function CoffeeMap({
                   Ketinggian: <strong>{plot.elevation} MDPL</strong>
                 </p>
                 <p style={{ margin: 0, fontSize: '11px', color: '#64748b' }}>
-                  Estimasi Panen MLR: <strong style={{ color: '#10b981' }}>{plot.predicted_yield ?? '—'} kg</strong>
+                  Perkiraan panen: <strong style={{ color: '#10b981' }}>{plot.calibrated_yield ?? plot.predicted_yield ?? '—'} kg</strong>
+                  {plot.range_low !== undefined && plot.range_high !== undefined && (
+                    <span style={{ color: '#94a3b8' }}> ({plot.range_low}–{plot.range_high} kg)</span>
+                  )}
                 </p>
               </div>
             </Popup>
@@ -617,14 +620,14 @@ export default function CoffeeMap({
         <button 
           onClick={() => setZoomInCount(z => z + 1)}
           className="w-10 h-10 bg-slate-900/90 text-white shadow-xl rounded-xl flex items-center justify-center hover:bg-slate-800 transition-colors border border-slate-700"
-          title="Zoom In"
+          title="Perbesar Peta"
         >
           <span className="material-symbols-outlined font-bold">add</span>
         </button>
         <button 
           onClick={() => setZoomOutCount(z => z + 1)}
           className="w-10 h-10 bg-slate-900/90 text-white shadow-xl rounded-xl flex items-center justify-center hover:bg-slate-800 transition-colors border border-slate-700"
-          title="Zoom Out"
+          title="Perkecil Peta"
         >
           <span className="material-symbols-outlined font-bold">remove</span>
         </button>
@@ -636,7 +639,7 @@ export default function CoffeeMap({
               ? 'bg-sky-500 text-white border-sky-400 shadow-sky-500/40' 
               : 'bg-slate-900/90 text-white border-slate-700 hover:bg-slate-800'
           }`}
-          title="Aktifkan Lokasi Saya (GPS Real-time)"
+          title="Tampilkan Lokasi Saya"
         >
           <span className={`material-symbols-outlined ${gpsLoading ? 'animate-spin' : ''}`}>
             {gpsActive ? 'gps_fixed' : 'my_location'}

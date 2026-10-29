@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { MLR_COEFFICIENTS, MLR_MODEL_VERSION, calculateMLRYield } from '../lib/mlr';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import { calculateMLRYield, getPredictionRange } from '../lib/mlr';
+import { API_BASE_URL } from '../lib/api';
 
 export default function DetailsPanel({ 
   selectedPlot, 
@@ -24,6 +23,7 @@ export default function DetailsPanel({
   });
 
   const [plotBatches, setPlotBatches] = useState([]);
+  const [harvestSummary, setHarvestSummary] = useState(null);
   const [mlrHistory, setMlrHistory] = useState([]);
   const [showAddHarvestModal, setShowAddHarvestModal] = useState(false);
   const [newHarvest, setNewHarvest] = useState({
@@ -47,8 +47,14 @@ export default function DetailsPanel({
       // Fetch real harvest records for this plot
       fetch(`${API_BASE_URL}/plots/${selectedPlot.id}/harvests`)
         .then(res => (res.ok ? res.json() : null))
-        .then(data => setPlotBatches(Array.isArray(data?.data) ? data.data : []))
-        .catch(() => setPlotBatches([]));
+        .then(data => {
+          setPlotBatches(Array.isArray(data?.data) ? data.data : []);
+          setHarvestSummary(data?.status === 'SUCCESS' ? data : null);
+        })
+        .catch(() => {
+          setPlotBatches([]);
+          setHarvestSummary(null);
+        });
 
       fetch(`${API_BASE_URL}/plots/${selectedPlot.id}/mlr-history`)
         .then(res => (res.ok ? res.json() : []))
@@ -56,6 +62,29 @@ export default function DetailsPanel({
         .catch(() => setMlrHistory([]));
     }
   }, [selectedPlot]);
+
+  // Prediksi yang tampil tergantung panen tercatat, jadi segarkan lahan + ringkasan musim
+  // setiap kali input berubah; panel akurasi juga membaca data yang sama.
+  const refreshPlotSnapshot = async (plotId) => {
+    try {
+      const [plotsRes, harvestsRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/plots`),
+        fetch(`${API_BASE_URL}/plots/${plotId}/harvests`)
+      ]);
+      if (plotsRes.ok) {
+        const list = await plotsRes.json();
+        setPlots(list);
+        const fresh = list.find((item) => item.id === plotId);
+        if (fresh) setSelectedPlot(fresh);
+      }
+      if (harvestsRes.ok) {
+        const summary = await harvestsRes.json();
+        setHarvestSummary(summary?.status === 'SUCCESS' ? summary : null);
+      }
+    } catch (err) {
+      console.error('Gagal menyegarkan data prediksi lahan:', err);
+    }
+  };
 
   // Handle Quick Add Harvest Batch for this plot
   const handleCreateHarvestBatch = async (e) => {
@@ -88,10 +117,11 @@ export default function DetailsPanel({
       setPlotBatches([data.data, ...plotBatches]);
       setShowAddHarvestModal(false);
       setNewHarvest({ weight_kg: '', harvest_date: '' });
+      await refreshPlotSnapshot(selectedPlot.id);
       alert('Pencatatan hasil panen realisasi berhasil disimpan!');
     } catch (err) {
       console.error('Error creating harvest batch:', err);
-      alert('Gagal menghubungi server. Panen tidak tersimpan.');
+      alert('Koneksi terputus. Panen belum tersimpan.');
     }
   };
 
@@ -129,21 +159,19 @@ export default function DetailsPanel({
         return;
       }
 
-      const updatedPlots = plots.map(p => p.id === selectedPlot.id ? data.plot : p);
-      setPlots(updatedPlots);
-      setSelectedPlot(data.plot);
       setIsEditing(false);
-      alert('Data plot lahan & peramalan hasil panen MLR berhasil diperbarui!');
+      await refreshPlotSnapshot(selectedPlot.id);
+      alert('Data lahan dan perkiraan panen berhasil diperbarui.');
     } catch (err) {
       console.error('Gagal update plot:', err);
-      alert('Gagal menghubungi server. Perubahan tidak tersimpan.');
+      alert('Koneksi terputus. Perubahan belum tersimpan.');
     }
   };
 
   // Handle Delete Plot with Backend API Persistence
   const handleDeletePlot = async () => {
     if (!selectedPlot) return;
-    if (window.confirm(`Nonaktifkan plot lahan "${selectedPlot.farmer_name}"? Data akan diarsipkan (soft delete).`)) {
+    if (window.confirm(`Nonaktifkan plot lahan "${selectedPlot.farmer_name}"? Data akan diarsipkan dan tidak tampil lagi di peta.`)) {
       try {
         const res = await fetch(`${API_BASE_URL}/plots/${selectedPlot.id}`, {
           method: 'DELETE',
@@ -160,26 +188,33 @@ export default function DetailsPanel({
         const updatedPlots = plots.filter(p => p.id !== selectedPlot.id);
         setPlots(updatedPlots);
         setSelectedPlot(null);
-        alert('Plot lahan berhasil dinonaktifkan (soft delete).');
+        alert('Plot lahan berhasil dinonaktifkan.');
       } catch (err) {
         console.error('Gagal menghapus plot:', err);
-        alert('Gagal menghubungi server. Plot tidak dinonaktifkan.');
+        alert('Koneksi terputus. Plot belum dinonaktifkan.');
       }
     }
   };
 
-  // MLR Coefficient Component Values for Display
+  // Nilai dasar untuk perhitungan perkiraan panen
   const currentArea = parseFloat(selectedPlot?.land_area || 0);
   const currentTrees = parseInt(selectedPlot?.tree_count || 0);
   const currentElev = parseInt(selectedPlot?.elevation || 0);
-  const mlrAreaContrib = (MLR_COEFFICIENTS.land_area * currentArea).toFixed(1);
-  const mlrTreeContrib = (MLR_COEFFICIENTS.tree_count * currentTrees).toFixed(1);
-  const mlrElevContrib = (MLR_COEFFICIENTS.elevation * currentElev).toFixed(1);
-  const mlrTotalYield = calculateMLRYield(currentArea, currentTrees, currentElev);
+  const currentType = selectedPlot?.coffee_type || '';
+  const mlrTotalYield = calculateMLRYield(currentArea, currentTrees, currentElev, currentType);
+
+  // Prediksi yang ditampilkan = prediksi dasar dikoreksi panen musim-musim sebelumnya
+  const calibratedYield = Number(selectedPlot?.calibrated_yield ?? mlrTotalYield);
+  const calibrationSeasons = Number(selectedPlot?.calibration_seasons || 0);
+  const calibrationRatio = Number(selectedPlot?.calibration_ratio || 1);
+  const predictionRange = getPredictionRange(calibratedYield);
 
   // Total Recorded Real Harvest Weight for this Plot
   const totalRecordedHarvestKg = plotBatches.reduce((acc, b) => acc + (parseFloat(b.weight_kg) || 0), 0);
-  const harvestAchievementRatio = mlrTotalYield > 0 ? Math.round((totalRecordedHarvestKg / mlrTotalYield) * 100) : 0;
+  const latestSeason = harvestSummary?.latest_season ?? null;
+  const latestSeasonKg = Number(harvestSummary?.latest_kg ?? 0);
+  const seasonTargetKg = Number(harvestSummary?.season_predicted_kg ?? calibratedYield);
+  const seasonAchievementRatio = seasonTargetKg > 0 ? Math.round((latestSeasonKg / seasonTargetKg) * 100) : 0;
 
   return (
     <aside className={`details-panel ${selectedPlot ? 'open' : ''}`}>
@@ -241,7 +276,7 @@ export default function DetailsPanel({
                   fontSize: '12px',
                   cursor: 'pointer'
                 }}
-                title="Hapus Plot dari Peta & Database"
+                title="Nonaktifkan plot dari peta"
               >
                 <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>delete</span>
                 Hapus
@@ -336,22 +371,6 @@ export default function DetailsPanel({
                 </span>
               </div>
 
-              {/* Live Preview MLR Yield Formula */}
-              <div style={{
-                background: 'rgba(52, 211, 153, 0.1)',
-                border: '1px solid rgba(52, 211, 153, 0.3)',
-                borderRadius: '8px',
-                padding: '10px',
-                fontSize: '11px',
-                color: '#34D399'
-              }}>
-                <div style={{ fontWeight: 700, marginBottom: '2px' }}>📊 Estimasi Hasil Panen (Y) — {MLR_MODEL_VERSION}:</div>
-                Y = max(0, {MLR_COEFFICIENTS.intercept} + ({MLR_COEFFICIENTS.land_area} × {editForm.land_area || 0}) + ({MLR_COEFFICIENTS.tree_count} × {editForm.tree_count || 0}) + ({MLR_COEFFICIENTS.elevation} × {editForm.elevation || 0}))
-                <div style={{ fontWeight: 800, fontSize: '13px', marginTop: '4px', color: '#F8FAFC' }}>
-                  = {calculateMLRYield(editForm.land_area, editForm.tree_count, editForm.elevation).toLocaleString('id-ID')} Kg/tahun
-                </div>
-              </div>
-
               <div>
                 <label style={{ fontSize: '10px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Keterangan Lahan</label>
                 <textarea 
@@ -376,7 +395,7 @@ export default function DetailsPanel({
                   marginTop: '4px'
                 }}
               >
-                Simpan Perubahan & Hitung Ulang MLR
+                Simpan Perubahan
               </button>
             </form>
           ) : (
@@ -385,7 +404,7 @@ export default function DetailsPanel({
                 {selectedPlot.description || 'Tidak ada deskripsi tambahan untuk lahan ini.'}
               </p>
 
-              {/* 1. KARTU ANALITIK PREDIKSI HASIL PANEN MLR */}
+              {/* 1. KARTU PERKIRAAN HASIL PANEN */}
               <div style={{
                 background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%)',
                 border: '1px solid rgba(52, 211, 153, 0.3)',
@@ -397,19 +416,41 @@ export default function DetailsPanel({
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <span className="material-symbols-outlined" style={{ color: '#34D399', fontSize: '20px' }}>analytics</span>
                     <span style={{ fontSize: '12px', fontWeight: 800, color: '#34D399', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      Prediksi Hasil Panen MLR
+                      Perkiraan Hasil Panen
                     </span>
                   </div>
-                  <span style={{ fontSize: '10px', background: 'rgba(52, 211, 153, 0.2)', color: '#34D399', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
-                    {MLR_MODEL_VERSION}
-                  </span>
                 </div>
 
-                <div style={{ fontSize: '22px', fontWeight: '800', color: '#F8FAFC', marginBottom: '8px' }}>
-                  {mlrTotalYield.toLocaleString('id-ID')} <span style={{ fontSize: '14px', fontWeight: 600, color: '#94A3B8' }}>Kg/tahun</span>
+                <div style={{ fontSize: '22px', fontWeight: '800', color: '#F8FAFC', marginBottom: '2px' }}>
+                  {calibratedYield.toLocaleString('id-ID')} <span style={{ fontSize: '14px', fontWeight: 600, color: '#94A3B8' }}>Kg/tahun</span>
+                </div>
+                <div style={{ fontSize: '11px', color: '#94A3B8', marginBottom: '8px' }}>
+                  Rentang wajar {predictionRange.low.toLocaleString('id-ID')}–{predictionRange.high.toLocaleString('id-ID')} kg
+                  {' '}(8 dari 10 kebun contoh berada di rentang ini).
+                </div>
+                <div style={{
+                  background: 'rgba(15, 23, 42, 0.6)',
+                  border: '1px solid rgba(52, 211, 153, 0.2)',
+                  borderRadius: '10px',
+                  padding: '8px 10px',
+                  marginBottom: '8px',
+                  fontSize: '11px',
+                  lineHeight: '1.6',
+                  color: '#CBD5E1'
+                }}>
+                  {calibrationSeasons > 0 ? (
+                    <>
+                      Perkiraan dasar {mlrTotalYield.toLocaleString('id-ID')} kg, disesuaikan
+                      {' '}×{calibrationRatio.toLocaleString('id-ID')} dari {calibrationSeasons} musim panen sebelumnya.
+                    </>
+                  ) : (
+                    <>
+                      Perkiraan dasar {mlrTotalYield.toLocaleString('id-ID')} kg. Angka ini akan menyesuaikan
+                      {' '}otomatis setelah panen pertama lahan ini tercatat.
+                    </>
+                  )}
                 </div>
 
-                {/* Keterangan Variabel MLR */}
                 <div style={{
                   background: 'rgba(15, 23, 42, 0.6)',
                   border: '1px solid rgba(52, 211, 153, 0.2)',
@@ -420,53 +461,11 @@ export default function DetailsPanel({
                   lineHeight: '1.7',
                   color: '#CBD5E1'
                 }}>
-                  <div style={{ fontWeight: 800, color: '#34D399', marginBottom: '2px' }}>
-                    Keterangan Variabel Prediksi:
-                  </div>
-                  <div><strong style={{ color: '#F8FAFC' }}>Y</strong> = estimasi hasil panen (kg/tahun)</div>
-                  <div><strong style={{ color: '#F8FAFC' }}>X₁</strong> = luas lahan (m²)</div>
-                  <div><strong style={{ color: '#F8FAFC' }}>X₂</strong> = jumlah pohon (batang)</div>
-                  <div><strong style={{ color: '#F8FAFC' }}>X₃</strong> = elevasi lahan (MDPL)</div>
-                  <div style={{ marginTop: '4px', color: '#94A3B8' }}>
-                    Koefisien pohon bernilai negatif karena pada luas yang sama, tanam yang lebih rapat menurunkan hasil per pohon.
-                  </div>
-                </div>
-
-                {/* Mathematical Parameter Breakdown */}
-                <div style={{
-                  background: 'rgba(15, 23, 42, 0.6)',
-                  borderRadius: '10px',
-                  padding: '10px',
-                  fontSize: '11px',
-                  lineHeight: '1.6',
-                  color: '#CBD5E1',
-                  border: '1px solid rgba(255, 255, 255, 0.05)'
-                }}>
-                  <div style={{ fontWeight: 700, color: '#34D399', marginBottom: '4px' }}>Rincian Perhitungan (Y = hasil panen):</div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>• Konstanta (a):</span>
-                    <span style={{ fontWeight: 600 }}>{MLR_COEFFICIENTS.intercept} Kg</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>• Luas lahan X₁ ({currentArea} m² × {MLR_COEFFICIENTS.land_area}):</span>
-                    <span style={{ fontWeight: 600, color: '#34D399' }}>+{mlrAreaContrib} Kg</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>• Jumlah pohon X₂ ({currentTrees} batang × {MLR_COEFFICIENTS.tree_count}):</span>
-                    <span style={{ fontWeight: 600, color: '#F87171' }}>{mlrTreeContrib} Kg</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>• Elevasi X₃ ({currentElev} MDPL × {MLR_COEFFICIENTS.elevation}):</span>
-                    <span style={{ fontWeight: 600, color: '#F87171' }}>{mlrElevContrib} Kg</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed rgba(255,255,255,0.15)', marginTop: '4px', paddingTop: '4px' }}>
-                    <span>• Prediksi di bawah 0 dibulatkan jadi 0 kg:</span>
-                    <span style={{ fontWeight: 600, color: '#34D399' }}>≥ 0 Kg</span>
-                  </div>
+                  Perkiraan dihitung dari luas lahan, jumlah pohon, dan jenis kopi. Hasil panen dari musim-musim sebelumnya dipakai untuk menyesuaikan angka agar makin dekat dengan kondisi kebun ini.
                 </div>
               </div>
 
-              {/* MLR MODEL GOVERNANCE: PREDICTION HISTORY */}
+              {/* RIWAYAT PERKIRAAN PANEN */}
               <div style={{
                 background: 'rgba(15, 23, 42, 0.5)',
                 border: '1px solid rgba(255, 255, 255, 0.08)',
@@ -478,7 +477,7 @@ export default function DetailsPanel({
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <span className="material-symbols-outlined" style={{ color: '#94A3B8', fontSize: '18px' }}>history</span>
                     <span style={{ fontSize: '11px', fontWeight: 800, color: '#CBD5E1', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      Riwayat Prediksi MLR
+                      Riwayat Perkiraan Panen
                     </span>
                   </div>
                   <span style={{ fontSize: '10px', color: '#94A3B8' }}>{mlrHistory.length} entri</span>
@@ -486,7 +485,7 @@ export default function DetailsPanel({
 
                 {mlrHistory.length === 0 ? (
                   <p style={{ fontSize: '11px', color: '#64748B', margin: 0 }}>
-                    Belum ada riwayat prediksi tersimpan untuk lahan ini.
+                    Belum ada riwayat perkiraan panen untuk lahan ini.
                   </p>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -502,7 +501,6 @@ export default function DetailsPanel({
                       }}>
                         <span>
                           {new Date(entry.calculated_at).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' })}
-                          {' • '}{entry.mlr_formula_version}
                         </span>
                         <span style={{ color: '#34D399', fontWeight: 700 }}>
                           {Number(entry.predicted_kg).toLocaleString('id-ID')} Kg
@@ -552,12 +550,20 @@ export default function DetailsPanel({
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '6px' }}>
                   <div style={{ fontSize: '20px', fontWeight: '800', color: '#F8FAFC' }}>
-                    {totalRecordedHarvestKg.toLocaleString('id-ID')} <span style={{ fontSize: '13px', fontWeight: 600, color: '#94A3B8' }}>Kg Realisasi</span>
+                    {(latestSeason ? latestSeasonKg : totalRecordedHarvestKg).toLocaleString('id-ID')}
+                    {' '}<span style={{ fontSize: '13px', fontWeight: 600, color: '#94A3B8' }}>
+                      Kg {latestSeason ? `Musim ${latestSeason}` : 'Realisasi'}
+                    </span>
                   </div>
                   <span style={{ fontSize: '11px', color: '#38BDF8', fontWeight: 700 }}>
-                    {plotBatches.length} Batch Olah
+                    {plotBatches.length} Catatan Panen
                   </span>
                 </div>
+                {latestSeason && totalRecordedHarvestKg !== latestSeasonKg && (
+                  <div style={{ fontSize: '10px', color: '#94A3B8', marginBottom: '6px' }}>
+                    Total semua musim: {totalRecordedHarvestKg.toLocaleString('id-ID')} kg
+                  </div>
+                )}
 
                 {/* Audit Comparison Gauge */}
                 <div style={{
@@ -570,19 +576,27 @@ export default function DetailsPanel({
                   border: '1px solid rgba(255, 255, 255, 0.05)'
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span>Target Peramalan MLR:</span>
-                    <span style={{ fontWeight: 700, color: '#34D399' }}>{mlrTotalYield.toLocaleString('id-ID')} Kg</span>
+                    <span>{latestSeason ? `Perkiraan musim ${latestSeason}:` : 'Perkiraan musim berikutnya:'}</span>
+                    <span style={{ fontWeight: 700, color: '#34D399' }}>
+                      {(latestSeason ? seasonTargetKg : calibratedYield).toLocaleString('id-ID')} Kg
+                    </span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span>Total Panen Realisasi:</span>
-                    <span style={{ fontWeight: 700, color: '#38BDF8' }}>{totalRecordedHarvestKg.toLocaleString('id-ID')} Kg</span>
+                    <span>{latestSeason ? `Panen musim ${latestSeason}:` : 'Total Panen Realisasi:'}</span>
+                    <span style={{ fontWeight: 700, color: '#38BDF8' }}>{(latestSeason ? latestSeasonKg : totalRecordedHarvestKg).toLocaleString('id-ID')} Kg</span>
                   </div>
-                  {mlrTotalYield > 0 && (
+                  {latestSeason && seasonTargetKg > 0 && (
                     <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed rgba(255,255,255,0.1)', paddingTop: '4px', marginTop: '4px' }}>
-                      <span>Capaian Terhadap MLR:</span>
-                      <span style={{ fontWeight: 800, color: harvestAchievementRatio >= 80 ? '#34D399' : '#FBBF24' }}>
-                        {harvestAchievementRatio}% ({harvestAchievementRatio >= 80 ? 'On Target / Sangat Baik' : 'Dalam Proses Panen'})
+                      <span>Capaian Terhadap Perkiraan:</span>
+                      <span style={{ fontWeight: 800, color: seasonAchievementRatio >= 80 ? '#34D399' : '#FBBF24' }}>
+                        {seasonAchievementRatio}% ({seasonAchievementRatio >= 80 ? 'On Target / Sangat Baik' : 'Dalam Proses Panen'})
                       </span>
+                    </div>
+                  )}
+                  {latestSeason && Number(harvestSummary?.calibration_seasons) > 0 && (
+                    <div style={{ marginTop: '4px', fontSize: '10px', color: '#94A3B8' }}>
+                      Perkiraan musim {latestSeason} disesuaikan ×{Number(harvestSummary.calibration_ratio).toLocaleString('id-ID')}
+                      {' '}dari {harvestSummary.calibration_seasons} musim sebelumnya.
                     </div>
                   )}
                 </div>
@@ -731,7 +745,7 @@ export default function DetailsPanel({
                 </div>
               </div>
               <p style={{ fontSize: '10px', color: '#94A3B8', margin: 0 }}>
-                Kosongkan tanggal untuk memakai tanggal hari ini. Data ini langsung dipakai pada perbandingan prediksi MLR di tab Daftar Lahan.
+                Kosongkan tanggal untuk memakai tanggal hari ini. Data ini langsung dipakai pada perbandingan perkiraan panen di tab Daftar Lahan.
               </p>
 
               <button

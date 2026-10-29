@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import Pagination from './Pagination';
+import { API_BASE_URL } from '../lib/api';
 
 const REVIEW_PAGE_SIZE = 6;
 const INFO_PAGE_SIZE = 6;
+
+const formatResourceType = (type) => {
+  const value = String(type || '').toUpperCase();
+  if (value === 'VIDEO') return 'Video';
+  if (value === 'PDF') return 'Dokumen';
+  return 'Teks';
+};
 
 export default function EResourceView() {
   const [reviews, setReviews] = useState([]);
@@ -26,7 +34,7 @@ export default function EResourceView() {
 
   const fetchApprovedReviews = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/reviews?approved_only=true');
+      const res = await fetch(`${API_BASE_URL}/reviews?approved_only=true`);
       if (res.ok) {
         const data = await res.json();
         setReviews(data);
@@ -38,7 +46,7 @@ export default function EResourceView() {
 
   const fetchPublicEResources = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/eresources');
+      const res = await fetch(`${API_BASE_URL}/eresources`);
       if (res.ok) {
         const data = await res.json();
         setEresources(data.filter(item => !item.status || item.status === 'AKTIF' || item.status === 'aktif'));
@@ -53,7 +61,7 @@ export default function EResourceView() {
     if (!visitorName || !userComment) return;
 
     try {
-      const res = await fetch('http://localhost:5000/api/reviews', {
+      const res = await fetch(`${API_BASE_URL}/reviews`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -65,7 +73,7 @@ export default function EResourceView() {
       });
 
       if (res.ok) {
-        setToastMsg('✓ Terima kasih! Ulasan Anda telah terkirim untuk ditinjau admin.');
+        setToastMsg('✓ Terima kasih! Ulasan Anda sudah kami terima untuk ditinjau perangkat desa.');
         setShowReviewModal(false);
         setVisitorName('');
         setUserComment('');
@@ -116,9 +124,9 @@ export default function EResourceView() {
       <section>
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-6 sm:mb-8 gap-4">
           <div>
-            <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">KOMUNITAS VISITOR</div>
+            <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">ULASAN PENGUNJUNG</div>
             <h2 className="text-xl sm:text-3xl font-black text-slate-900 dark:text-white mt-1">Apa Kata Pengunjung</h2>
-            <p className="text-slate-500 dark:text-slate-400 mt-1 text-xs">Ulasan terverifikasi yang ditampilkan dari sistem moderasi dasbor desa</p>
+            <p className="text-slate-500 dark:text-slate-400 mt-1 text-xs">Ulasan terverifikasi dari pengunjung Desa Kucur</p>
           </div>
 
           <div className="flex flex-wrap gap-2.5 sm:gap-3 items-center">
@@ -204,7 +212,7 @@ export default function EResourceView() {
       <section className="bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-100 dark:border-slate-700 shadow-sm space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-700/80 pb-5">
           <div>
-            <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">DIGITAL KNOWLEDGE BASE</div>
+            <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">INFORMASI DESA</div>
             <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2 mt-1">
               <span className="material-symbols-outlined text-primary text-2xl">campaign</span>
               <span>Informasi & Pengumuman Resmi Desa Kucur</span>
@@ -219,7 +227,7 @@ export default function EResourceView() {
         {eresources.length === 0 ? (
           <div className="p-12 text-center bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-slate-700">
             <span className="material-symbols-outlined text-4xl text-slate-400">info</span>
-            <p className="mt-2 text-sm font-bold text-slate-500">Belum ada pengumuman resmi yang diunggah dari Dasbor Perangkat Desa.</p>
+            <p className="mt-2 text-sm font-bold text-slate-500">Belum ada pengumuman resmi dari perangkat desa.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -233,7 +241,7 @@ export default function EResourceView() {
                       </span>
                     </div>
                     <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-blue-500/10 text-blue-500 uppercase tracking-wider">
-                      {item.type || 'TEXT'}
+                      {formatResourceType(item.type)}
                     </span>
                   </div>
 
@@ -328,7 +336,7 @@ export default function EResourceView() {
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <div className="flex items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-500/10 text-blue-500 uppercase">
-                  {selectedResource.type || 'TEXT'}
+                  {formatResourceType(selectedResource.type)}
                 </span>
                 <span className="text-xs font-bold text-slate-400">Dipublikasikan Desa Kucur</span>
               </div>

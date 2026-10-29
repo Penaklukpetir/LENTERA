@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Pagination from './Pagination';
+import { getPredictionRange } from '../lib/mlr';
 
 const PAGE_SIZE = 10;
 const CURRENT_YEAR = new Date().getFullYear();
@@ -40,11 +41,18 @@ export default function PlotDirectory({ plots = [], accuracy = null, onOpenPlot 
       .map((plot) => {
         const harvest = harvestByPlot.get(plot.id);
         const harvestedKg = harvest ? Number(harvest.harvested_kg) : 0;
-        const predictedKg = Number(plot.predicted_yield || 0);
+        const predictedKg = Number(plot.calibrated_yield ?? plot.predicted_yield ?? 0);
+        const range = getPredictionRange(predictedKg);
         return {
           ...plot,
           harvestedKg,
           predictedKg,
+          rangeLow: Number(plot.range_low ?? range.low),
+          rangeHigh: Number(plot.range_high ?? range.high),
+          season: harvest?.season ?? null,
+          seasonPredictedKg: harvest ? Number(harvest.predicted_kg) : null,
+          calibrationSeasons: Number(plot.calibration_seasons ?? 0),
+          calibrationRatio: Number(plot.calibration_ratio ?? 1),
           errorPct: harvest ? Number(harvest.error_pct) : null,
           age: plot.planting_year ? CURRENT_YEAR - Number(plot.planting_year) : null,
         };
@@ -63,9 +71,12 @@ export default function PlotDirectory({ plots = [], accuracy = null, onOpenPlot 
   const totals = useMemo(() => {
     const area = rows.reduce((sum, plot) => sum + Number(plot.land_area || 0), 0);
     const predicted = rows.reduce((sum, plot) => sum + plot.predictedKg, 0);
+    const rangeLow = rows.reduce((sum, plot) => sum + plot.rangeLow, 0);
+    const rangeHigh = rows.reduce((sum, plot) => sum + plot.rangeHigh, 0);
     const harvested = rows.reduce((sum, plot) => sum + plot.harvestedKg, 0);
     const withHarvest = rows.filter((plot) => plot.harvestedKg > 0).length;
-    return { area, predicted, harvested, withHarvest };
+    const calibrated = rows.filter((plot) => plot.calibrationSeasons > 0).length;
+    return { area, predicted, rangeLow, rangeHigh, harvested, withHarvest, calibrated };
   }, [rows]);
 
   const withinTolerance = accuracy?.tolerance_pct ?? 25;
@@ -77,7 +88,7 @@ export default function PlotDirectory({ plots = [], accuracy = null, onOpenPlot 
           <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">DATA LAHAN KOPI</span>
           <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Daftar Lahan &amp; Panen Riil</h3>
           <p className="text-[11px] text-slate-500 font-medium mt-1">
-            Prediksi MLR dibandingkan dengan total panen yang dicatat per lahan.
+            Perkiraan panen musim berikutnya dibandingkan dengan panen musim terakhir; angkanya disesuaikan dari hasil panen musim-musim sebelumnya.
           </p>
         </div>
         <button
@@ -98,19 +109,28 @@ export default function PlotDirectory({ plots = [], accuracy = null, onOpenPlot 
         </div>
 
         <div className="rounded-2xl p-4 bg-white dark:bg-slate-950 border border-primary/10 shadow-sm">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">PREDIKSI MLR</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">PERKIRAAN PANEN</span>
           <div className="mt-2 text-2xl font-extrabold text-amber-500">{formatKg(totals.predicted)}</div>
-          <div className="mt-1 text-[11px] text-slate-500 font-semibold">Total prediksi seluruh lahan</div>
+          <div className="mt-1 text-[11px] text-slate-500 font-semibold">
+            Rentang {formatKg(totals.rangeLow)} – {formatKg(totals.rangeHigh)}
+          </div>
+          <div className="mt-0.5 text-[10px] text-slate-400 font-semibold">
+            {totals.calibrated > 0
+              ? `${totals.calibrated} lahan disesuaikan dari panen sebelumnya`
+              : 'Belum ada riwayat panen'}
+          </div>
         </div>
 
         <div className="rounded-2xl p-4 bg-white dark:bg-slate-950 border border-primary/10 shadow-sm">
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">PANEN RIIL</span>
           <div className="mt-2 text-2xl font-extrabold text-emerald-500">{formatKg(totals.harvested)}</div>
-          <div className="mt-1 text-[11px] text-slate-500 font-semibold">{totals.withHarvest} lahan sudah dicatat</div>
+          <div className="mt-1 text-[11px] text-slate-500 font-semibold">
+            {totals.withHarvest} lahan punya panen (musim terakhir)
+          </div>
         </div>
 
         <div className="rounded-2xl p-4 bg-white dark:bg-slate-950 border border-primary/10 shadow-sm">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">AKURASI PREDIKSI</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">AKURASI PERKIRAAN</span>
           <div className="mt-2 text-2xl font-extrabold text-slate-900 dark:text-white">
             {accuracy?.median_ape_pct === null || accuracy?.median_ape_pct === undefined
               ? '—'
@@ -170,7 +190,7 @@ export default function PlotDirectory({ plots = [], accuracy = null, onOpenPlot 
                     <th className="px-4 py-3">Pohon</th>
                     <th className="px-4 py-3">Elevasi</th>
                     <th className="px-4 py-3">Umur</th>
-                    <th className="px-4 py-3 text-right">Prediksi</th>
+                    <th className="px-4 py-3 text-right">Perkiraan</th>
                     <th className="px-4 py-3 text-right">Panen Riil</th>
                     <th className="px-4 py-3 text-right">Selisih</th>
                     <th className="px-4 py-3 text-right">Aksi</th>
@@ -190,17 +210,35 @@ export default function PlotDirectory({ plots = [], accuracy = null, onOpenPlot 
                         {plot.planting_year ? `${plot.age} th` : '—'}
                         {plot.planting_year && <div className="text-[10px] text-slate-400">tanam {plot.planting_year}</div>}
                       </td>
-                      <td className="px-4 py-3 text-right font-bold text-amber-500">{formatKg(plot.predictedKg)}</td>
+                      <td className="px-4 py-3 text-right">
+                        <div className="font-bold text-amber-500">{formatKg(plot.predictedKg)}</div>
+                        <div className="text-[10px] font-semibold text-slate-400">
+                          {plot.rangeLow.toLocaleString('id-ID')}–{plot.rangeHigh.toLocaleString('id-ID')} kg
+                        </div>
+                        {plot.calibrationSeasons > 0 && (
+                          <div className="text-[10px] font-extrabold text-emerald-500">
+                            disesuaikan ×{plot.calibrationRatio.toLocaleString('id-ID')}
+                          </div>
+                        )}
+                      </td>
                       <td className="px-4 py-3 text-right font-bold text-emerald-500">
                         {plot.harvestedKg > 0 ? formatKg(plot.harvestedKg) : '—'}
+                        {plot.season && (
+                          <div className="text-[10px] font-semibold text-slate-400">musim {plot.season}</div>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-right">
                         {plot.errorPct === null ? (
                           <span className="text-slate-400 font-semibold">Belum ada panen</span>
                         ) : (
-                          <span className={`font-extrabold ${plot.errorPct <= withinTolerance ? 'text-emerald-500' : 'text-rose-500'}`}>
-                            ±{formatPct(plot.errorPct)}
-                          </span>
+                          <>
+                            <span className={`font-extrabold ${plot.errorPct <= withinTolerance ? 'text-emerald-500' : 'text-rose-500'}`}>
+                              ±{formatPct(plot.errorPct)}
+                            </span>
+                            <div className="text-[10px] font-semibold text-slate-400">
+                              vs perkiraan musim {plot.season}: {formatKg(plot.seasonPredictedKg)}
+                            </div>
+                          </>
                         )}
                       </td>
                       <td className="px-4 py-3 text-right">
@@ -243,14 +281,27 @@ export default function PlotDirectory({ plots = [], accuracy = null, onOpenPlot 
                     <span>{plot.elevation} mdpl</span>
                   </div>
                   <div className="flex items-center justify-between gap-2 text-[11px] font-bold">
-                    <span className="text-amber-500">Prediksi {formatKg(plot.predictedKg)}</span>
+                    <span className="text-amber-500">
+                      Perkiraan {formatKg(plot.predictedKg)}
+                      <span className="ml-1 text-[10px] font-semibold text-slate-400">
+                        ({plot.rangeLow.toLocaleString('id-ID')}–{plot.rangeHigh.toLocaleString('id-ID')} kg)
+                      </span>
+                    </span>
                     <span className="text-emerald-500">
-                      {plot.harvestedKg > 0 ? `Panen ${formatKg(plot.harvestedKg)}` : 'Panen belum dicatat'}
+                      {plot.harvestedKg > 0
+                        ? `Panen ${formatKg(plot.harvestedKg)}${plot.season ? ` (${plot.season})` : ''}`
+                        : 'Panen belum dicatat'}
                     </span>
                   </div>
+                  {plot.calibrationSeasons > 0 && (
+                    <div className="text-[10px] font-extrabold text-emerald-500">
+                      Disesuaikan ×{plot.calibrationRatio.toLocaleString('id-ID')} dari {plot.calibrationSeasons} musim panen sebelumnya
+                    </div>
+                  )}
                   {plot.errorPct !== null && (
                     <div className={`text-[10px] font-extrabold ${plot.errorPct <= withinTolerance ? 'text-emerald-500' : 'text-rose-500'}`}>
-                      Selisih ±{formatPct(plot.errorPct)} {plot.errorPct <= withinTolerance ? '(dalam toleransi)' : `(di luar toleransi ±${withinTolerance}%)`}
+                      Selisih ±{formatPct(plot.errorPct)} vs perkiraan musim {plot.season} ({formatKg(plot.seasonPredictedKg)})
+                      {' '}{plot.errorPct <= withinTolerance ? '(dalam toleransi)' : `(di luar toleransi ±${withinTolerance}%)`}
                     </div>
                   )}
                 </div>

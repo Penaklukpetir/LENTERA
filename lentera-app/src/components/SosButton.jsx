@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import { API_BASE_URL } from '../lib/api';
 
 export default function SosButton() {
   const [showSosModal, setShowSosModal] = useState(false);
@@ -88,7 +87,7 @@ export default function SosButton() {
       });
       window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(message)}`, '_blank');
     } catch (err) {
-      setSubmitState({ loading: false, error: 'Gagal menghubungi server. Sinyal SOS tidak terkirim.', success: '' });
+      setSubmitState({ loading: false, error: 'Koneksi terputus. Sinyal SOS belum terkirim.', success: '' });
     }
   };
 
@@ -156,7 +155,7 @@ export default function SosButton() {
                     {geoStatus === 'loading' ? 'location_searching' : geoStatus === 'ready' ? 'my_location' : 'location_off'}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Koordinat GPS Perangkat</p>
+                    <p className="text-[10px] font-bold text-rose-400 uppercase tracking-widest">Lokasi Perangkat</p>
                     {geoStatus === 'ready' && coords ? (
                       <p className="font-bold text-white font-mono text-xs">
                         LAT: {coords.lat.toFixed(6)} / LONG: {coords.lng.toFixed(6)}
@@ -164,7 +163,7 @@ export default function SosButton() {
                       </p>
                     ) : (
                       <p className="text-xs text-slate-300 font-semibold">
-                        {geoStatus === 'loading' ? 'Membaca lokasi GPS...' : geoError || 'Lokasi belum tersedia.'}
+                        {geoStatus === 'loading' ? 'Mendeteksi lokasi Anda...' : geoError || 'Lokasi belum tersedia.'}
                       </p>
                     )}
                   </div>

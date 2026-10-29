@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from './lib/api';
 import Header from './components/Header';
 import Home from './components/Home';
 import Sidebar from './components/Sidebar';
@@ -18,7 +19,6 @@ const EResourceView = React.lazy(() => import('./components/EResourceView'));
 const SponsorView = React.lazy(() => import('./components/SponsorView'));
 const Profile = React.lazy(() => import('./components/Profile'));
 
-const API_BASE_URL = 'http://localhost:5000/api';
 
 export default function App() {
   const [theme, setTheme] = useState('light');
@@ -176,7 +176,7 @@ export default function App() {
       }
     } catch (err) {
       console.error('Gagal menyimpan plot ke backend:', err);
-      alert('Gagal menghubungi server. Plot tidak tersimpan.');
+      alert('Koneksi terputus. Plot belum tersimpan.');
     }
   };
 
@@ -217,7 +217,7 @@ export default function App() {
       alert('Proposal kemitraan terkirim dan menunggu kurasi Karang Taruna.');
     } catch (err) {
       console.error('Gagal mengirim proposal sponsorship:', err);
-      alert('Gagal menghubungi server. Proposal tidak terkirim.');
+      alert('Koneksi terputus. Proposal belum terkirim.');
     }
   };
 
@@ -252,7 +252,7 @@ export default function App() {
       return true;
     } catch (err) {
       console.error('Sponsorship transition failed:', err);
-      alert('Gagal menghubungi server. Status proposal tidak berubah.');
+      alert('Koneksi terputus. Status proposal belum berubah.');
       return false;
     }
   };

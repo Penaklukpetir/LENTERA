@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import { API_BASE_URL } from '../lib/api';
 
 export default function AdminLoginModal({ setShowAdminLoginModal, onAuthenticated }) {
   const [username, setUsername] = useState('');
@@ -34,7 +33,7 @@ export default function AdminLoginModal({ setShowAdminLoginModal, onAuthenticate
       onAuthenticated({ token: data.token, user: data.user });
       setShowAdminLoginModal(false);
     } catch (err) {
-      setErrorMsg('Gagal menghubungi server otentikasi.');
+      setErrorMsg('Koneksi terputus. Coba lagi.');
     } finally {
       setLoading(false);
     }

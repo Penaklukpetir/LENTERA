@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import { API_BASE_URL } from '../lib/api';
 const FALLBACK_IMG = '/indonesian_coffee_farmer.png';
 
 const formatDate = (value) => {
@@ -97,7 +96,7 @@ export default function Home({ setActiveView, destinations = [] }) {
               Memberdayakan <span className="text-primary bg-gradient-to-r from-emerald-500 to-primary bg-clip-text text-transparent">Pariwisata</span> & Edukasi Desa
             </h1>
             <p className="text-xs sm:text-base text-slate-600 dark:text-slate-400 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
-              Temukan permata agrowisata kopi tersembunyi di Desa Kucur melalui integrasi Web-GIS spasial berkelanjutan dan modul edukasi interaktif.
+              Temukan pesona agrowisata kopi Desa Kucur melalui peta digital desa dan modul edukasi interaktif.
             </p>
             <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-4 justify-center lg:justify-start pt-1">
               <button 
@@ -168,7 +167,7 @@ export default function Home({ setActiveView, destinations = [] }) {
           <div>
             <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">WARTA & BERITA</div>
             <h2 className="text-xl sm:text-3xl font-black text-slate-900 dark:text-white mb-1">Kabar Desa</h2>
-            <p className="text-slate-500 dark:text-slate-400 font-medium text-xs">Publikasi resmi dari basis data desa: modul edukasi, e-resource, dan destinasi wisata</p>
+            <p className="text-slate-500 dark:text-slate-400 font-medium text-xs">Publikasi resmi desa: modul edukasi, informasi warga, dan destinasi wisata</p>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
             {/* Left: Featured Content from PostgreSQL */}

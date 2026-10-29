@@ -352,7 +352,7 @@ export default function AdminPlotForm({
             <span className="block text-[9px] text-slate-400 mt-1">
               {formPlantingYear && Number(formPlantingYear) >= 1900
                 ? `Umur tanaman ± ${new Date().getFullYear() - Number(formPlantingYear)} tahun`
-                : 'Isi bila tahu tahun tanam — dipakai untuk menilai wajar-tidaknya prediksi panen.'}
+                : 'Isi bila tahu tahun tanam — dipakai untuk menilai wajar-tidaknya perkiraan panen.'}
             </span>
           </div>
 

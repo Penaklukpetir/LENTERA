@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Sidebar from './Sidebar';
 import DetailsPanel from './DetailsPanel';
 import AdminPlotForm from './AdminPlotForm';
 import Pagination from './Pagination';
 import PlotDirectory from './PlotDirectory';
+import { getPredictionRange } from '../lib/mlr';
+import { API_BASE_URL, resolveServerUrl } from '../lib/api';
 
 const CoffeeMap = React.lazy(() => import('./CoffeeMap'));
 const Profile = React.lazy(() => import('./Profile'));
@@ -13,8 +15,6 @@ const CHART_RANGES = [
   { id: 30, label: '30 Hari' },
   { id: 365, label: '1 Tahun' }
 ];
-
-const API_BASE_URL = 'http://localhost:5000/api';
 
 const formatKg = (value) =>
   `${Number(value || 0).toLocaleString('id-ID', { maximumFractionDigits: 1 })} kg`;
@@ -34,10 +34,28 @@ const EDU_MODULE_PAGE_SIZE = 6;
 const REVIEW_PAGE_SIZE = 6;
 const SPONSORSHIP_PAGE_SIZE = 5;
 
-const proposalHref = (url) => {
-  if (!url) return null;
-  return url.startsWith('http') ? url : `http://localhost:5000${url}`;
+const GUIDE_STATUS_LABELS = {
+  PENDING: 'Menunggu',
+  CONFIRMED: 'Dikonfirmasi',
+  COMPLETED: 'Selesai',
+  CANCELLED: 'Dibatalkan'
 };
+
+const SOS_STATUS_LABELS = {
+  ALERT_ACTIVE: 'Darurat Aktif',
+  DISPATCHED: 'Tim Dikirim',
+  RESOLVED: 'Selesai'
+};
+
+const SPONSORSHIP_STATUS_LABELS = {
+  PENDING: 'Menunggu',
+  CURATED: 'Dikurasi',
+  APPROVED: 'Disetujui',
+  DISBURSED: 'Dana Disalurkan',
+  REJECTED: 'Ditolak'
+};
+
+const proposalHref = (url) => (url ? resolveServerUrl(url) : null);
 
 export default function DashboardView({ 
   setActiveView, 
@@ -232,7 +250,7 @@ export default function DashboardView({
       setDestDesc('');
       await refreshDestinations();
     } catch (err) {
-      showToast('⚠️ Gagal menghubungi server.');
+      showToast('⚠️ Koneksi terputus. Coba lagi.');
     }
   };
 
@@ -265,10 +283,10 @@ export default function DashboardView({
         showToast(`⚠️ ${data.error || 'Gagal mengarsipkan destinasi.'}`);
         return;
       }
-      showToast('✓ Destinasi wisata diarsipkan (soft delete).');
+      showToast('✓ Destinasi wisata diarsipkan.');
       await refreshDestinations();
     } catch (err) {
-      showToast('⚠️ Gagal menghubungi server.');
+      showToast('⚠️ Koneksi terputus. Coba lagi.');
     }
   };
 
@@ -313,7 +331,7 @@ export default function DashboardView({
       }
       setDashboardSummary(data);
     } catch (err) {
-      setSummaryError('Gagal menghubungi server.');
+      setSummaryError('Koneksi terputus. Coba lagi.');
     } finally {
       setSummaryLoading(false);
     }
@@ -332,12 +350,12 @@ export default function DashboardView({
       const res = await fetch(`${API_BASE_URL}/plots/accuracy`, { headers: authHeaders });
       const data = await res.json();
       if (!res.ok) {
-        setAccuracyError(data.error || 'Gagal memuat akurasi prediksi.');
+        setAccuracyError(data.error || 'Gagal memuat akurasi perkiraan.');
         return;
       }
       setAccuracy(data);
     } catch (err) {
-      setAccuracyError('Gagal menghubungi server.');
+      setAccuracyError('Koneksi terputus. Coba lagi.');
     } finally {
       setAccuracyLoading(false);
     }
@@ -410,7 +428,7 @@ export default function DashboardView({
       }
       if (data.summary) setFarmerSummary(data.summary);
     } catch {
-      setFarmersError('Gagal menghubungi server.');
+      setFarmersError('Koneksi terputus. Coba lagi.');
     } finally {
       setFarmersLoading(false);
     }
@@ -486,7 +504,7 @@ export default function DashboardView({
       fetchFarmers();
       fetchFarmerOptions();
     } catch (err) {
-      showToast('⚠️ Gagal menghubungi server.');
+      showToast('⚠️ Koneksi terputus. Coba lagi.');
     } finally {
       setFarmerSaving(false);
     }
@@ -510,7 +528,7 @@ export default function DashboardView({
       fetchFarmers();
       fetchFarmerOptions();
     } catch (err) {
-      showToast('⚠️ Gagal menghubungi server.');
+      showToast('⚠️ Koneksi terputus. Coba lagi.');
     }
   };
 
@@ -526,10 +544,10 @@ export default function DashboardView({
         showToast(`⚠️ ${data.error || 'Gagal memperbarui status pemesanan.'}`);
         return;
       }
-      showToast(`✓ Pemesanan guide ditandai ${status}.`);
+      showToast(`✓ Pemesanan pemandu ditandai ${GUIDE_STATUS_LABELS[status] || status}.`);
       fetchGuideBookings();
     } catch (err) {
-      showToast('⚠️ Gagal menghubungi server.');
+      showToast('⚠️ Koneksi terputus. Coba lagi.');
     }
   };
 
@@ -545,17 +563,17 @@ export default function DashboardView({
         showToast(`⚠️ ${data.error || 'Gagal memperbarui status SOS.'}`);
         return;
       }
-      showToast(`✓ Sinyal SOS ditandai ${status}.`);
+      showToast(`✓ Sinyal SOS ditandai ${SOS_STATUS_LABELS[status] || status}.`);
       fetchSosAlerts();
       fetchDashboardSummary();
     } catch (err) {
-      showToast('⚠️ Gagal menghubungi server.');
+      showToast('⚠️ Koneksi terputus. Coba lagi.');
     }
   };
 
   const fetchReviews = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/reviews', { headers: authHeaders });
+      const res = await fetch(`${API_BASE_URL}/reviews`, { headers: authHeaders });
       if (res.ok) {
         const data = await res.json();
         setAllReviews(data);
@@ -567,7 +585,7 @@ export default function DashboardView({
 
   const handleToggleApproveReviewDB = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/reviews/${id}/approve`, { method: 'PUT', headers: authHeaders });
+      const res = await fetch(`${API_BASE_URL}/reviews/${id}/approve`, { method: 'PUT', headers: authHeaders });
       if (res.ok) {
         showToast('✓ Status publikasi ulasan diperbarui!');
         fetchReviews();
@@ -578,9 +596,9 @@ export default function DashboardView({
   };
 
   const handleDeleteReviewDB = async (id) => {
-    if (!window.confirm('Hapus ulasan pengunjung ini dari database?')) return;
+    if (!window.confirm('Hapus ulasan pengunjung ini?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/reviews/${id}`, { method: 'DELETE', headers: authHeaders });
+      const res = await fetch(`${API_BASE_URL}/reviews/${id}`, { method: 'DELETE', headers: authHeaders });
       if (res.ok) {
         showToast('✓ Ulasan pengunjung berhasil dihapus!');
         fetchReviews();
@@ -592,7 +610,7 @@ export default function DashboardView({
 
   const fetchEResources = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/eresources');
+      const res = await fetch(`${API_BASE_URL}/eresources`);
       if (res.ok) {
         const data = await res.json();
         setEresources(data);
@@ -604,7 +622,7 @@ export default function DashboardView({
 
   const fetchEducationModules = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/education');
+      const res = await fetch(`${API_BASE_URL}/education`);
       if (res.ok) {
         const data = await res.json();
         setEduModules(data);
@@ -636,6 +654,27 @@ export default function DashboardView({
   const dashboardKpi = dashboardSummary?.kpi || {};
   const activeChart = dashboardSummary?.series || [];
   const maxChartKg = Math.max(...activeChart.map(d => d.harvest_kg), 1);
+
+  const calibratedTotals = useMemo(() => {
+    const list = Array.isArray(plots) ? plots : [];
+    return list.reduce((acc, plot) => {
+      const value = Number(plot.calibrated_yield ?? plot.predicted_yield ?? 0);
+      const range = getPredictionRange(value);
+      acc.predicted += value;
+      acc.low += Number(plot.range_low ?? range.low);
+      acc.high += Number(plot.range_high ?? range.high);
+      if (Number(plot.calibration_seasons) > 0) acc.calibrated += 1;
+      return acc;
+    }, { predicted: 0, low: 0, high: 0, calibrated: 0 });
+  }, [plots]);
+
+  const hasPlotCalibration = calibratedTotals.predicted > 0;
+  const dashboardPredictionKg = hasPlotCalibration
+    ? calibratedTotals.predicted
+    : Number(dashboardKpi.predicted_yield_kg || 0);
+  const dashboardPredictionRange = hasPlotCalibration
+    ? { low: calibratedTotals.low, high: calibratedTotals.high }
+    : getPredictionRange(dashboardPredictionKg);
 
   const accuracyMeasured = accuracy?.measured_plots ?? 0;
   const accuracyScorePct = accuracy?.median_ape_pct === null || accuracy?.median_ape_pct === undefined
@@ -679,7 +718,7 @@ export default function DashboardView({
     e.preventDefault();
     if (!eTitle) return;
     try {
-      const res = await fetch('http://localhost:5000/api/eresources', {
+      const res = await fetch(`${API_BASE_URL}/eresources`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...authHeaders },
         body: JSON.stringify({
@@ -690,7 +729,7 @@ export default function DashboardView({
         })
       });
       if (res.ok) {
-        showToast('✓ E-Resource berhasil disimpan ke Database!');
+        showToast('✓ Informasi desa berhasil disimpan.');
         setETitle('');
         setEContent('');
         fetchEResources();
@@ -704,13 +743,13 @@ export default function DashboardView({
   const handleToggleEResourceStatus = async (item) => {
     const newStatus = item.status === 'AKTIF' ? 'NONAKTIF' : 'AKTIF';
     try {
-      const res = await fetch(`http://localhost:5000/api/eresources/${item.id}`, {
+      const res = await fetch(`${API_BASE_URL}/eresources/${item.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', ...authHeaders },
         body: JSON.stringify({ status: newStatus })
       });
       if (res.ok) {
-        showToast(`Status E-Resource diperbarui menjadi ${newStatus}`);
+        showToast(`✓ Status informasi diubah menjadi ${newStatus === 'AKTIF' ? 'Aktif' : 'Nonaktif'}.`);
         fetchEResources();
       }
     } catch (err) {
@@ -720,11 +759,11 @@ export default function DashboardView({
 
   // Delete E-Resource (DB DELETE)
   const handleDeleteEResource = async (id) => {
-    if (!window.confirm('Hapus item E-Resource ini dari database?')) return;
+    if (!window.confirm('Hapus informasi desa ini?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/eresources/${id}`, { method: 'DELETE', headers: authHeaders });
+      const res = await fetch(`${API_BASE_URL}/eresources/${id}`, { method: 'DELETE', headers: authHeaders });
       if (res.ok) {
-        showToast('✓ Item E-Resource berhasil dihapus dari Database');
+        showToast('✓ Informasi desa berhasil dihapus.');
         fetchEResources();
       }
     } catch (err) {
@@ -737,7 +776,7 @@ export default function DashboardView({
     e.preventDefault();
     if (!eduTitle) return;
     try {
-      const res = await fetch('http://localhost:5000/api/education', {
+      const res = await fetch(`${API_BASE_URL}/education`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...authHeaders },
         body: JSON.stringify({
@@ -763,9 +802,9 @@ export default function DashboardView({
   const handleDeleteEduModule = async (id) => {
     if (!window.confirm('Hapus modul edukasi ini?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/education/${id}`, { method: 'DELETE', headers: authHeaders });
+      const res = await fetch(`${API_BASE_URL}/education/${id}`, { method: 'DELETE', headers: authHeaders });
       if (res.ok) {
-        showToast('✓ Modul berhasil dihapus dari Database');
+        showToast('✓ Modul edukasi berhasil dihapus.');
         fetchEducationModules();
       }
     } catch (err) {
@@ -825,7 +864,7 @@ export default function DashboardView({
         showToast(`⚠️ ${data.error || 'Gagal mengarsipkan akun.'}`);
         return;
       }
-      showToast('✓ Akun admin diarsipkan (soft delete).');
+      showToast('✓ Akun admin diarsipkan.');
       fetchAdminUsers();
     } catch (err) {
       showToast('⚠️ Gagal mengarsipkan akun.');
@@ -843,7 +882,7 @@ export default function DashboardView({
       fetchEResources(),
       fetchEducationModules()
     ]);
-    showToast('✓ Data dashboard dimuat ulang dari database.');
+    showToast('✓ Data dashboard dimuat ulang.');
   };
 
   const openFarmerPlot = (farmer) => {
@@ -918,7 +957,7 @@ export default function DashboardView({
             { id: 'gis',        label: 'Peta Lahan & GIS',       icon: 'map' },
             { id: 'farmers',    label: 'Daftar Petani',          icon: 'agriculture' },
             { id: 'plots',      label: 'Daftar Lahan',          icon: 'landscape' },
-            { id: 'navigation', label: 'Kelola Wisata & Guide', icon: 'explore' },
+            { id: 'navigation', label: 'Kelola Wisata & Pemandu', icon: 'explore' },
             { id: 'eresource',  label: 'E-Resource',            icon: 'folder_shared' },
             { id: 'education',  label: 'Kelola Edukasi',        icon: 'school' },
             { id: 'accounts',   label: 'Setting Akun',          icon: 'manage_accounts' },
@@ -1058,7 +1097,7 @@ export default function DashboardView({
                 { id: 'gis',        label: 'Peta Lahan & GIS',       icon: 'map' },
                 { id: 'farmers',    label: 'Daftar Petani',          icon: 'agriculture' },
                 { id: 'plots',      label: 'Daftar Lahan',          icon: 'landscape' },
-                { id: 'navigation', label: 'Kelola Wisata & Guide', icon: 'explore' },
+                { id: 'navigation', label: 'Kelola Wisata & Pemandu', icon: 'explore' },
                 { id: 'eresource',  label: 'E-Resource',            icon: 'folder_shared' },
                 { id: 'education',  label: 'Kelola Edukasi',        icon: 'school' },
                 { id: 'accounts',   label: 'Setting Akun',          icon: 'manage_accounts' },
@@ -1123,14 +1162,14 @@ export default function DashboardView({
 
             <div className="min-w-0">
               <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest truncate">
-                MONITORING & APPROVAL
+                PEMANTAUAN &amp; PERSETUJUAN
               </div>
               <h1 className="text-base sm:text-2xl font-extrabold text-slate-900 dark:text-white capitalize truncate">
                 {activeTab === 'dashboard' ? 'Dashboard' : 
                  activeTab === 'gis' ? 'Peta Lahan & GIS' :
                  activeTab === 'farmers' ? 'Daftar Petani' :
                  activeTab === 'plots' ? 'Daftar Lahan' :
-                 activeTab === 'navigation' ? 'Kelola Wisata & Guide' :
+                 activeTab === 'navigation' ? 'Kelola Wisata & Pemandu' :
                  activeTab === 'eresource' ? 'E-Resource' :
                  activeTab === 'education' ? 'Kelola Edukasi' :
                  activeTab === 'accounts' ? 'Setting Akun' :
@@ -1185,25 +1224,32 @@ export default function DashboardView({
                   <div className="mt-1 text-xs text-slate-500 font-medium">Plot terdaftar &amp; aktif</div>
                   <div className="mt-2 flex items-center gap-1 text-[10px] font-bold text-emerald-500">
                     <span className="material-symbols-outlined text-xs">verified</span>
-                    <span>Sumber: coffee_plots</span>
+                    <span>Data resmi desa</span>
                   </div>
                 </div>
 
                 <div className="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-5 shadow-sm relative overflow-hidden group hover:shadow-md card-hover">
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-amber-400 to-amber-600 rounded-l-2xl" />
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">PREDIKSI MLR</span>
+                    <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">PERKIRAAN PANEN</span>
                     <div className="w-9 h-9 rounded-xl bg-amber-500/10 flex items-center justify-center">
                       <span className="material-symbols-outlined text-amber-500 text-lg">analytics</span>
                     </div>
                   </div>
                   <div className="mt-4 text-3xl font-extrabold text-slate-900 dark:text-white">
-                    {summaryLoading ? '—' : formatNumber(dashboardKpi.predicted_yield_kg)}
+                    {summaryLoading ? '—' : formatNumber(dashboardPredictionKg)}
                   </div>
-                  <div className="mt-1 text-xs text-slate-500 font-medium">Kg/tahun estimasi model</div>
+                  <div className="mt-1 text-xs text-slate-500 font-medium">Kg/tahun perkiraan panen</div>
                   <div className="mt-2 flex items-center gap-1 text-[10px] font-bold text-amber-500">
                     <span className="material-symbols-outlined text-xs">functions</span>
-                    <span>Total predicted_yield</span>
+                    <span>
+                      Rentang {formatNumber(dashboardPredictionRange.low)}–{formatNumber(dashboardPredictionRange.high)} kg
+                    </span>
+                  </div>
+                  <div className="mt-1 text-[10px] font-semibold text-slate-400">
+                    {calibratedTotals.calibrated > 0
+                      ? `${calibratedTotals.calibrated} lahan disesuaikan dari panen sebelumnya`
+                      : 'Belum ada riwayat panen'}
                   </div>
                 </div>
 
@@ -1238,7 +1284,7 @@ export default function DashboardView({
                   <div className="mt-4 text-3xl font-extrabold text-slate-900 dark:text-white">
                     {summaryLoading ? '—' : formatNumber(dashboardKpi.pending_sponsorships)}
                   </div>
-                  <div className="mt-1 text-xs text-slate-500 font-medium">Menunggu kurasi / approval</div>
+                  <div className="mt-1 text-xs text-slate-500 font-medium">Menunggu kurasi / persetujuan</div>
                   <div className="mt-2 flex items-center gap-1 text-[10px] font-bold text-primary">
                     <span className="material-symbols-outlined text-xs">payments</span>
                     <span>Dana aktif Rp {formatNumber(dashboardKpi.approved_funding)}</span>
@@ -1316,7 +1362,7 @@ export default function DashboardView({
                     <div className="flex items-center justify-between">
                       <div>
                         <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">STATUS</span>
-                        <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Approval</h3>
+                        <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Persetujuan</h3>
                       </div>
                       <span className="material-symbols-outlined text-primary text-2xl">verified</span>
                     </div>
@@ -1329,9 +1375,9 @@ export default function DashboardView({
                       </div>
 
                       <div className="rounded-2xl p-4 bg-slate-50 dark:bg-slate-900/60 border border-primary/10">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">GUIDE</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">PEMANDU</span>
                         <div className="mt-2 text-3xl font-extrabold text-slate-900 dark:text-white">{dashboardKpi.pending_guides ?? 0}</div>
-                        <div className="mt-1 text-xs text-blue-500 font-semibold">Booking pending</div>
+                        <div className="mt-1 text-xs text-blue-500 font-semibold">Menunggu konfirmasi</div>
                       </div>
 
                       <div className="rounded-2xl p-4 bg-slate-50 dark:bg-slate-900/60 border border-primary/10">
@@ -1351,7 +1397,7 @@ export default function DashboardView({
                     <div className="mt-5 space-y-2">
                       {[
                         {
-                          label: 'Menunggu Review',
+                          label: 'Menunggu Peninjauan',
                           count: pendingSponsorsCount,
                           pill: 'bg-amber-500/10 text-amber-600 border-amber-500/25',
                           dot: 'bg-amber-500'
@@ -1391,17 +1437,14 @@ export default function DashboardView({
 
               </div>
 
-              {/* Akurasi peramalan: prediksi MLR per lahan dibandingkan total panen tercatat */}
+              {/* Akurasi perkiraan panen per lahan dibandingkan total panen tercatat */}
               <div className="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6 shadow-sm">
                 <div className="flex items-start justify-between flex-wrap gap-2">
                   <div>
-                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">VALIDASI MODEL</span>
-                    <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Akurasi Peramalan vs Panen Nyata</h3>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">AKURASI PERKIRAAN</span>
+                    <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Akurasi Perkiraan vs Panen Nyata</h3>
                     <p className="text-[11px] text-slate-500 font-medium mt-1">
-                      {accuracy?.formula_version
-                        ? `Dibandingkan dengan ${accuracy.formula_version}`
-                        : 'Dibandingkan dengan prediksi MLR tersimpan'}
-                      {' — '}hanya lahan yang sudah punya catatan panen.
+                      Perkiraan panen dibandingkan dengan hasil panen tercatat — dinilai pada panen musim terakhir; perkiraan musim itu hanya disesuaikan dari musim sebelumnya.
                     </p>
                   </div>
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold border border-primary/25 bg-primary/10 text-primary">
@@ -1427,7 +1470,7 @@ export default function DashboardView({
                 {!accuracyLoading && !accuracyError && accuracy && accuracyMeasured === 0 && (
                   <div className="mt-4 flex items-start gap-2 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-600 text-xs font-bold">
                     <span className="material-symbols-outlined text-base">info</span>
-                    <span>Belum ada lahan yang punya prediksi dan catatan panen sekaligus. Catat hasil panen lewat Detail Plot agar akurasi bisa dihitung.</span>
+                    <span>Belum ada lahan yang punya perkiraan dan catatan panen sekaligus. Catat hasil panen lewat Detail Plot agar akurasi bisa dihitung; penyesuaian per lahan aktif otomatis mulai musim panen kedua.</span>
                   </div>
                 )}
 
@@ -1435,7 +1478,7 @@ export default function DashboardView({
                   <>
                     <div className="mt-5 grid grid-cols-2 lg:grid-cols-4 gap-3">
                       <div className="rounded-2xl p-4 bg-slate-50 dark:bg-slate-900/60 border border-primary/10">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">AKURASI PREDIKSI</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">AKURASI PERKIRAAN</span>
                         <div className={`mt-2 text-3xl font-extrabold ${accuracyTone}`}>{formatPct(accuracyScorePct)}</div>
                         <div className="mt-1 text-[11px] text-slate-500 font-semibold">
                           Meleset {formatPct(accuracy.median_ape_pct)} (median)
@@ -1462,13 +1505,15 @@ export default function DashboardView({
                           {formatNumber(accuracyMeasured)}
                           <span className="text-base font-bold text-slate-400"> / {formatNumber(accuracy.total_plots)}</span>
                         </div>
-                        <div className="mt-1 text-[11px] text-slate-500 font-semibold">Punya prediksi &amp; catatan panen</div>
+                        <div className="mt-1 text-[11px] text-slate-500 font-semibold">Punya perkiraan &amp; catatan panen</div>
                       </div>
                     </div>
 
                     <p className="mt-4 text-[10px] font-semibold text-slate-400">
-                      Total prediksi {formatKg(accuracy.total_predicted_kg)} vs total panen tercatat {formatKg(accuracy.total_harvested_kg)}.
-                      Lengkapi Tahun Tanam pada form plot agar umur tanaman ikut tercatat.
+                      Total perkiraan {formatKg(accuracy.total_predicted_kg)} vs total panen musim terakhir {formatKg(accuracy.total_harvested_kg)}.
+                      {accuracy.calibrated_plots > 0
+                        ? ` ${accuracy.calibrated_plots} lahan memakai penyesuaian dari panen musim sebelumnya.`
+                        : ' Belum ada lahan yang punya lebih dari satu musim panen; penyesuaian aktif mulai musim kedua.'}
                     </p>
                   </>
                 )}
@@ -1556,10 +1601,10 @@ export default function DashboardView({
             <div className="p-6 sm:p-8 space-y-6">
               <div className="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">DAFTAR PETANI (DB)</span>
+                  <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">DAFTAR PETANI</span>
                   <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Registry Petani Kucur</h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                    Input data petani lalu rekap lahan, prediksi panen, dan batch panen dihitung otomatis dari basis data.
+                    Input data petani untuk melihat rekap lahan, perkiraan panen, dan catatan panen tiap pemilik.
                   </p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -1681,11 +1726,11 @@ export default function DashboardView({
                 </div>
                 <div className="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-5 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">PREDIKSI PANEN</span>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">PERKIRAAN PANEN</span>
                     <span className="material-symbols-outlined text-primary text-lg">trending_up</span>
                   </div>
                   <div className="text-2xl font-extrabold text-slate-900 dark:text-white mt-2">{formatNumber(farmerTotals.predicted_yield)}</div>
-                  <div className="text-[10px] text-slate-400 font-semibold mt-0.5">kg / tahun (MLR)</div>
+                  <div className="text-[10px] text-slate-400 font-semibold mt-0.5">kg / tahun</div>
                 </div>
               </div>
 
@@ -1737,7 +1782,7 @@ export default function DashboardView({
                           <th className="px-5 py-3 text-right">Lahan</th>
                           <th className="px-5 py-3 text-right">Luas (m²)</th>
                           <th className="px-5 py-3 text-right">Elevasi</th>
-                          <th className="px-5 py-3 text-right">Prediksi</th>
+                          <th className="px-5 py-3 text-right">Perkiraan</th>
                           <th className="px-5 py-3 text-right">Panen</th>
                           <th className="px-5 py-3">Terakhir Panen</th>
                           <th className="px-5 py-3 text-right">Aksi</th>
@@ -1943,7 +1988,7 @@ export default function DashboardView({
                           const formData = new FormData();
                           formData.append('file', file);
                           try {
-                            const res = await fetch('http://localhost:5000/api/upload', { method: 'POST', headers: authHeaders, body: formData });
+                            const res = await fetch(`${API_BASE_URL}/upload`, { method: 'POST', headers: authHeaders, body: formData });
                             if (res.ok) {
                               const data = await res.json();
                               setDestImg(data.url);
@@ -2054,7 +2099,7 @@ export default function DashboardView({
               <div className="lg:col-span-6 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">GUIDE BOOKING (DB)</span>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">PEMESANAN PEMANDU</span>
                     <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Permintaan Pemandu Wisata</h3>
                   </div>
                   <span className="text-xs font-extrabold text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">{guideBookings.length} Booking</span>
@@ -2077,7 +2122,7 @@ export default function DashboardView({
                             status === 'COMPLETED' ? 'bg-emerald-500/10 text-emerald-500' :
                             status === 'CONFIRMED' ? 'bg-blue-500/10 text-blue-500' :
                             status === 'CANCELLED' ? 'bg-rose-500/10 text-rose-500' : 'bg-amber-500/10 text-amber-500'
-                          }`}>{status}</span>
+                          }`}>{GUIDE_STATUS_LABELS[status] || status}</span>
                         </div>
                         <p className="text-[11px] text-slate-500 font-semibold">
                           {booking.guide_name || 'Pemandu belum ditentukan'} • {String(booking.visit_date).slice(0, 10)} • {booking.target_dest || 'Semua Destinasi'}
@@ -2104,7 +2149,7 @@ export default function DashboardView({
               <div className="lg:col-span-6 bg-white dark:bg-slate-950 border border-rose-500/20 rounded-2xl p-6 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] font-extrabold text-rose-400 uppercase tracking-widest">EMERGENCY SOS (DB)</span>
+                    <span className="text-[10px] font-extrabold text-rose-400 uppercase tracking-widest">DARURAT SOS</span>
                     <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Sinyal Darurat Pengunjung</h3>
                   </div>
                   <span className="text-xs font-extrabold text-rose-500 bg-rose-500/10 px-3 py-1 rounded-full">{sosAlerts.length} Sinyal</span>
@@ -2132,7 +2177,7 @@ export default function DashboardView({
                           <span className={`px-2.5 py-1 rounded-full text-[9px] font-extrabold ${
                             status === 'RESOLVED' ? 'bg-emerald-500/10 text-emerald-500' :
                             status === 'DISPATCHED' ? 'bg-blue-500/10 text-blue-500' : 'bg-rose-500/10 text-rose-500'
-                          }`}>{status}</span>
+                          }`}>{SOS_STATUS_LABELS[status] || status}</span>
                         </div>
                         <a
                           href={`https://www.google.com/maps?q=${alert.latitude},${alert.longitude}`}
@@ -2166,7 +2211,7 @@ export default function DashboardView({
               <div className="lg:col-span-5 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">UNGGAH (POSTGRESQL)</span>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">FORM INFORMASI</span>
                     <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Tambah Informasi Desa</h3>
                   </div>
                   <span className="material-symbols-outlined text-primary">upload_file</span>
@@ -2225,7 +2270,7 @@ export default function DashboardView({
 
                   <div className="flex gap-2 pt-2">
                     <button type="submit" className="flex-1 bg-primary text-slate-900 font-extrabold py-3 rounded-xl text-xs shadow-md shadow-primary/20 hover:bg-primary/90 transition-all">
-                      Simpan ke DB
+                      Simpan Informasi
                     </button>
                     <button type="button" onClick={() => { setETitle(''); setEContent(''); }} className="px-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold py-3 rounded-xl text-xs">
                       Reset
@@ -2238,7 +2283,7 @@ export default function DashboardView({
               <div className="lg:col-span-7 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">POSTGRESQL DATA</span>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">DAFTAR INFORMASI</span>
                     <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Daftar E-Resource</h3>
                   </div>
                   <span className="text-xs font-extrabold text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">{eresources.length} Items</span>
@@ -2296,7 +2341,7 @@ export default function DashboardView({
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
                   <div>
                     <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">MODERASI ULASAN</span>
-                    <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Filter & Approval Ulasan Pengunjung Publik</h3>
+                    <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Filter & Persetujuan Ulasan Pengunjung Publik</h3>
                     <p className="text-xs text-slate-500 mt-0.5">Pilih ulasan pengunjung mana yang diizinkan untuk tampil di portal depan publik.</p>
                   </div>
                   <span className="material-symbols-outlined text-primary text-2xl">verified_user</span>
@@ -2365,7 +2410,7 @@ export default function DashboardView({
               <div className="lg:col-span-5 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">FORM MODUL (DB)</span>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">FORM MODUL</span>
                     <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Tambah/Ubah Modul</h3>
                   </div>
                   <span className="material-symbols-outlined text-primary">edit_note</span>
@@ -2373,7 +2418,7 @@ export default function DashboardView({
 
                 <form onSubmit={handleAddEducationModule} className="space-y-3 text-xs">
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">SLUG / ID UNIK</label>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">KODE MODUL</label>
                     <input type="text" placeholder="contoh: kopi, tani, jeruk" value={eduSlug} onChange={e => setEduSlug(e.target.value)} className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl font-semibold" />
                   </div>
                   <div>
@@ -2395,7 +2440,7 @@ export default function DashboardView({
                     <textarea rows={3} placeholder="Tulis deskripsi singkat..." value={eduDesc} onChange={e => setEduDesc(e.target.value)} className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl font-semibold" />
                   </div>
                   <button type="submit" className="w-full bg-primary text-slate-900 font-extrabold py-3 rounded-xl shadow-md shadow-primary/20 hover:bg-primary/90 transition-all">
-                    Simpan Modul ke DB
+                    Simpan Modul
                   </button>
                 </form>
               </div>
@@ -2404,7 +2449,7 @@ export default function DashboardView({
               <div className="lg:col-span-7 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">POSTGRESQL DATA</span>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">DAFTAR MODUL</span>
                     <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Katalog Modul Aktif</h3>
                   </div>
                   <span className="text-xs font-extrabold text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">{eduModules.length} Modul</span>
@@ -2485,7 +2530,7 @@ export default function DashboardView({
               <div className="lg:col-span-5 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">ADMIN (DB)</span>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">AKUN ADMIN</span>
                     <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Buat Akun Admin</h3>
                   </div>
                   <span className="material-symbols-outlined text-primary">person_add</span>
@@ -2518,7 +2563,7 @@ export default function DashboardView({
                     disabled={role !== 'village'}
                     className="w-full bg-primary text-slate-900 font-extrabold py-3 rounded-xl shadow-md shadow-primary/20 hover:bg-primary/90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                   >
-                    Simpan Akun ke DB
+                    Simpan Akun
                   </button>
                 </form>
               </div>
@@ -2526,7 +2571,7 @@ export default function DashboardView({
               <div className="lg:col-span-7 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">POSTGRESQL USERS</span>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">DAFTAR ADMIN</span>
                     <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Daftar Admin</h3>
                   </div>
                   <span className="text-xs font-extrabold text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">{adminAccounts.length} Admin</span>
@@ -2613,7 +2658,7 @@ export default function DashboardView({
                               status === 'REJECTED' ? 'bg-rose-500/10 text-rose-500' :
                               status === 'CURATED' ? 'bg-sky-500/10 text-sky-500' : 'bg-amber-500/10 text-amber-500'
                             }`}>
-                              {status}
+                              {SPONSORSHIP_STATUS_LABELS[status] || status}
                             </span>
 
                             {href && (
@@ -2675,12 +2720,12 @@ export default function DashboardView({
               {/* Right Column: Approval Summary */}
               <div className="lg:col-span-4 bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-6">
                 <div>
-                  <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">APPROVAL</span>
+                  <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">PERSETUJUAN</span>
                   <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Ringkasan</h3>
 
                   <div className="mt-6 space-y-3">
                     <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 flex items-center justify-between">
-                      <div className="text-[10px] font-bold text-slate-400 uppercase">Menunggu Kurasi / Approval</div>
+                      <div className="text-[10px] font-bold text-slate-400 uppercase">Menunggu Kurasi / Persetujuan</div>
                       <div className="text-2xl font-extrabold text-amber-500">{pendingSponsorsCount}</div>
                     </div>
                     <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-primary/10 flex items-center justify-between">
@@ -2698,8 +2743,8 @@ export default function DashboardView({
                   </div>
 
                   <p className="mt-4 text-[10px] font-semibold text-slate-400 leading-relaxed">
-                    Alur: PENDING → kurasi Karang Taruna → CURATED → persetujuan Kepala Desa → APPROVED → pencairan → DISBURSED.
-                    Setiap transisi menyimpan jejak petugas dan waktu.
+                    Alur: proposal masuk → dikurasi Karang Taruna → disetujui Kepala Desa → dana dicairkan.
+                    Setiap tahap menyimpan catatan petugas dan waktu.
                   </p>
                 </div>
 
@@ -2718,10 +2763,10 @@ export default function DashboardView({
           {activeTab === 'settings' && (
             <div className="p-6 sm:p-8 max-w-4xl space-y-6">
               <div className="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6 shadow-sm space-y-4">
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">RINGKASAN SISTEM</span>
+                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">RINGKASAN DATA</span>
                 <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">Status Data Desa</h3>
                 <p className="text-[11px] text-slate-500">
-                  Angka di bawah dibaca langsung dari PostgreSQL. Tidak ada data demo atau nilai bawaan.
+                  Angka di bawah dihitung dari data desa yang tersimpan. Tidak ada data contoh atau nilai bawaan.
                 </p>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -2730,7 +2775,7 @@ export default function DashboardView({
                     { label: `Batch Panen (${CHART_RANGES.find(r => r.id === chartRange)?.label || '7 Hari'})`, value: dashboardKpi.batches },
                     { label: 'Sponsor Aktif', value: dashboardKpi.active_sponsors },
                     { label: 'Lahan Waspada', value: dashboardKpi.alert_plots },
-                    { label: 'Guide Pending', value: dashboardKpi.pending_guides },
+                    { label: 'Pemandu Menunggu', value: dashboardKpi.pending_guides },
                     { label: 'SOS Aktif', value: dashboardKpi.active_sos },
                     { label: 'Destinasi', value: destinations.length },
                     { label: 'Akun Admin', value: adminAccounts.length }

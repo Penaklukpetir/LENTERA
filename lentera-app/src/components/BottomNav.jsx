@@ -6,7 +6,7 @@ export default function BottomNav({ activeView, setActiveView, role }) {
 
   const navItems = [
     { id: 'home', label: 'Home', icon: 'home' },
-    { id: 'location', label: 'Peta SIG', icon: 'map' },
+    { id: 'location', label: 'Peta', icon: 'map' },
     { id: 'education', label: 'Edukasi', icon: 'school' },
     { id: 'eresource', label: 'E-Resource', icon: 'library_books' },
     { id: 'sponsor', label: 'Sponsor', icon: 'handshake' },

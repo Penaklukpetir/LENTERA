@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Pagination from './Pagination';
-
-const API_BASE_URL = 'http://localhost:5000/api';
+import { API_BASE_URL } from '../lib/api';
 const DESTINATION_PAGE_SIZE = 6;
 
 export default function Navigation({ destinations = [] }) {
@@ -63,13 +62,13 @@ export default function Navigation({ destinations = [] }) {
       setBookingState({
         loading: false,
         error: '',
-        success: 'Permintaan pemandu tercatat di sistem. Lanjutkan konfirmasi via WhatsApp bila diperlukan.'
+        success: 'Permintaan pemandu sudah kami terima. Lanjutkan konfirmasi via WhatsApp bila diperlukan.'
       });
       window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(message)}`, '_blank');
       setGuideForm({ name: '', phone: '', date: '', guests: 2, notes: '' });
       setSelectedGuideId('');
     } catch (err) {
-      setBookingState({ loading: false, error: 'Gagal menghubungi server. Permintaan tidak tersimpan.', success: '' });
+      setBookingState({ loading: false, error: 'Koneksi terputus. Permintaan belum tersimpan.', success: '' });
     }
   };
 
@@ -190,7 +189,7 @@ export default function Navigation({ destinations = [] }) {
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-emerald-400 text-xl">person_pin</span>
-                <h3 className="text-lg font-extrabold text-white">Form Request Pemandu Wisata</h3>
+                <h3 className="text-lg font-extrabold text-white">Formulir Pemesanan Pemandu Wisata</h3>
               </div>
               <button
                 onClick={() => setShowGuideModal(false)}
@@ -302,7 +301,7 @@ export default function Navigation({ destinations = [] }) {
                 ) : (
                   <span className="material-symbols-outlined text-base">send</span>
                 )}
-                <span>Simpan &amp; Kirim Booking Pemandu</span>
+                <span>Kirim Permintaan Pemandu</span>
               </button>
             </form>
           </div>
