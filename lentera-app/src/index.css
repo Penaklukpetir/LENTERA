@@ -720,15 +720,11 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-
 
 /* Admin Panel / Form overlays */
 .admin-form-panel {
-  position: absolute;
-  left: 20px;
-  top: 20px;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 24px;
   width: 320px;
-  z-index: 40;
   box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;

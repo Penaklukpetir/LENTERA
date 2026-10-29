@@ -49,10 +49,12 @@ export const getDashboardSummary = async (req, res) => {
     : "to_char(harvest_date, 'YYYY-MM-DD')";
 
   try {
-    const [plots, sponsors, harvest, queuedGuides, sos, contracts, priceBasis, bucketsResult] =
+    const [plots, sponsors, harvest, queuedGuides, sos, bucketsResult] =
       await Promise.all([
         pool.query(
-          `SELECT COUNT(*)::int AS plots, COALESCE(SUM(predicted_yield), 0) AS predicted_yield_kg
+          `SELECT COUNT(*)::int AS plots,
+                  COUNT(*) FILTER (WHERE status = 'Waspada')::int AS alert_plots,
+                  COALESCE(SUM(predicted_yield), 0) AS predicted_yield_kg
            FROM coffee_plots WHERE deleted_at IS NULL`
         ),
         pool.query(
@@ -77,16 +79,6 @@ export const getDashboardSummary = async (req, res) => {
            WHERE deleted_at IS NULL AND status = 'ALERT_ACTIVE'`
         ),
         pool.query(
-          `SELECT COUNT(*) FILTER (WHERE status = 'AKTIF')::int AS active_contracts,
-                  COALESCE(SUM(volume_kg) FILTER (WHERE status = 'AKTIF'), 0) AS contract_volume_kg
-           FROM scm_contracts WHERE deleted_at IS NULL`
-        ),
-        pool.query(
-          `SELECT COALESCE(SUM(total_value) / NULLIF(SUM(volume_kg), 0), 0) AS avg_price
-           FROM scm_contracts
-           WHERE deleted_at IS NULL AND status IN ('AKTIF', 'TERKIRIM')`
-        ),
-        pool.query(
           `SELECT ${periodExpr} AS period,
                   COALESCE(SUM(weight_kg), 0) AS harvest_kg,
                   COUNT(*)::int AS batch_count
@@ -97,7 +89,6 @@ export const getDashboardSummary = async (req, res) => {
         ),
       ]);
 
-    const avgPrice = toNumber(priceBasis.rows[0].avg_price);
     const byPeriod = new Map(bucketsResult.rows.map((row) => [row.period, row]));
 
     const series = buckets.map(({ period, label }) => {
@@ -108,7 +99,6 @@ export const getDashboardSummary = async (req, res) => {
         label,
         harvest_kg: Math.round(harvestKg * 100) / 100,
         batch_count: row ? row.batch_count : 0,
-        estimated_value: Math.round(harvestKg * avgPrice),
       };
     });
 
@@ -116,14 +106,9 @@ export const getDashboardSummary = async (req, res) => {
       status: 'SUCCESS',
       range,
       generated_at: new Date().toISOString(),
-      price_basis: {
-        avg_contract_price_per_kg: Math.round(avgPrice),
-        note: avgPrice > 0
-          ? 'Estimasi nilai memakai harga rata-rata kontrak offtaker tersimpan.'
-          : 'Belum ada kontrak offtaker; estimasi nilai ditampilkan 0.',
-      },
       kpi: {
         plots: plots.rows[0].plots,
+        alert_plots: plots.rows[0].alert_plots,
         predicted_yield_kg: toNumber(plots.rows[0].predicted_yield_kg),
         harvest_kg: toNumber(harvest.rows[0].harvest_kg),
         batches: harvest.rows[0].batches,
@@ -132,8 +117,6 @@ export const getDashboardSummary = async (req, res) => {
         approved_funding: toNumber(sponsors.rows[0].approved_funding),
         pending_guides: queuedGuides.rows[0].pending_guides,
         active_sos: sos.rows[0].active_sos,
-        active_contracts: contracts.rows[0].active_contracts,
-        contract_volume_kg: toNumber(contracts.rows[0].contract_volume_kg),
       },
       series,
     });

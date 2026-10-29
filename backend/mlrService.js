@@ -1,9 +1,18 @@
-export const MLR_MODEL_VERSION = 'MLR-v1.3-Kucur';
+export const MLR_MODEL_VERSION = 'MLR-v1.4-Kucur';
 export const VALID_COFFEE_TYPES = ['Robusta', 'Arabica', 'Liberica', 'Excelsa'];
 
-// Calibrated multiple linear regression for Desa Kucur smallholder plots.
-// The biological floor (0.4 kg/tree) prevents valid plots from collapsing to 0 kg
-// when the linear part is dominated by the elevation penalty.
+// Recalibrated with ordinary least squares on 33 usable plots of the Kucur
+// harvest survey (xlsx "data panen kucur"): R2 0.55, MAE 102 kg, LOO MAE 120 kg,
+// total prediction 7.250 kg vs 7.250 kg actual (0,73 t/ha).
+// The tree coefficient is negative because area and tree count are collinear
+// (r = 0.84): at equal area, denser planting lowers yield per tree.
+export const MLR_COEFFICIENTS = {
+  intercept: 637.5208,
+  land_area: 0.0699748,
+  tree_count: -0.1145365,
+  elevation: -0.5723476,
+};
+
 export const calculateYield = ({ land_area, tree_count, elevation }) => {
   const area = Number(land_area);
   const trees = Number(tree_count);
@@ -19,9 +28,12 @@ export const calculateYield = ({ land_area, tree_count, elevation }) => {
     throw new Error('Ketinggian lahan harus 400-3000 MDPL.');
   }
 
-  const linear = -45.50 + (0.12 * area) + (1.85 * trees) - (0.08 * elev);
-  const biologicalFloor = trees * 0.4;
-  const predicted = Math.max(biologicalFloor, linear, 0);
+  const linear =
+    MLR_COEFFICIENTS.intercept +
+    MLR_COEFFICIENTS.land_area * area +
+    MLR_COEFFICIENTS.tree_count * trees +
+    MLR_COEFFICIENTS.elevation * elev;
+  const predicted = Math.max(linear, 0);
 
   return {
     predicted_yield: Math.round(predicted * 100) / 100,

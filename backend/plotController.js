@@ -9,7 +9,7 @@ import {
   runMobileNetV2Inference,
   scanLeafDiseaseEnsemble,
 } from './inferenceService.js';
-import { calculateYield, VALID_COFFEE_TYPES } from './mlrService.js';
+import { calculateYield, VALID_COFFEE_TYPES, MLR_MODEL_VERSION } from './mlrService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,11 +17,25 @@ const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
 
 export { loadAIModels, getAIStatus };
 
+const CURRENT_YEAR = () => new Date().getFullYear();
+
+// Empty input means "tahun tanam belum diketahui", so it is stored as NULL.
+const parsePlantingYear = (value) => {
+  if (value === undefined || value === null || value === '') {
+    return { year: null };
+  }
+  const year = Number(value);
+  if (!Number.isInteger(year) || year < 1900 || year > CURRENT_YEAR()) {
+    return { error: `Tahun tanam harus berupa tahun antara 1900 dan ${CURRENT_YEAR()}.` };
+  }
+  return { year };
+};
+
 export const getPlots = async (req, res) => {
   try {
     const queryResult = await pool.query(
       `SELECT id, farmer_name, (geom)[1] AS lat, (geom)[0] AS lng, coffee_type, tree_count,
-              elevation, land_area, predicted_yield, status, description, created_by, created_at
+              elevation, land_area, planting_year, predicted_yield, status, description, created_by, created_at
        FROM coffee_plots WHERE deleted_at IS NULL ORDER BY id ASC`
     );
     return res.status(200).json(queryResult.rows);
@@ -32,7 +46,7 @@ export const getPlots = async (req, res) => {
 };
 
 export const createPlot = async (req, res) => {
-  const { farmer_name, lat, lng, coffee_type, tree_count, elevation, land_area, description } = req.body;
+  const { farmer_name, lat, lng, coffee_type, tree_count, elevation, land_area, planting_year, description } = req.body;
 
   if (!farmer_name || lat === undefined || lng === undefined || !coffee_type || tree_count === undefined || elevation === undefined || land_area === undefined) {
     return res.status(400).json({ error: 'Missing parameters. All plot details, including land area, are required.' });
@@ -40,6 +54,11 @@ export const createPlot = async (req, res) => {
 
   if (!VALID_COFFEE_TYPES.includes(coffee_type)) {
     return res.status(400).json({ error: 'Invalid coffee type variety selection.' });
+  }
+
+  const planting = parsePlantingYear(planting_year);
+  if (planting.error) {
+    return res.status(400).json({ error: planting.error });
   }
 
   let mlr;
@@ -53,12 +72,12 @@ export const createPlot = async (req, res) => {
     const creatorId = req.user ? req.user.id : null;
     const queryResult = await pool.query(
       `INSERT INTO coffee_plots
-         (farmer_name, geom, coffee_type, tree_count, elevation, land_area, predicted_yield, status, description, created_by)
-       VALUES ($1, ST_SetSRID(ST_Point($2, $3), 4326), $4, $5, $6, $7, $8, 'Sehat', $9, $10)
+         (farmer_name, geom, coffee_type, tree_count, elevation, land_area, planting_year, predicted_yield, status, description, created_by)
+       VALUES ($1, ST_SetSRID(ST_Point($2, $3), 4326), $4, $5, $6, $7, $8, $9, 'Sehat', $10, $11)
        RETURNING id, farmer_name, (geom)[1] AS lat, (geom)[0] AS lng, coffee_type, tree_count,
-                 elevation, land_area, predicted_yield, status, description, created_by, created_at`,
+                 elevation, land_area, planting_year, predicted_yield, status, description, created_by, created_at`,
       [farmer_name, lng, lat, coffee_type, mlr.inputs.tree_count, mlr.inputs.elevation,
-        mlr.inputs.land_area, mlr.predicted_yield, description, creatorId]
+        mlr.inputs.land_area, planting.year, mlr.predicted_yield, description, creatorId]
     );
 
     const plot = queryResult.rows[0];
@@ -174,13 +193,19 @@ export const resolvePlotLeaf = async (req, res) => {
 
 export const updatePlot = async (req, res) => {
   const { id } = req.params;
-  const { farmer_name, coffee_type, tree_count, elevation, land_area, description } = req.body;
+  const { farmer_name, coffee_type, tree_count, elevation, land_area, planting_year, description } = req.body;
 
   if (!farmer_name || !coffee_type) {
     return res.status(400).json({ error: 'Nama petani dan varietas kopi wajib diisi.' });
   }
   if (!VALID_COFFEE_TYPES.includes(coffee_type)) {
     return res.status(400).json({ error: 'Invalid coffee type variety selection.' });
+  }
+
+  const hasPlantingYear = Object.prototype.hasOwnProperty.call(req.body, 'planting_year');
+  const planting = parsePlantingYear(planting_year);
+  if (planting.error) {
+    return res.status(400).json({ error: planting.error });
   }
 
   let mlr;
@@ -194,12 +219,14 @@ export const updatePlot = async (req, res) => {
     const result = await pool.query(
       `UPDATE coffee_plots
        SET farmer_name = $1, coffee_type = $2, tree_count = $3, elevation = $4, land_area = $5,
-           predicted_yield = $6, description = $7, updated_at = NOW()
-       WHERE id = $8 AND deleted_at IS NULL
+           predicted_yield = $6, description = $7,
+           planting_year = CASE WHEN $8::boolean THEN $9::smallint ELSE planting_year END,
+           updated_at = NOW()
+       WHERE id = $10 AND deleted_at IS NULL
        RETURNING id, farmer_name, (geom)[1] AS lat, (geom)[0] AS lng, coffee_type, tree_count,
-                 elevation, land_area, predicted_yield, status, description, created_by, created_at`,
+                 elevation, land_area, planting_year, predicted_yield, status, description, created_by, created_at`,
       [farmer_name, coffee_type, mlr.inputs.tree_count, mlr.inputs.elevation, mlr.inputs.land_area,
-        mlr.predicted_yield, description, id]
+        mlr.predicted_yield, description, hasPlantingYear, planting.year, id]
     );
 
     if (result.rows.length === 0) {
@@ -251,6 +278,168 @@ export const getMlrHistory = async (req, res) => {
   } catch (err) {
     console.error('MLR history query error:', err);
     return res.status(500).json({ error: 'Gagal mengambil riwayat prediksi MLR.' });
+  }
+};
+
+const ACCURACY_TOLERANCE_PCT = 25;
+
+const round1 = (value) => Math.round(value * 10) / 10;
+
+// Bandingkan prediksi MLR per lahan dengan total panen realisasi (harvest_batches).
+// Lahan tanpa batch panen tidak dihitung agar error palsu 100% tidak muncul.
+export const getPredictionAccuracy = async (req, res) => {
+  try {
+    const [matched, totals] = await Promise.all([
+      pool.query(
+        `SELECT p.id, p.farmer_name, p.coffee_type, p.planting_year,
+                p.predicted_yield::float8 AS predicted_kg,
+                SUM(b.weight_kg)::float8 AS harvested_kg
+         FROM coffee_plots p
+         JOIN harvest_batches b ON b.plot_id = p.id AND b.deleted_at IS NULL
+         WHERE p.deleted_at IS NULL
+         GROUP BY p.id, p.farmer_name, p.coffee_type, p.planting_year, p.predicted_yield
+         HAVING SUM(b.weight_kg) > 0 AND COALESCE(p.predicted_yield, 0) > 0
+         ORDER BY p.id ASC`
+      ),
+      pool.query('SELECT COUNT(*)::int AS total_plots FROM coffee_plots WHERE deleted_at IS NULL'),
+    ]);
+
+    const rows = matched.rows.map((row) => {
+      const predicted = Number(row.predicted_kg);
+      const harvested = Number(row.harvested_kg);
+      return {
+        plot_id: row.id,
+        farmer_name: row.farmer_name,
+        coffee_type: row.coffee_type,
+        planting_year: row.planting_year,
+        predicted_kg: predicted,
+        harvested_kg: harvested,
+        error_pct: (Math.abs(harvested - predicted) / harvested) * 100,
+      };
+    });
+
+    const measured = rows.length;
+    const totalPredicted = rows.reduce((sum, row) => sum + row.predicted_kg, 0);
+    const totalHarvested = rows.reduce((sum, row) => sum + row.harvested_kg, 0);
+    const mae = measured > 0
+      ? rows.reduce((sum, row) => sum + Math.abs(row.harvested_kg - row.predicted_kg), 0) / measured
+      : null;
+
+    const sortedApe = rows.map((row) => row.error_pct).sort((a, b) => a - b);
+    let medianApe = null;
+    if (measured > 0) {
+      const mid = Math.floor(measured / 2);
+      medianApe = measured % 2 === 0 ? (sortedApe[mid - 1] + sortedApe[mid]) / 2 : sortedApe[mid];
+    }
+
+    const mape = measured > 0
+      ? rows.reduce((sum, row) => sum + row.error_pct, 0) / measured
+      : null;
+    const withinTolerance = measured > 0
+      ? (rows.filter((row) => row.error_pct <= ACCURACY_TOLERANCE_PCT).length / measured) * 100
+      : null;
+
+    return res.status(200).json({
+      formula_version: MLR_MODEL_VERSION,
+      tolerance_pct: ACCURACY_TOLERANCE_PCT,
+      total_plots: totals.rows[0]?.total_plots || 0,
+      measured_plots: measured,
+      median_ape_pct: medianApe === null ? null : round1(medianApe),
+      mape_pct: mape === null ? null : round1(mape),
+      within_tolerance_pct: withinTolerance === null ? null : round1(withinTolerance),
+      mae_kg: mae === null ? null : Math.round(mae),
+      total_predicted_kg: Math.round(totalPredicted),
+      total_harvested_kg: Math.round(totalHarvested),
+      plots: rows.map(({ error_pct, ...rest }) => ({ ...rest, error_pct: round1(error_pct) })),
+    });
+  } catch (err) {
+    console.error('Prediction accuracy query error:', err);
+    return res.status(500).json({ error: 'Gagal menghitung akurasi prediksi.' });
+  }
+};
+
+// Panen riil per lahan. Tabel harvest_batches dipakai ulang agar KPI dashboard
+// dan panel akurasi tetap membaca satu sumber data yang sama.
+export const getPlotHarvests = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const plot = await pool.query(
+      'SELECT id, farmer_name, coffee_type FROM coffee_plots WHERE id = $1 AND deleted_at IS NULL',
+      [id]
+    );
+    if (plot.rows.length === 0) {
+      return res.status(404).json({ error: 'Lahan tidak ditemukan.' });
+    }
+
+    const result = await pool.query(
+      `SELECT id, batch_code, plot_id, weight_kg::float8 AS weight_kg, harvest_date, created_at
+       FROM harvest_batches
+       WHERE plot_id = $1 AND deleted_at IS NULL
+       ORDER BY harvest_date DESC, id DESC
+       LIMIT 100`,
+      [id]
+    );
+
+    const totalKg = result.rows.reduce((sum, row) => sum + Number(row.weight_kg || 0), 0);
+
+    return res.status(200).json({
+      status: 'SUCCESS',
+      data: result.rows,
+      total_kg: Math.round(totalKg * 100) / 100,
+    });
+  } catch (err) {
+    console.error('Fetch plot harvests error:', err);
+    return res.status(500).json({ error: 'Gagal mengambil catatan panen lahan.' });
+  }
+};
+
+export const createPlotHarvest = async (req, res) => {
+  const { id } = req.params;
+  const { weight_kg, harvest_date } = req.body;
+
+  const weight = Number(weight_kg);
+  if (!Number.isFinite(weight) || weight <= 0) {
+    return res.status(400).json({ error: 'Berat panen harus lebih besar dari nol.' });
+  }
+
+  let harvestDate = null;
+  if (harvest_date !== undefined && harvest_date !== null && harvest_date !== '') {
+    const parsed = new Date(harvest_date);
+    if (Number.isNaN(parsed.getTime())) {
+      return res.status(400).json({ error: 'Tanggal panen tidak valid.' });
+    }
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    if (parsed > today) {
+      return res.status(400).json({ error: 'Tanggal panen tidak boleh melebihi hari ini.' });
+    }
+    harvestDate = parsed.toISOString().slice(0, 10);
+  }
+
+  try {
+    const plot = await pool.query(
+      'SELECT id FROM coffee_plots WHERE id = $1 AND deleted_at IS NULL',
+      [id]
+    );
+    if (plot.rows.length === 0) {
+      return res.status(404).json({ error: 'Lahan tidak ditemukan.' });
+    }
+
+    const seq = await pool.query("SELECT nextval('harvest_batch_code_seq') AS seq");
+    const batchCode = `KCR-${new Date().getFullYear()}-${String(seq.rows[0].seq).padStart(3, '0')}`;
+
+    const result = await pool.query(
+      `INSERT INTO harvest_batches
+         (batch_code, plot_id, weight_kg, harvest_date, process_method, status, grade, drying_days)
+       VALUES ($1, $2, $3, COALESCE($4::date, CURRENT_DATE), 'Natural Process', 'Terjual', NULL, NULL)
+       RETURNING id, batch_code, plot_id, weight_kg::float8 AS weight_kg, harvest_date, created_at`,
+      [batchCode, id, weight, harvestDate]
+    );
+
+    return res.status(201).json({ status: 'SUCCESS', data: result.rows[0] });
+  } catch (err) {
+    console.error('Create plot harvest error:', err);
+    return res.status(500).json({ error: 'Gagal menyimpan catatan panen.' });
   }
 };
 

@@ -14,6 +14,9 @@ import {
   resolvePlotLeaf,
   getDiseaseDetectionsForPlot,
   getMlrHistory,
+  getPredictionAccuracy,
+  getPlotHarvests,
+  createPlotHarvest,
   loadAIModels,
   getAIStatus,
 } from './plotController.js';
@@ -30,12 +33,12 @@ import { getEResources, createEResource, updateEResource, deleteEResource } from
 import { getEducationModules, createEducationModule, deleteEducationModule } from './educationController.js';
 import { getAdminUsers, createAdminUser, deleteAdminUser } from './userController.js';
 import { getReviews, createReview, toggleApproveReview, deleteReview } from './reviewController.js';
-import { getScmBatches, createScmBatch, getTraceability, getOfftakers, createOfftaker, getForecast } from './scmController.js';
+
 import { getDestinations, createDestination, updateDestination, deleteDestination } from './destinationController.js';
 import { getTourGuides, createGuideBooking, getGuideBookings, updateGuideBookingStatus } from './guideController.js';
 import { createSosAlert, getSosAlerts, updateSosStatus } from './sosController.js';
 import { getDashboardSummary } from './dashboardController.js';
-import { createFarmer, deleteFarmer, getFarmersList, updateFarmer } from './farmerController.js';
+import { createFarmer, deleteFarmer, getFarmerOptions, getFarmersList, updateFarmer } from './farmerController.js';
 import { authenticateToken, optionalAuth, requireRole } from './authMiddleware.js';
 import pool from './db.js';
 
@@ -98,17 +101,7 @@ const handleGenericUpload = (req, res, next) => {
   });
 };
 
-const escapeHtml = (value) =>
-  String(value ?? '').replace(/[&<>"']/g, (char) => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-  }[char]));
-
-// ==========================================
-// RESTful API Routes Definition
+// ==========================================// RESTful API Routes Definition
 // ==========================================
 
 // Generic File Upload Endpoint (Images, Videos, PDFs)
@@ -125,7 +118,9 @@ app.post('/api/auth/login', loginUser);
 app.post('/api/auth/change-password', authenticateToken, changePassword);
 
 app.get('/api/plots', getPlots);
+app.get('/api/plots/accuracy', authenticateToken, requireRole(['admin', 'village']), getPredictionAccuracy);
 app.get('/api/farmers', authenticateToken, requireRole(['admin', 'village']), getFarmersList);
+app.get('/api/farmers/options', authenticateToken, requireRole(['admin', 'village']), getFarmerOptions);
 app.post('/api/farmers', authenticateToken, requireRole(['admin']), createFarmer);
 app.put('/api/farmers/:id', authenticateToken, requireRole(['admin']), updateFarmer);
 app.delete('/api/farmers/:id', authenticateToken, requireRole(['admin']), deleteFarmer);
@@ -134,6 +129,8 @@ app.put('/api/plots/:id', authenticateToken, requireRole(['admin', 'village']), 
 app.delete('/api/plots/:id', authenticateToken, requireRole(['admin']), deletePlot);
 app.post('/api/plots/:id/scan', authenticateToken, upload.single('leaf'), scanPlotLeaf);
 app.get('/api/plots/:id/detections', authenticateToken, getDiseaseDetectionsForPlot);
+app.get('/api/plots/:id/harvests', getPlotHarvests);
+app.post('/api/plots/:id/harvests', authenticateToken, requireRole(['admin', 'village']), createPlotHarvest);
 app.get('/api/plots/:id/mlr-history', getMlrHistory);
 app.put('/api/plots/:id/resolve', authenticateToken, requireRole(['admin', 'village']), resolvePlotLeaf);
 
@@ -167,13 +164,7 @@ app.post('/api/reviews', createReview);
 app.put('/api/reviews/:id/approve', authenticateToken, requireRole(['admin', 'village']), toggleApproveReview);
 app.delete('/api/reviews/:id', authenticateToken, requireRole(['admin', 'village']), deleteReview);
 
-// SCM Supply Chain Management Hub Routes
-app.get('/api/scm/batches', getScmBatches);
-app.post('/api/scm/batches', authenticateToken, requireRole(['admin', 'village']), createScmBatch);
-app.get('/api/scm/traceability/:batchCode', getTraceability);
-app.get('/api/scm/offtakers', getOfftakers);
-app.post('/api/scm/offtakers', authenticateToken, requireRole(['admin', 'village']), createOfftaker);
-app.get('/api/scm/forecast', getForecast);
+// SCM Supply Chain Management Hub Routes removed: harvest data now lives per plot.
 
 // Destinations Agrowisata Routes
 app.get('/api/destinations', getDestinations);
@@ -194,59 +185,6 @@ app.put('/api/sos/:id', authenticateToken, requireRole(['admin', 'village']), up
 
 // Dashboard Summary (real aggregated data)
 app.get('/api/dashboard/summary', authenticateToken, requireRole(['admin', 'village']), getDashboardSummary);
-
-// Public QR trace page referenced by each harvest batch QR code
-app.get('/trace/:batchCode', async (req, res) => {
-  try {
-    const result = await pool.query(
-      `SELECT b.batch_code, b.weight_kg, b.drying_days, b.grade, b.process_method,
-              b.cupping_score, b.status, b.harvest_date, b.created_at,
-              p.farmer_name, p.coffee_type, p.elevation
-       FROM harvest_batches b
-       LEFT JOIN coffee_plots p ON b.plot_id = p.id
-       WHERE LOWER(b.batch_code) = LOWER($1) AND b.deleted_at IS NULL`,
-      [req.params.batchCode]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).send('<h1 style="font-family:sans-serif">Batch tidak ditemukan</h1>');
-    }
-
-    const b = result.rows[0];
-    const rows = [
-      ['Kode Batch', b.batch_code],
-      ['Petani', b.farmer_name || '-'],
-      ['Varietas', b.coffee_type || '-'],
-      ['Ketinggian', b.elevation ? `${b.elevation} MDPL` : '-'],
-      ['Berat Panen', `${Number(b.weight_kg)} kg`],
-      ['Metode Proses', b.process_method || '-'],
-      ['Lama Pengeringan', `${b.drying_days} hari`],
-      ['Grade', b.grade || '-'],
-      ['Skor Cupping', b.cupping_score ?? '-'],
-      ['Status SCM', b.status || '-'],
-      ['Tanggal Panen', b.harvest_date ? new Date(b.harvest_date).toISOString().slice(0, 10) : '-'],
-    ];
-
-    res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    return res.send(`<!doctype html>
-<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Traceability ${escapeHtml(b.batch_code)} - LENTERA</title></head>
-<body style="margin:0;background:#0f172a;color:#e2e8f0;font-family:system-ui,sans-serif">
-  <main style="max-width:640px;margin:0 auto;padding:32px 20px">
-    <p style="letter-spacing:.2em;color:#facc15;font-weight:800;font-size:12px">LENTERA · TRACEABILITY</p>
-    <h1 style="margin:8px 0 4px;font-size:26px">${escapeHtml(b.batch_code)}</h1>
-    <p style="color:#94a3b8;margin:0 0 24px">Desa Kucur, Kec. Dau, Kab. Malang</p>
-    <section style="background:#1e293b;border:1px solid #334155;border-radius:16px;padding:20px">
-      ${rows.map(([k, v]) => `<div style="display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px solid #334155"><span style="color:#94a3b8">${escapeHtml(k)}</span><strong>${escapeHtml(v)}</strong></div>`).join('')}
-    </section>
-    <p style="color:#64748b;font-size:12px;margin-top:20px">Halaman ini dirender langsung dari database LENTERA.</p>
-  </main>
-</body></html>`);
-  } catch (err) {
-    console.error('Trace page error:', err);
-    return res.status(500).send('<h1 style="font-family:sans-serif">Gagal memuat traceability</h1>');
-  }
-});
 
 app.get('/api/ai/status', (req, res) => {
   res.status(200).json(getAIStatus());

@@ -3,10 +3,10 @@ import Sidebar from './Sidebar';
 import DetailsPanel from './DetailsPanel';
 import AdminPlotForm from './AdminPlotForm';
 import Pagination from './Pagination';
+import PlotDirectory from './PlotDirectory';
 
 const CoffeeMap = React.lazy(() => import('./CoffeeMap'));
 const Profile = React.lazy(() => import('./Profile'));
-const SCMHubView = React.lazy(() => import('./SCMHubView'));
 
 const CHART_RANGES = [
   { id: 7, label: '7 Hari' },
@@ -21,6 +21,11 @@ const formatKg = (value) =>
 
 const formatNumber = (value) =>
   Number(value || 0).toLocaleString('id-ID', { maximumFractionDigits: 1 });
+
+const formatPct = (value) =>
+  value === null || value === undefined
+    ? '—'
+    : `${Number(value).toLocaleString('id-ID', { maximumFractionDigits: 1 })}%`;
 
 const FARMER_PAGE_SIZE = 10;
 const DESTINATION_PAGE_SIZE = 5;
@@ -70,6 +75,8 @@ export default function DashboardView({
   setFormElevation,
   formArea,
   setFormArea,
+  formPlantingYear,
+  setFormPlantingYear,
   formDesc,
   setFormDesc,
   handleAddPlot,
@@ -87,7 +94,15 @@ export default function DashboardView({
   const [dashboardSummary, setDashboardSummary] = useState(null);
   const [summaryLoading, setSummaryLoading] = useState(true);
   const [summaryError, setSummaryError] = useState('');
+  const [accuracy, setAccuracy] = useState(null);
+  const [accuracyLoading, setAccuracyLoading] = useState(true);
+  const [accuracyError, setAccuracyError] = useState('');
   const [toastMsg, setToastMsg] = useState(null);
+
+  // Free up horizontal space for the registration panel (which docks next to the map)
+  useEffect(() => {
+    if (showAddForm) setAssetSidebarCollapsed(true);
+  }, [showAddForm]);
 
   // Helper Toast
   const showToast = (msg) => {
@@ -135,6 +150,7 @@ export default function DashboardView({
   });
   const [farmersLoading, setFarmersLoading] = useState(true);
   const [farmersError, setFarmersError] = useState('');
+  const [farmerOptions, setFarmerOptions] = useState([]);
   const [showFarmerForm, setShowFarmerForm] = useState(false);
   const [editingFarmerId, setEditingFarmerId] = useState(null);
   const [farmerForm, setFarmerForm] = useState({ name: '', phone: '', address: '', notes: '' });
@@ -272,6 +288,7 @@ export default function DashboardView({
     fetchGuideBookings();
     fetchSosAlerts();
     refreshSponsorships();
+    fetchAccuracy();
   }, [token]);
 
   const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
@@ -299,6 +316,30 @@ export default function DashboardView({
       setSummaryError('Gagal menghubungi server.');
     } finally {
       setSummaryLoading(false);
+    }
+  };
+
+  const fetchAccuracy = async () => {
+    if (!token) {
+      setAccuracyLoading(false);
+      setAccuracyError('Sesi login tidak tersedia.');
+      return;
+    }
+
+    setAccuracyLoading(true);
+    setAccuracyError('');
+    try {
+      const res = await fetch(`${API_BASE_URL}/plots/accuracy`, { headers: authHeaders });
+      const data = await res.json();
+      if (!res.ok) {
+        setAccuracyError(data.error || 'Gagal memuat akurasi prediksi.');
+        return;
+      }
+      setAccuracy(data);
+    } catch (err) {
+      setAccuracyError('Gagal menghubungi server.');
+    } finally {
+      setAccuracyLoading(false);
     }
   };
 
@@ -384,6 +425,24 @@ export default function DashboardView({
     return () => clearTimeout(timer);
   }, [fetchFarmers, token]);
 
+  const fetchFarmerOptions = useCallback(async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/farmers/options`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      setFarmerOptions(Array.isArray(data.data) ? data.data : []);
+    } catch (err) {
+      console.warn('Fetch farmer options failed:', err);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    fetchFarmerOptions();
+  }, [fetchFarmerOptions]);
+
   const resetFarmerForm = () => {
     setFarmerForm({ name: '', phone: '', address: '', notes: '' });
     setEditingFarmerId(null);
@@ -425,6 +484,7 @@ export default function DashboardView({
       showToast(editingFarmerId ? '✓ Data petani berhasil diperbarui.' : '✓ Data petani berhasil disimpan.');
       resetFarmerForm();
       fetchFarmers();
+      fetchFarmerOptions();
     } catch (err) {
       showToast('⚠️ Gagal menghubungi server.');
     } finally {
@@ -448,6 +508,7 @@ export default function DashboardView({
       showToast('✓ Data petani dihapus.');
       if (editingFarmerId === farmer.id) resetFarmerForm();
       fetchFarmers();
+      fetchFarmerOptions();
     } catch (err) {
       showToast('⚠️ Gagal menghubungi server.');
     }
@@ -575,6 +636,18 @@ export default function DashboardView({
   const dashboardKpi = dashboardSummary?.kpi || {};
   const activeChart = dashboardSummary?.series || [];
   const maxChartKg = Math.max(...activeChart.map(d => d.harvest_kg), 1);
+
+  const accuracyMeasured = accuracy?.measured_plots ?? 0;
+  const accuracyScorePct = accuracy?.median_ape_pct === null || accuracy?.median_ape_pct === undefined
+    ? null
+    : Math.max(0, 100 - accuracy.median_ape_pct);
+  const accuracyTone = accuracyScorePct === null
+    ? 'text-slate-400'
+    : accuracyScorePct >= 75
+      ? 'text-emerald-500'
+      : accuracyScorePct >= 50
+        ? 'text-amber-500'
+        : 'text-rose-500';
 
   const farmerRows = Array.isArray(farmerList) ? farmerList : [];
   const farmerTotal = farmerPagination.total;
@@ -762,6 +835,7 @@ export default function DashboardView({
   const refreshDashboard = async () => {
     await Promise.all([
       fetchDashboardSummary(),
+      fetchAccuracy(),
       fetchGuideBookings(),
       fetchSosAlerts(),
       refreshSponsorships(),
@@ -843,7 +917,7 @@ export default function DashboardView({
             { id: 'dashboard',  label: 'Dashboard',             icon: 'dashboard' },
             { id: 'gis',        label: 'Peta Lahan & GIS',       icon: 'map' },
             { id: 'farmers',    label: 'Daftar Petani',          icon: 'agriculture' },
-            { id: 'scm',        label: 'Hub SCM & Hasil Panen',  icon: 'account_tree' },
+            { id: 'plots',      label: 'Daftar Lahan',          icon: 'landscape' },
             { id: 'navigation', label: 'Kelola Wisata & Guide', icon: 'explore' },
             { id: 'eresource',  label: 'E-Resource',            icon: 'folder_shared' },
             { id: 'education',  label: 'Kelola Edukasi',        icon: 'school' },
@@ -983,7 +1057,7 @@ export default function DashboardView({
                 { id: 'dashboard',  label: 'Dashboard',             icon: 'dashboard' },
                 { id: 'gis',        label: 'Peta Lahan & GIS',       icon: 'map' },
                 { id: 'farmers',    label: 'Daftar Petani',          icon: 'agriculture' },
-                { id: 'scm',        label: 'Hub SCM & Hasil Panen',  icon: 'account_tree' },
+                { id: 'plots',      label: 'Daftar Lahan',          icon: 'landscape' },
                 { id: 'navigation', label: 'Kelola Wisata & Guide', icon: 'explore' },
                 { id: 'eresource',  label: 'E-Resource',            icon: 'folder_shared' },
                 { id: 'education',  label: 'Kelola Edukasi',        icon: 'school' },
@@ -1055,7 +1129,7 @@ export default function DashboardView({
                 {activeTab === 'dashboard' ? 'Dashboard' : 
                  activeTab === 'gis' ? 'Peta Lahan & GIS' :
                  activeTab === 'farmers' ? 'Daftar Petani' :
-                 activeTab === 'scm' ? 'Hub SCM & Hasil Panen' :
+                 activeTab === 'plots' ? 'Daftar Lahan' :
                  activeTab === 'navigation' ? 'Kelola Wisata & Guide' :
                  activeTab === 'eresource' ? 'E-Resource' :
                  activeTab === 'education' ? 'Kelola Edukasi' :
@@ -1221,7 +1295,7 @@ export default function DashboardView({
                             <div className="relative w-full transition-all duration-300" style={{ height: `${heightPct}%` }}>
                               {/* Interactive Tooltip on Hover */}
                               <div className="opacity-0 group-hover:opacity-100 transition-all absolute -top-11 left-1/2 -translate-x-1/2 -translate-y-1 bg-slate-900/95 backdrop-blur-md text-white text-[10px] font-bold py-1 px-2.5 rounded-lg whitespace-nowrap shadow-xl border border-primary/30 pointer-events-none z-30 duration-150">
-                                {formatKg(bar.harvest_kg)} • Rp {formatNumber(bar.estimated_value)}
+                                {formatKg(bar.harvest_kg)} • {formatNumber(bar.batch_count)} batch
                               </div>
                               <div className="w-full h-full bg-gradient-to-t from-emerald-600 via-primary to-emerald-300 rounded-xl shadow-md origin-bottom transition-transform group-hover:scale-y-[1.02]" />
                             </div>
@@ -1233,7 +1307,7 @@ export default function DashboardView({
                   </div>
 
                   <p className="mt-4 text-[10px] font-semibold text-slate-400">
-                    {dashboardSummary?.price_basis?.note || 'Estimasi nilai dihitung dari harga kontrak offtaker tersimpan.'}
+                    Total berat panen yang dicatat per periode, dihitung dari batch panen lahan.
                   </p>
                 </div>
 
@@ -1267,9 +1341,9 @@ export default function DashboardView({
                       </div>
 
                       <div className="rounded-2xl p-4 bg-slate-50 dark:bg-slate-900/60 border border-primary/10">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">KONTRAK SCM</span>
-                        <div className="mt-2 text-3xl font-extrabold text-slate-900 dark:text-white">{dashboardKpi.active_contracts ?? 0}</div>
-                        <div className="mt-1 text-xs text-emerald-500 font-semibold">{formatKg(dashboardKpi.contract_volume_kg)}</div>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">LAHAN WASPADA</span>
+                        <div className="mt-2 text-3xl font-extrabold text-amber-500">{dashboardKpi.alert_plots ?? 0}</div>
+                        <div className="mt-1 text-xs text-amber-500 font-semibold">Perlu pemeriksaan</div>
                       </div>
                     </div>
 
@@ -1315,6 +1389,89 @@ export default function DashboardView({
                   </button>
                 </div>
 
+              </div>
+
+              {/* Akurasi peramalan: prediksi MLR per lahan dibandingkan total panen tercatat */}
+              <div className="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6 shadow-sm">
+                <div className="flex items-start justify-between flex-wrap gap-2">
+                  <div>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">VALIDASI MODEL</span>
+                    <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Akurasi Peramalan vs Panen Nyata</h3>
+                    <p className="text-[11px] text-slate-500 font-medium mt-1">
+                      {accuracy?.formula_version
+                        ? `Dibandingkan dengan ${accuracy.formula_version}`
+                        : 'Dibandingkan dengan prediksi MLR tersimpan'}
+                      {' — '}hanya lahan yang sudah punya catatan panen.
+                    </p>
+                  </div>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold border border-primary/25 bg-primary/10 text-primary">
+                    <span className="material-symbols-outlined text-xs">target</span>
+                    Toleransi ±{accuracy?.tolerance_pct ?? 25}%
+                  </span>
+                </div>
+
+                {accuracyLoading && (
+                  <div className="mt-6 h-20 flex items-center justify-center text-xs font-bold text-slate-400">
+                    Menghitung akurasi dari catatan panen...
+                  </div>
+                )}
+
+                {!accuracyLoading && accuracyError && (
+                  <div className="mt-4 flex items-center gap-2 px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-500 text-xs font-bold">
+                    <span className="material-symbols-outlined text-base">error</span>
+                    <span>{accuracyError}</span>
+                    <button onClick={fetchAccuracy} className="ml-auto px-3 py-1 bg-rose-500 text-white rounded-lg">Coba Lagi</button>
+                  </div>
+                )}
+
+                {!accuracyLoading && !accuracyError && accuracy && accuracyMeasured === 0 && (
+                  <div className="mt-4 flex items-start gap-2 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-600 text-xs font-bold">
+                    <span className="material-symbols-outlined text-base">info</span>
+                    <span>Belum ada lahan yang punya prediksi dan catatan panen sekaligus. Catat hasil panen lewat Detail Plot agar akurasi bisa dihitung.</span>
+                  </div>
+                )}
+
+                {!accuracyLoading && !accuracyError && accuracyMeasured > 0 && (
+                  <>
+                    <div className="mt-5 grid grid-cols-2 lg:grid-cols-4 gap-3">
+                      <div className="rounded-2xl p-4 bg-slate-50 dark:bg-slate-900/60 border border-primary/10">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">AKURASI PREDIKSI</span>
+                        <div className={`mt-2 text-3xl font-extrabold ${accuracyTone}`}>{formatPct(accuracyScorePct)}</div>
+                        <div className="mt-1 text-[11px] text-slate-500 font-semibold">
+                          Meleset {formatPct(accuracy.median_ape_pct)} (median)
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl p-4 bg-slate-50 dark:bg-slate-900/60 border border-primary/10">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">DALAM TOLERANSI</span>
+                        <div className="mt-2 text-3xl font-extrabold text-slate-900 dark:text-white">{formatPct(accuracy.within_tolerance_pct)}</div>
+                        <div className="mt-1 text-[11px] text-slate-500 font-semibold">
+                          Selisih ≤ {accuracy.tolerance_pct}% dari panen nyata
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl p-4 bg-slate-50 dark:bg-slate-900/60 border border-primary/10">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">RATA-RATA SELISIH</span>
+                        <div className="mt-2 text-3xl font-extrabold text-slate-900 dark:text-white">{formatKg(accuracy.mae_kg)}</div>
+                        <div className="mt-1 text-[11px] text-slate-500 font-semibold">Per lahan per tahun</div>
+                      </div>
+
+                      <div className="rounded-2xl p-4 bg-slate-50 dark:bg-slate-900/60 border border-primary/10">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">LAHAN TERUKUR</span>
+                        <div className="mt-2 text-3xl font-extrabold text-slate-900 dark:text-white">
+                          {formatNumber(accuracyMeasured)}
+                          <span className="text-base font-bold text-slate-400"> / {formatNumber(accuracy.total_plots)}</span>
+                        </div>
+                        <div className="mt-1 text-[11px] text-slate-500 font-semibold">Punya prediksi &amp; catatan panen</div>
+                      </div>
+                    </div>
+
+                    <p className="mt-4 text-[10px] font-semibold text-slate-400">
+                      Total prediksi {formatKg(accuracy.total_predicted_kg)} vs total panen tercatat {formatKg(accuracy.total_harvested_kg)}.
+                      Lengkapi Tahun Tanam pada form plot agar umur tanaman ikut tercatat.
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           )}
@@ -1362,6 +1519,7 @@ export default function DashboardView({
                 setNewPlotCoords={setNewPlotCoords}
                 showAddForm={showAddForm}
                 setShowAddForm={setShowAddForm}
+                farmerOptions={farmerOptions}
                 formFarmer={formFarmer}
                 setFormFarmer={setFormFarmer}
                 formType={formType}
@@ -1372,20 +1530,24 @@ export default function DashboardView({
                 setFormElevation={setFormElevation}
                 formArea={formArea}
                 setFormArea={setFormArea}
+                formPlantingYear={formPlantingYear}
+                setFormPlantingYear={setFormPlantingYear}
                 formDesc={formDesc}
                 setFormDesc={setFormDesc}
                 handleAddPlot={handleAddPlot}
               />
 
-              <DetailsPanel 
-                selectedPlot={selectedPlot}
-                setSelectedPlot={setSelectedPlot}
-                role={role}
-                token={token}
-                plots={plots}
-                setPlots={setPlots}
-                inDashboard={true}
-              />
+              {!showAddForm && (
+                <DetailsPanel 
+                  selectedPlot={selectedPlot}
+                  setSelectedPlot={setSelectedPlot}
+                  role={role}
+                  token={token}
+                  plots={plots}
+                  setPlots={setPlots}
+                  inDashboard={true}
+                />
+              )}
             </div>
           )}
 
@@ -1671,19 +1833,16 @@ export default function DashboardView({
             </div>
           )}
 
-          {/* 1.5. SCM SUPPLY CHAIN MANAGEMENT HUB TAB */}
-          {activeTab === 'scm' && (
-            <React.Suspense fallback={<div className="p-8 text-xs font-bold text-slate-400">Memuat Hub SCM...</div>}>
-              <SCMHubView 
-                token={token}
-                plots={plots}
-                onSelectPlotOnMap={(id) => {
-                  const targetPlot = plots.find(p => p.id === id);
-                  if (targetPlot) setSelectedPlot(targetPlot);
-                  setActiveTab('gis');
-                }} 
-              />
-            </React.Suspense>
+          {/* 1.5. DAFTAR LAHAN & PANEN RIIL TAB */}
+          {activeTab === 'plots' && (
+            <PlotDirectory
+              plots={plots}
+              accuracy={accuracy}
+              onOpenPlot={(plot) => {
+                if (plot) setSelectedPlot(plot);
+                setActiveTab('gis');
+              }}
+            />
           )}
 
           {/* KELOLA WISATA & GUIDE TAB */}
@@ -2570,7 +2729,7 @@ export default function DashboardView({
                     { label: 'Plot Lahan', value: dashboardKpi.plots },
                     { label: `Batch Panen (${CHART_RANGES.find(r => r.id === chartRange)?.label || '7 Hari'})`, value: dashboardKpi.batches },
                     { label: 'Sponsor Aktif', value: dashboardKpi.active_sponsors },
-                    { label: 'Kontrak SCM', value: dashboardKpi.active_contracts },
+                    { label: 'Lahan Waspada', value: dashboardKpi.alert_plots },
                     { label: 'Guide Pending', value: dashboardKpi.pending_guides },
                     { label: 'SOS Aktif', value: dashboardKpi.active_sos },
                     { label: 'Destinasi', value: destinations.length },

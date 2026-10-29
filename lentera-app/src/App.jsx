@@ -39,6 +39,7 @@ export default function App() {
   const [formCount, setFormCount] = useState(100);
   const [formElevation, setFormElevation] = useState(800);
   const [formArea, setFormArea] = useState(1000);
+  const [formPlantingYear, setFormPlantingYear] = useState('');
   const [formDesc, setFormDesc] = useState('');
 
   // Login Modals state
@@ -144,6 +145,7 @@ export default function App() {
       tree_count: Number(formCount),
       elevation: Number(formElevation),
       land_area: Number(formArea),
+      planting_year: formPlantingYear === '' ? null : Number(formPlantingYear),
       description: formDesc
     };
 
@@ -165,6 +167,7 @@ export default function App() {
         setNewPlotCoords(null);
         setFormFarmer('');
         setFormArea(1000);
+        setFormPlantingYear('');
         setFormDesc('');
         console.log('Spatiogeometric plot registered successfully in database.');
       } else {
@@ -371,6 +374,8 @@ export default function App() {
             setFormElevation={setFormElevation}
             formArea={formArea}
             setFormArea={setFormArea}
+            formPlantingYear={formPlantingYear}
+            setFormPlantingYear={setFormPlantingYear}
             formDesc={formDesc}
             setFormDesc={setFormDesc}
             handleAddPlot={handleAddPlot}

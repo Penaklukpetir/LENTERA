@@ -298,60 +298,44 @@ export default function CoffeeMap({
   return (
     <main className="flex-1 relative overflow-hidden h-[calc(100vh-80px)]">
       
-      {/* Floating GIS Spatial Analysis Header Widget */}
-      <div className="absolute top-4 left-4 z-10 hidden sm:flex items-center gap-3 bg-slate-900/85 backdrop-blur-md p-2.5 px-4 rounded-2xl border border-primary/30 text-white shadow-2xl">
-        <div className="flex items-center gap-2 pr-3 border-r border-slate-700">
-          <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
-            <span className="material-symbols-outlined text-lg">public</span>
+      {/* Top toolbar: statistic header + layer manager share one row so they never overlap */}
+      <div className="absolute top-3 left-3 right-3 z-20 flex items-start justify-between gap-2 pointer-events-none">
+        <div className="pointer-events-auto min-w-0 overflow-hidden flex items-center gap-3 bg-slate-900/90 backdrop-blur-md py-2 px-3 rounded-xl border border-primary/30 text-white shadow-2xl">
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center text-primary shrink-0">
+              <span className="material-symbols-outlined text-lg">public</span>
+            </div>
+            <div>
+              <div className="text-[8px] font-extrabold text-primary uppercase tracking-widest whitespace-nowrap">SISTEM INFORMASI GEOGRAFIS</div>
+              <div className="text-[11px] font-bold text-slate-100 whitespace-nowrap">Desa Kucur, Malang</div>
+            </div>
           </div>
-          <div>
-            <div className="text-[9px] font-extrabold text-primary uppercase tracking-widest">SISTEM INFORMASI GEOGRAFIS</div>
-            <div className="text-xs font-bold text-slate-100">Desa Kucur, Malang</div>
+
+          <div className={`${showAddForm ? 'hidden' : 'hidden xl:flex'} items-center gap-3 pl-3 border-l border-slate-700 text-[11px] font-semibold text-slate-300`}>
+            <div className="whitespace-nowrap">
+              <span className="text-slate-400 text-[9px] block leading-tight">LUAS POLIGON</span>
+              <span className="text-emerald-400 font-extrabold">{totalLandArea.toLocaleString()} m²</span>
+            </div>
+            <div className="whitespace-nowrap">
+              <span className="text-slate-400 text-[9px] block leading-tight">RATA2 ELEVASI</span>
+              <span className="text-sky-400 font-extrabold">{avgElevation} MDPL</span>
+            </div>
+            <div className="hidden xl:block whitespace-nowrap">
+              <span className="text-slate-400 text-[9px] block leading-tight">ESTIMASI PANEN MLR</span>
+              <span className="text-amber-400 font-extrabold">{totalYield.toFixed(1)} kg</span>
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 text-xs font-semibold text-slate-300">
-          <div>
-            <span className="text-slate-400 text-[10px] block">LUAS POLIGON</span>
-            <span className="text-emerald-400 font-extrabold">{totalLandArea.toLocaleString()} m²</span>
-          </div>
-          <div>
-            <span className="text-slate-400 text-[10px] block">RATA2 ELEVASI</span>
-            <span className="text-sky-400 font-extrabold">{avgElevation} MDPL</span>
-          </div>
-          <div>
-            <span className="text-slate-400 text-[10px] block">ESTIMASI PANEN MLR</span>
-            <span className="text-amber-400 font-extrabold">{totalYield.toFixed(1)} kg</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Admin Click Instruction Alert Banner */}
-      {(role === 'admin' || role === 'village') && !showAddForm && (
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 bg-slate-900/95 text-white border border-primary/40 px-3 py-1.5 rounded-full z-10 shadow-2xl flex items-center gap-2 text-xs font-bold backdrop-blur-md max-w-[calc(100vw-32px)]">
-          <span className="material-symbols-outlined text-primary text-sm">add_location_alt</span>
-          <span className="hidden sm:inline">Klik lokasi di peta atau</span>
-          {onOpenAddPlot && (
-            <button
-              type="button"
-              onClick={onOpenAddPlot}
-              className="bg-primary hover:bg-primary/90 text-slate-950 font-extrabold px-3 py-1 rounded-full text-[11px] border-none cursor-pointer flex items-center gap-1 shadow-sm transition-all shrink-0"
-            >
-              <span className="material-symbols-outlined text-xs">edit_location</span>
-              <span>+ Ketik Titik Koordinat</span>
-            </button>
-          )}
-        </div>
-      )}
-
-      {/* Floating GIS Layer Manager Control Trigger Button */}
-      <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2">
+        {/* Floating GIS Layer Manager Control */}
+        <div className="pointer-events-auto flex flex-col items-end gap-2 shrink-0">
         <button
           onClick={() => setShowLayerPanel(!showLayerPanel)}
-          className="flex items-center gap-2 px-3 py-2 bg-slate-900/90 text-white rounded-xl border border-primary/30 shadow-2xl text-xs font-extrabold backdrop-blur-md hover:border-primary transition-all"
+          title="Layer & Basemap SIG"
+          className="flex items-center gap-2 px-2.5 py-2 bg-slate-900/90 text-white rounded-xl border border-primary/30 shadow-2xl text-xs font-extrabold backdrop-blur-md hover:border-primary transition-all"
         >
           <span className="material-symbols-outlined text-primary text-base">layers</span>
-          <span>Layer & Basemap SIG</span>
+          <span className={showAddForm ? 'hidden' : 'hidden xl:inline'}>Layer & Basemap SIG</span>
           <span className="material-symbols-outlined text-sm">{showLayerPanel ? 'expand_less' : 'expand_more'}</span>
         </button>
 
@@ -436,7 +420,26 @@ export default function CoffeeMap({
             </div>
           </div>
         )}
+        </div>
       </div>
+
+      {/* Admin Click Instruction — sits below the toolbar row, never under the layer button */}
+      {(role === 'admin' || role === 'village') && !showAddForm && !showLayerPanel && (
+        <div className="absolute top-16 left-3 z-10 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-slate-900/95 px-3 py-1.5 text-xs font-bold text-white shadow-2xl backdrop-blur-md max-w-[calc(100%-1.5rem)]">
+          <span className="material-symbols-outlined text-primary text-sm shrink-0">add_location_alt</span>
+          <span className="hidden sm:inline">Klik lokasi di peta atau</span>
+          {onOpenAddPlot && (
+            <button
+              type="button"
+              onClick={onOpenAddPlot}
+              className="bg-primary hover:bg-primary/90 text-slate-950 font-extrabold px-3 py-1 rounded-full text-[11px] border-none cursor-pointer flex items-center gap-1 shadow-sm transition-all shrink-0"
+            >
+              <span className="material-symbols-outlined text-xs">edit_location</span>
+              <span>+ Ketik Titik Koordinat</span>
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Map Container */}
       <MapContainer 
@@ -479,8 +482,8 @@ export default function CoffeeMap({
           </>
         )}
 
-        {/* User Location Pulse Icon */}
-        <Marker position={userLocation} icon={createUserIcon()} />
+        {/* User Location Pulse Icon — only after a real GPS fix, so it never sits on top of the village label */}
+        {gpsActive && <Marker position={userLocation} icon={createUserIcon()} />}
 
         {/* Render Spatial Polygons (Batas Lahan Kopi) */}
         {showPolygons && filteredPlots.map(plot => {
@@ -541,7 +544,7 @@ export default function CoffeeMap({
                   Ketinggian: <strong>{plot.elevation} MDPL</strong>
                 </p>
                 <p style={{ margin: 0, fontSize: '11px', color: '#64748b' }}>
-                  Estimasi Panen MLR: <strong style={{ color: '#10b981' }}>{plot.predicted_yield || '657.40'} kg</strong>
+                  Estimasi Panen MLR: <strong style={{ color: '#10b981' }}>{plot.predicted_yield ?? '—'} kg</strong>
                 </p>
               </div>
             </Popup>
@@ -566,7 +569,7 @@ export default function CoffeeMap({
               }
             }}
           >
-            <Tooltip permanent direction="top" offset={[0, -48]}>
+            <Tooltip permanent direction="right" offset={[14, -10]}>
               <div style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '11px', fontWeight: '800', color: '#0284c7' }}>
                 📍 Plot Baru: [{Number(newPlotCoords.lat).toFixed(5)}, {Number(newPlotCoords.lng).toFixed(5)}]
                 <br/>
@@ -590,8 +593,8 @@ export default function CoffeeMap({
         />
       </MapContainer>
 
-      {/* UI Overlays: Zoom & Recenter Controls on the Right */}
-      <div className="absolute top-20 right-4 flex flex-col gap-2 z-10">
+      {/* UI Overlays: Zoom & Recenter Controls — below the toolbar, hidden while the layer panel is open */}
+      <div className={`absolute top-[7.5rem] right-3 flex flex-col gap-2 z-10 transition-opacity ${showLayerPanel ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         {(role === 'admin' || role === 'village') && (
           <button 
             onClick={() => {

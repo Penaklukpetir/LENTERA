@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { MLR_COEFFICIENTS, MLR_MODEL_VERSION, calculateMLRYield } from '../lib/mlr';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
@@ -18,6 +19,7 @@ export default function DetailsPanel({
     tree_count: 100,
     elevation: 800,
     land_area: 1000,
+    planting_year: '',
     description: ''
   });
 
@@ -25,12 +27,8 @@ export default function DetailsPanel({
   const [mlrHistory, setMlrHistory] = useState([]);
   const [showAddHarvestModal, setShowAddHarvestModal] = useState(false);
   const [newHarvest, setNewHarvest] = useState({
-    process_method: 'Natural Process',
     weight_kg: '',
-    drying_days: 14,
-    grade: 'Specialty Grade',
-    cupping_score: 85.0,
-    status: 'Pengeringan'
+    harvest_date: ''
   });
 
   useEffect(() => {
@@ -41,19 +39,15 @@ export default function DetailsPanel({
         tree_count: selectedPlot.tree_count || 0,
         elevation: selectedPlot.elevation || 0,
         land_area: selectedPlot.land_area || 0,
+        planting_year: selectedPlot.planting_year ?? '',
         description: selectedPlot.description || ''
       });
       setIsEditing(false);
 
-      // Fetch harvest batches linked to this plot
-      fetch(`${API_BASE_URL}/scm/batches`)
-        .then(res => res.json())
-        .then(data => {
-          if (data.data) {
-            const linked = data.data.filter(b => b.plot_id === selectedPlot.id || b.farmer_name?.toLowerCase().includes(selectedPlot.farmer_name?.toLowerCase()));
-            setPlotBatches(linked);
-          }
-        })
+      // Fetch real harvest records for this plot
+      fetch(`${API_BASE_URL}/plots/${selectedPlot.id}/harvests`)
+        .then(res => (res.ok ? res.json() : null))
+        .then(data => setPlotBatches(Array.isArray(data?.data) ? data.data : []))
         .catch(() => setPlotBatches([]));
 
       fetch(`${API_BASE_URL}/plots/${selectedPlot.id}/mlr-history`)
@@ -67,18 +61,18 @@ export default function DetailsPanel({
   const handleCreateHarvestBatch = async (e) => {
     e.preventDefault();
     if (!selectedPlot) return;
+    const weight = parseFloat(newHarvest.weight_kg);
+    if (!Number.isFinite(weight) || weight <= 0) {
+      alert('Berat panen harus lebih dari 0 kg.');
+      return;
+    }
     const payload = {
-      plot_id: selectedPlot.id,
-      process_method: newHarvest.process_method,
-      weight_kg: parseFloat(newHarvest.weight_kg) || 0,
-      drying_days: parseInt(newHarvest.drying_days) || 14,
-      grade: newHarvest.grade,
-      cupping_score: parseFloat(newHarvest.cupping_score) || 85.0,
-      status: newHarvest.status
+      weight_kg: weight,
+      harvest_date: newHarvest.harvest_date || undefined
     };
 
     try {
-      const res = await fetch(`${API_BASE_URL}/scm/batches`, {
+      const res = await fetch(`${API_BASE_URL}/plots/${selectedPlot.id}/harvests`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,22 +87,12 @@ export default function DetailsPanel({
       }
       setPlotBatches([data.data, ...plotBatches]);
       setShowAddHarvestModal(false);
-      setNewHarvest({ process_method: 'Natural Process', weight_kg: '', drying_days: 14, grade: 'Specialty Grade', cupping_score: 85.0, status: 'Pengeringan' });
+      setNewHarvest({ weight_kg: '', harvest_date: '' });
       alert('Pencatatan hasil panen realisasi berhasil disimpan!');
     } catch (err) {
       console.error('Error creating harvest batch:', err);
       alert('Gagal menghubungi server. Panen tidak tersimpan.');
     }
-  };
-
-  // MLR v1.3: linear regression with biological floor (0.4 kg/tree)
-  const calculateMLRYield = (area, trees, elev) => {
-    const a = parseFloat(area) || 0;
-    const t = parseInt(trees) || 0;
-    const e = parseInt(elev) || 0;
-    if (a <= 0 || t < 1 || e < 400 || e > 3000) return 0;
-    const linear = -45.50 + (0.12 * a) + (1.85 * t) - (0.08 * e);
-    return parseFloat(Math.max(t * 0.4, linear, 0).toFixed(2));
   };
 
   // Handle Edit Plot Save with Backend API Persistence
@@ -126,6 +110,7 @@ export default function DetailsPanel({
       tree_count: trees,
       elevation: elev,
       land_area: area,
+      planting_year: editForm.planting_year === '' ? null : Number(editForm.planting_year),
       description: editForm.description
     };
 
@@ -187,9 +172,9 @@ export default function DetailsPanel({
   const currentArea = parseFloat(selectedPlot?.land_area || 0);
   const currentTrees = parseInt(selectedPlot?.tree_count || 0);
   const currentElev = parseInt(selectedPlot?.elevation || 0);
-  const mlrAreaContrib = (0.12 * currentArea).toFixed(1);
-  const mlrTreeContrib = (1.85 * currentTrees).toFixed(1);
-  const mlrElevPenalty = (0.08 * currentElev).toFixed(1);
+  const mlrAreaContrib = (MLR_COEFFICIENTS.land_area * currentArea).toFixed(1);
+  const mlrTreeContrib = (MLR_COEFFICIENTS.tree_count * currentTrees).toFixed(1);
+  const mlrElevContrib = (MLR_COEFFICIENTS.elevation * currentElev).toFixed(1);
   const mlrTotalYield = calculateMLRYield(currentArea, currentTrees, currentElev);
 
   // Total Recorded Real Harvest Weight for this Plot
@@ -333,6 +318,24 @@ export default function DetailsPanel({
                 </div>
               </div>
 
+              <div>
+                <label style={{ fontSize: '10px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Tahun Tanam (opsional)</label>
+                <input 
+                  type="number" 
+                  min="1900"
+                  max={new Date().getFullYear()}
+                  placeholder="misal 2012"
+                  value={editForm.planting_year}
+                  onChange={(e) => setEditForm({ ...editForm, planting_year: e.target.value })}
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-main)', fontSize: '12px', boxSizing: 'border-box' }}
+                />
+                <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+                  {editForm.planting_year && Number(editForm.planting_year) >= 1900
+                    ? `Umur tanaman ± ${new Date().getFullYear() - Number(editForm.planting_year)} tahun`
+                    : 'Kosongkan bila belum diketahui.'}
+                </span>
+              </div>
+
               {/* Live Preview MLR Yield Formula */}
               <div style={{
                 background: 'rgba(52, 211, 153, 0.1)',
@@ -342,8 +345,8 @@ export default function DetailsPanel({
                 fontSize: '11px',
                 color: '#34D399'
               }}>
-                <div style={{ fontWeight: 700, marginBottom: '2px' }}>📊 Estimasi MLR v1.3 Realtime:</div>
-                Y = max(0.4 × pohon, -45.50 + (0.12 × {editForm.land_area || 0}) + (1.85 × {editForm.tree_count || 0}) - (0.08 × {editForm.elevation || 0}))
+                <div style={{ fontWeight: 700, marginBottom: '2px' }}>📊 Estimasi Hasil Panen (Y) — {MLR_MODEL_VERSION}:</div>
+                Y = max(0, {MLR_COEFFICIENTS.intercept} + ({MLR_COEFFICIENTS.land_area} × {editForm.land_area || 0}) + ({MLR_COEFFICIENTS.tree_count} × {editForm.tree_count || 0}) + ({MLR_COEFFICIENTS.elevation} × {editForm.elevation || 0}))
                 <div style={{ fontWeight: 800, fontSize: '13px', marginTop: '4px', color: '#F8FAFC' }}>
                   = {calculateMLRYield(editForm.land_area, editForm.tree_count, editForm.elevation).toLocaleString('id-ID')} Kg/tahun
                 </div>
@@ -398,12 +401,35 @@ export default function DetailsPanel({
                     </span>
                   </div>
                   <span style={{ fontSize: '10px', background: 'rgba(52, 211, 153, 0.2)', color: '#34D399', padding: '2px 8px', borderRadius: '12px', fontWeight: 700 }}>
-                    MLR-v1.3-Kucur
+                    {MLR_MODEL_VERSION}
                   </span>
                 </div>
 
                 <div style={{ fontSize: '22px', fontWeight: '800', color: '#F8FAFC', marginBottom: '8px' }}>
                   {mlrTotalYield.toLocaleString('id-ID')} <span style={{ fontSize: '14px', fontWeight: 600, color: '#94A3B8' }}>Kg/tahun</span>
+                </div>
+
+                {/* Keterangan Variabel MLR */}
+                <div style={{
+                  background: 'rgba(15, 23, 42, 0.6)',
+                  border: '1px solid rgba(52, 211, 153, 0.2)',
+                  borderRadius: '10px',
+                  padding: '10px',
+                  marginBottom: '8px',
+                  fontSize: '11px',
+                  lineHeight: '1.7',
+                  color: '#CBD5E1'
+                }}>
+                  <div style={{ fontWeight: 800, color: '#34D399', marginBottom: '2px' }}>
+                    Keterangan Variabel Prediksi:
+                  </div>
+                  <div><strong style={{ color: '#F8FAFC' }}>Y</strong> = estimasi hasil panen (kg/tahun)</div>
+                  <div><strong style={{ color: '#F8FAFC' }}>X₁</strong> = luas lahan (m²)</div>
+                  <div><strong style={{ color: '#F8FAFC' }}>X₂</strong> = jumlah pohon (batang)</div>
+                  <div><strong style={{ color: '#F8FAFC' }}>X₃</strong> = elevasi lahan (MDPL)</div>
+                  <div style={{ marginTop: '4px', color: '#94A3B8' }}>
+                    Koefisien pohon bernilai negatif karena pada luas yang sama, tanam yang lebih rapat menurunkan hasil per pohon.
+                  </div>
                 </div>
 
                 {/* Mathematical Parameter Breakdown */}
@@ -416,26 +442,26 @@ export default function DetailsPanel({
                   color: '#CBD5E1',
                   border: '1px solid rgba(255, 255, 255, 0.05)'
                 }}>
-                  <div style={{ fontWeight: 700, color: '#34D399', marginBottom: '4px' }}>Rincian Parameter Regresi (Y = a + b₁X₁ + b₂X₂ + b₃X₃):</div>
+                  <div style={{ fontWeight: 700, color: '#34D399', marginBottom: '4px' }}>Rincian Perhitungan (Y = hasil panen):</div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>• Intercept (a):</span>
-                    <span style={{ fontWeight: 600 }}>-45.50 Kg</span>
+                    <span>• Konstanta (a):</span>
+                    <span style={{ fontWeight: 600 }}>{MLR_COEFFICIENTS.intercept} Kg</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>• X₁ Luas ({currentArea} m² × 0.12):</span>
+                    <span>• Luas lahan X₁ ({currentArea} m² × {MLR_COEFFICIENTS.land_area}):</span>
                     <span style={{ fontWeight: 600, color: '#34D399' }}>+{mlrAreaContrib} Kg</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>• X₂ Pohon ({currentTrees} phn × 1.85):</span>
-                    <span style={{ fontWeight: 600, color: '#34D399' }}>+{mlrTreeContrib} Kg</span>
+                    <span>• Jumlah pohon X₂ ({currentTrees} batang × {MLR_COEFFICIENTS.tree_count}):</span>
+                    <span style={{ fontWeight: 600, color: '#F87171' }}>{mlrTreeContrib} Kg</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span>• X₃ Elevasi ({currentElev} m × -0.08):</span>
-                    <span style={{ fontWeight: 600, color: '#F87171' }}>-{mlrElevPenalty} Kg</span>
+                    <span>• Elevasi X₃ ({currentElev} MDPL × {MLR_COEFFICIENTS.elevation}):</span>
+                    <span style={{ fontWeight: 600, color: '#F87171' }}>{mlrElevContrib} Kg</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed rgba(255,255,255,0.15)', marginTop: '4px', paddingTop: '4px' }}>
-                    <span>• Batas biologis ({currentTrees} phn × 0.4):</span>
-                    <span style={{ fontWeight: 600, color: '#34D399' }}>≥ {(currentTrees * 0.4).toFixed(1)} Kg</span>
+                    <span>• Prediksi di bawah 0 dibulatkan jadi 0 kg:</span>
+                    <span style={{ fontWeight: 600, color: '#34D399' }}>≥ 0 Kg</span>
                   </div>
                 </div>
               </div>
@@ -596,6 +622,20 @@ export default function DetailsPanel({
 
                 <div className="info-item">
                   <div className="info-icon-container">
+                    <span className="material-symbols-outlined">calendar_month</span>
+                  </div>
+                  <div className="info-details">
+                    <span className="info-label">Tahun Tanam</span>
+                    <span className="info-value">
+                      {selectedPlot.planting_year
+                        ? `${selectedPlot.planting_year} (± ${new Date().getFullYear() - Number(selectedPlot.planting_year)} tahun)`
+                        : 'Belum dicatat'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="info-item">
+                  <div className="info-icon-container">
                     <span className="material-symbols-outlined">pin_drop</span>
                   </div>
                   <div className="info-details">
@@ -680,44 +720,19 @@ export default function DetailsPanel({
                 </div>
 
                 <div>
-                  <label style={{ fontSize: '11px', color: '#94A3B8', display: 'block', marginBottom: '4px' }}>Metode Olah</label>
-                  <select
-                    value={newHarvest.process_method}
-                    onChange={(e) => setNewHarvest({ ...newHarvest, process_method: e.target.value })}
-                    style={{ width: '100%', background: '#0F172A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '8px 8px', color: '#F8FAFC', fontSize: '12px', boxSizing: 'border-box' }}
-                  >
-                    <option value="Natural Process">Natural Process</option>
-                    <option value="Full Washed">Full Washed</option>
-                    <option value="Honey Process">Honey Process</option>
-                    <option value="Wet Hulled">Wet Hulled</option>
-                  </select>
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                <div>
-                  <label style={{ fontSize: '11px', color: '#94A3B8', display: 'block', marginBottom: '4px' }}>Kelas Mutu</label>
-                  <select
-                    value={newHarvest.grade}
-                    onChange={(e) => setNewHarvest({ ...newHarvest, grade: e.target.value })}
-                    style={{ width: '100%', background: '#0F172A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '8px 8px', color: '#F8FAFC', fontSize: '12px', boxSizing: 'border-box' }}
-                  >
-                    <option value="Specialty Grade">Specialty Grade</option>
-                    <option value="Commercial Grade">Commercial Grade</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ fontSize: '11px', color: '#94A3B8', display: 'block', marginBottom: '4px' }}>Cupping Score</label>
+                  <label style={{ fontSize: '11px', color: '#94A3B8', display: 'block', marginBottom: '4px' }}>Tanggal Panen</label>
                   <input
-                    type="number"
-                    step="0.5"
-                    value={newHarvest.cupping_score}
-                    onChange={(e) => setNewHarvest({ ...newHarvest, cupping_score: e.target.value })}
-                    style={{ width: '100%', background: '#0F172A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '8px 12px', color: '#F8FAFC', fontSize: '12px', boxSizing: 'border-box' }}
+                    type="date"
+                    max={new Date().toISOString().slice(0, 10)}
+                    value={newHarvest.harvest_date}
+                    onChange={(e) => setNewHarvest({ ...newHarvest, harvest_date: e.target.value })}
+                    style={{ width: '100%', background: '#0F172A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '8px 12px', color: '#F8FAFC', fontSize: '12px', outline: 'none', boxSizing: 'border-box' }}
                   />
                 </div>
               </div>
+              <p style={{ fontSize: '10px', color: '#94A3B8', margin: 0 }}>
+                Kosongkan tanggal untuk memakai tanggal hari ini. Data ini langsung dipakai pada perbandingan prediksi MLR di tab Daftar Lahan.
+              </p>
 
               <button
                 type="submit"

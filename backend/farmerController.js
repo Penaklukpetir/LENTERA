@@ -128,6 +128,21 @@ export const getFarmersList = async (req, res) => {
   }
 };
 
+export const getFarmerOptions = async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, name, phone
+       FROM farmers
+       WHERE deleted_at IS NULL
+       ORDER BY LOWER(name) ASC, name ASC`
+    );
+    return res.status(200).json({ data: result.rows });
+  } catch (err) {
+    console.error('Fetch farmer options exception:', err);
+    return res.status(500).json({ error: 'Internal server error while fetching farmer options.' });
+  }
+};
+
 const PHONE_PATTERN = /^[+0-9][0-9+\-\s()]{5,19}$/;
 
 const parseFarmerPayload = (body) => {
