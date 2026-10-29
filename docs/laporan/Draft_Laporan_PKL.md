@@ -1167,95 +1167,95 @@ Menyimpan data riwayat mutasi data sensitif untuk audit kepatuhan hukum perlindu
 ### 4.4 Tahap Konstruksi (Construction)
  
 #### 4.4.1 Implementasi Antarmuka Pengguna (User Interface)
-Bagian ini mendeskripsikan implementasi visual dari antarmuka halaman portal LENTERA berdasarkan berkas-berkas halaman HTML yang ada di dalam direktori `LENTERA/`:
+Bagian ini mendeskripsikan implementasi visual dari antarmuka halaman portal LENTERA berdasarkan berkas-berkas halaman HTML yang ada di dalam direktori `../prototipe/`:
  
 ##### A. Kelompok Antarmuka Publik (Public Area)
  
-1.  **Halaman Beranda (UI-PUB-01-A) - Berkas: `LENTERA/Home.html`**
+1.  **Halaman Beranda (UI-PUB-01-A) - Berkas: `../prototipe/Home.html`**
     *   Menyajikan profil singkat desa, info pariwisata Kucur, dan navigasi utama.
-    *   *Gambar:* [Halaman Beranda Utama (LENTERA/Home.html)](LENTERA/Home.png)
+    *   *Gambar:* [Halaman Beranda Utama (../prototipe/Home.html)](../prototipe/Home.png)
  
-2.  **Halaman Katalog Produk (UI-PUB-01-B) - Berkas: `LENTERA/Catalog.html`**
+2.  **Halaman Katalog Produk (UI-PUB-01-B) - Berkas: `../prototipe/Catalog.html`**
     *   Menyajikan etalase produk UMKM Desa Kucur bagi pengunjung publik dan cart belanja.
-    *   *Gambar:* [Halaman Katalog](LENTERA/Catalog.png)
+    *   *Gambar:* [Halaman Katalog](../prototipe/Catalog.png)
  
-3.  **Halaman Peta Spasial (UI-PUB-02-A) - Berkas: `LENTERA/Location.html`**
+3.  **Halaman Peta Spasial (UI-PUB-02-A) - Berkas: `../prototipe/Location.html`**
     *   Menyajikan peta spasial interaktif batas wilayah desa beserta penanda destinasi wisata.
-    *   *Gambar:* [Halaman Peta Spasial (LENTERA/Location.html)](LENTERA/Location.png)
+    *   *Gambar:* [Halaman Peta Spasial (../prototipe/Location.html)](../prototipe/Location.png)
  
-4.  **Halaman Sistem Navigasi (UI-PUB-02-B) - Berkas: `LENTERA/Navigation.html`**
+4.  **Halaman Sistem Navigasi (UI-PUB-02-B) - Berkas: `../prototipe/Navigation.html`**
     *   Menampilkan rute perjalanan dinamis antara posisi GPS wisatawan dan titik lokasi tujuan di atas Leaflet.js.
-    *   *Gambar:* [Halaman Navigasi](LENTERA/Navigation.png)
+    *   *Gambar:* [Halaman Navigasi](../prototipe/Navigation.png)
  
-5.  **Halaman Detail Produk (UI-PUB-01-DET) - Berkas: `LENTERA/Product-Detail.html`**
+5.  **Halaman Detail Produk (UI-PUB-01-DET) - Berkas: `../prototipe/Product-Detail.html`**
     *   Menyajikan deskripsi lengkap produk, sisa stok, panel kuantitas, dan ulasan pembeli.
-    *   *Gambar:* [Halaman Detail Produk (LENTERA/Product-Detail.html)](LENTERA/Product-Detail.png)
+    *   *Gambar:* [Halaman Detail Produk (../prototipe/Product-Detail.html)](../prototipe/Product-Detail.png)
  
-6.  **Halaman Formulir Checkout (UI-PUB-01-CHK) - Berkas: `LENTERA/Checkout.html`**
+6.  **Halaman Formulir Checkout (UI-PUB-01-CHK) - Berkas: `../prototipe/Checkout.html`**
     *   Mengisi informasi pengiriman produk dan data kontak pembeli.
-    *   *Gambar:* [Halaman Checkout (LENTERA/Checkout.html)](LENTERA/Checkout.png)
+    *   *Gambar:* [Halaman Checkout (../prototipe/Checkout.html)](../prototipe/Checkout.png)
  
-7.  **Portal Sponsorship (UI-PUB-04) - Berkas: `LENTERA/Sponsor.html`**
+7.  **Portal Sponsorship (UI-PUB-04) - Berkas: `../prototipe/Sponsor.html`**
     *   Menyajikan formulir pengajuan proposal kemitraan investor dan statistik visual real-time investasi masuk.
-    *   *Gambar:* [Portal Sponsorship (LENTERA/Sponsor.html)](LENTERA/Sponsor.png)
+    *   *Gambar:* [Portal Sponsorship (../prototipe/Sponsor.html)](../prototipe/Sponsor.png)
  
-8.  **Halaman Edukasi Agrowisata (UI-PUB-03-A) - Berkas: `LENTERA/Education.html`**
+8.  **Halaman Edukasi Agrowisata (UI-PUB-03-A) - Berkas: `../prototipe/Education.html`**
     *   Menyajikan artikel literasi perkebunan kopi dan jeruk Desa Kucur.
-    *   *Gambar:* [Halaman Edukasi (LENTERA/Education.html)](LENTERA/Education.png)
+    *   *Gambar:* [Halaman Edukasi (../prototipe/Education.html)](../prototipe/Education.png)
  
-9.  **Halaman E-Resource & Testimoni (UI-PUB-03-B) - Berkas: `LENTERA/E-resource.html`**
+9.  **Halaman E-Resource & Testimoni (UI-PUB-03-B) - Berkas: `../prototipe/E-resource.html`**
     *   Menyajikan ulasan testimoni dari pembeli dan form input ulasan dengan upload media.
-    *   *Gambar:* [Halaman E-Resource](LENTERA/E-resource.png)
+    *   *Gambar:* [Halaman E-Resource](../prototipe/E-resource.png)
  
-10. **Halaman Profil Pengguna (UI-PUB-05) - Berkas: `LENTERA/Profile.html`**
+10. **Halaman Profil Pengguna (UI-PUB-05) - Berkas: `../prototipe/Profile.html`**
     *   Menampilkan profil wisatawan dan riwayat transaksi pesanan produk.
-    *   *Gambar:* [Halaman Profil (LENTERA/Profile.html)](LENTERA/Profile.png)
+    *   *Gambar:* [Halaman Profil (../prototipe/Profile.html)](../prototipe/Profile.png)
  
 ##### B. Kelompok Antarmuka Dasbor Pengelola (Dashboard Area)
  
-11. **Layar Kredensial Masuk (UI-ADM-01) - Berkas: `LENTERA/Login.html`**
+11. **Layar Kredensial Masuk (UI-ADM-01) - Berkas: `../prototipe/Login.html`**
     *   Formulir login masuk administrator dan pelaku UMKM terintegrasi sesi token JWT.
-    *   *Gambar:* [Layar Login Dasbor (LENTERA/Login.html)](LENTERA/Login.png)
+    *   *Gambar:* [Layar Login Dasbor (../prototipe/Login.html)](../prototipe/Login.png)
  
-12. **Dasbor Perangkat Desa - Ringkasan (UI-ADM-02-A) - Berkas: `LENTERA/DashboardPerangkatDesa/index.html` (Tab Dashboard)**
+12. **Dasbor Perangkat Desa - Ringkasan (UI-ADM-02-A) - Berkas: `../prototipe/DashboardPerangkatDesa/index.html` (Tab Dashboard)**
     *   Halaman grafik statistik perekonomian dan kartu KPI Desa Wisata Kucur bagi Kepala Desa.
-    *   *Gambar:* [Dasbor Overview & Statistik (LENTERA/DashboardPerangkatDesa/index.html)](LENTERA/DashboardPerangkatDesa_index.png)
+    *   *Gambar:* [Dasbor Overview & Statistik (../prototipe/DashboardPerangkatDesa/index.html)](../prototipe/DashboardPerangkatDesa_index.png)
  
-13. **Dasbor Perangkat Desa - Kelola E-Resource (UI-ADM-02-B) - Berkas: `LENTERA/DashboardPerangkatDesa/index.html` (Tab E-Resource)**
+13. **Dasbor Perangkat Desa - Kelola E-Resource (UI-ADM-02-B) - Berkas: `../prototipe/DashboardPerangkatDesa/index.html` (Tab E-Resource)**
     *   CMS bagi pengelola untuk mengunggah pengumuman, buletin desa, dan melakukan moderasi ulasan.
-    *   *Gambar:* [Dasbor Perangkat Desa - Kelola E-Resource](LENTERA/DashboardPerangkatDesa_EResource.png)
+    *   *Gambar:* [Dasbor Perangkat Desa - Kelola E-Resource](../prototipe/DashboardPerangkatDesa_EResource.png)
  
-14. **Dasbor Perangkat Desa - Setting Akun (UI-ADM-02-C) - Berkas: `LENTERA/DashboardPerangkatDesa/index.html` (Tab Setting Akun)**
+14. **Dasbor Perangkat Desa - Setting Akun (UI-ADM-02-C) - Berkas: `../prototipe/DashboardPerangkatDesa/index.html` (Tab Setting Akun)**
     *   Pengelolaan data identitas dan pembuatan akun admin Karang Taruna operasional baru.
-    *   *Gambar:* [Dasbor Perangkat Desa - Setting Akun](LENTERA/DashboardPerangkatDesa_Accounts.png)
+    *   *Gambar:* [Dasbor Perangkat Desa - Setting Akun](../prototipe/DashboardPerangkatDesa_Accounts.png)
  
-15. **Dasbor Perangkat Desa - Approval Sponsorship (UI-ADM-02-D) - Berkas: `LENTERA/DashboardPerangkatDesa/index.html` (Tab Sponsorship)**
+15. **Dasbor Perangkat Desa - Approval Sponsorship (UI-ADM-02-D) - Berkas: `../prototipe/DashboardPerangkatDesa/index.html` (Tab Sponsorship)**
     *   Halaman tata kelola dan persetujuan proposal sponsor kemitraan B2B.
-    *   *Gambar:* [Dasbor Perangkat Desa - Approval Sponsorship](LENTERA/DashboardPerangkatDesa_Sponsor.png)
+    *   *Gambar:* [Dasbor Perangkat Desa - Approval Sponsorship](../prototipe/DashboardPerangkatDesa_Sponsor.png)
  
-16. **Dasbor Perangkat Desa - Pengaturan Desa (UI-ADM-02-E) - Berkas: `LENTERA/DashboardPerangkatDesa/index.html` (Tab Pengaturan Desa)**
+16. **Dasbor Perangkat Desa - Pengaturan Desa (UI-ADM-02-E) - Berkas: `../prototipe/DashboardPerangkatDesa/index.html` (Tab Pengaturan Desa)**
     *   Konfigurasi wewenang Karang Taruna dan pembersihan basis data lokal.
-    *   *Gambar:* [Dasbor Perangkat Desa - Pengaturan Desa](LENTERA/DashboardPerangkatDesa_Settings.png)
+    *   *Gambar:* [Dasbor Perangkat Desa - Pengaturan Desa](../prototipe/DashboardPerangkatDesa_Settings.png)
  
-17. **Dasbor Mitra UMKM - Ringkasan (UI-ADM-03-A) - Berkas: `LENTERA/DashboardUMKM.html` (Tab Ringkasan)**
+17. **Dasbor Mitra UMKM - Ringkasan (UI-ADM-03-A) - Berkas: `../prototipe/DashboardUMKM.html` (Tab Ringkasan)**
     *   Menampilkan ringkasan keuangan UMKM, status pesanan baru, dan total produk aktif.
-    *   *Gambar:* [Dasbor Mitra UMKM - Ringkasan](LENTERA/DashboardUMKM_Ringkasan.png)
+    *   *Gambar:* [Dasbor Mitra UMKM - Ringkasan](../prototipe/DashboardUMKM_Ringkasan.png)
  
-18. **Dasbor Mitra UMKM - Produk Saya (UI-ADM-03-B) - Berkas: `LENTERA/DashboardUMKM.html` (Tab Produk)**
+18. **Dasbor Mitra UMKM - Produk Saya (UI-ADM-03-B) - Berkas: `../prototipe/DashboardUMKM.html` (Tab Produk)**
     *   Menu penambahan katalog produk UMKM dan manajemen CRUD produk aktif di etalase.
-    *   *Gambar:* [Dasbor Mitra UMKM - Produk Saya](LENTERA/DashboardUMKM_Produk.png)
+    *   *Gambar:* [Dasbor Mitra UMKM - Produk Saya](../prototipe/DashboardUMKM_Produk.png)
  
-19. **Dasbor Mitra UMKM - Pesanan Masuk (UI-ADM-03-C) - Berkas: `LENTERA/DashboardUMKM.html` (Tab Pesanan)**
+19. **Dasbor Mitra UMKM - Pesanan Masuk (UI-ADM-03-C) - Berkas: `../prototipe/DashboardUMKM.html` (Tab Pesanan)**
     *   Mengelola riwayat pesanan belanja wisatawan dan pengisian nomor resi.
-    *   *Gambar:* [Dasbor Mitra UMKM - Pesanan Masuk](LENTERA/DashboardUMKM_Pesanan.png)
+    *   *Gambar:* [Dasbor Mitra UMKM - Pesanan Masuk](../prototipe/DashboardUMKM_Pesanan.png)
  
-20. **Dasbor Mitra UMKM - Penarikan Dana (UI-ADM-03-D) - Berkas: `LENTERA/DashboardUMKM.html` (Tab Penarikan)**
+20. **Dasbor Mitra UMKM - Penarikan Dana (UI-ADM-03-D) - Berkas: `../prototipe/DashboardUMKM.html` (Tab Penarikan)**
     *   Form pengajuan penarikan dana saldo hasil penjualan dan log transaksi penarikan.
-    *   *Gambar:* [Dasbor Mitra UMKM - Penarikan Dana](LENTERA/DashboardUMKM_Penarikan.png)
+    *   *Gambar:* [Dasbor Mitra UMKM - Penarikan Dana](../prototipe/DashboardUMKM_Penarikan.png)
  
-21. **Dasbor Mitra UMKM - Profil Toko (UI-ADM-03-E) - Berkas: `LENTERA/DashboardUMKM.html` (Tab Profil)**
+21. **Dasbor Mitra UMKM - Profil Toko (UI-ADM-03-E) - Berkas: `../prototipe/DashboardUMKM.html` (Tab Profil)**
     *   Pengaturan profil usaha UMKM dan info nomor rekening bank transfer.
-    *   *Gambar:* [Dasbor Mitra UMKM - Profil Toko](LENTERA/DashboardUMKM_Profil.png)
+    *   *Gambar:* [Dasbor Mitra UMKM - Profil Toko](../prototipe/DashboardUMKM_Profil.png)
 
 ### 4.5 Tahap Serah Terima dan Pengujian (Cutover)
 Tahap serah terima dan pengujian merupakan tahap akhir dari siklus pengembangan RAD. Tahap ini diisi dengan pelaksanaan pengujian fungsionalitas sistem secara terstruktur serta evaluasi hasil implementasi bersama mitra Desa Kucur untuk memperoleh umpan balik.

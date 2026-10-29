@@ -487,9 +487,9 @@ Sistem warna dikonfigurasi menggunakan palet yang terharmonisasi guna membedakan
     *   *Desktop:* Min-width `1024px` (katalog menjadi 3-4 kolom kartu, dasbor admin menampilkan sidebar statis penuh di sebelah kiri).
 
 #### 5. Gambar Mockup Utama (Representatif Visual Utama)
-Berikut adalah visualisasi mockup halaman beranda publik utama (berdasarkan implementasi berkas **LENTERA/Home.html**):
+Berikut adalah visualisasi mockup halaman beranda publik utama (berdasarkan implementasi berkas **../prototipe/Home.html**):
 
-![Halaman Beranda Utama (LENTERA/Home.html)](LENTERA/Home.png)
+![Halaman Beranda Utama (../prototipe/Home.html)](../prototipe/Home.png)
 
 ### 7.2 User Interface Navigation Flow
 
@@ -560,7 +560,7 @@ graph TD
 
 ### 7.3 Use Cases / User Function Description
 
-Berikut adalah deskripsi kegunaan layar (*screen usage*) serta fungsi tombol-tombol pada setiap antarmuka yang terimplementasi di direktori proyek `LENTERA/`, dilengkapi dengan peletakan gambar mockup masing-masing:
+Berikut adalah deskripsi kegunaan layar (*screen usage*) serta fungsi tombol-tombol pada setiap antarmuka yang terimplementasi di direktori proyek `../prototipe/`, dilengkapi dengan peletakan gambar mockup masing-masing:
 
 #### A. Kelompok Antarmuka Publik (Public Area)
  
@@ -570,7 +570,7 @@ Berikut adalah deskripsi kegunaan layar (*screen usage*) serta fungsi tombol-tom
     *   *Bilah Navigasi (Navbar):* Navigasi dua arah ke halaman Katalog, Peta Lokasi, Edukasi, Sponsor, dan Login.
     *   *Tombol CTA:* Mengalihkan pengunjung ke peta lokasi atau katalog.
 *   **Tampilan Mockup:**
-    ![Halaman Beranda Utama (LENTERA/Home.html)](LENTERA/Home.png)
+    ![Halaman Beranda Utama (../prototipe/Home.html)](../prototipe/Home.png)
  
 ##### 2. Halaman Katalog Produk (UI-PUB-01-B)
 *   **Fungsi Utama:** Menyajikan informasi etalase produk UMKM Desa Kucur bagi pengunjung publik serta memfasilitasi transaksi belanja keranjang sementara.
@@ -579,7 +579,7 @@ Berikut adalah deskripsi kegunaan layar (*screen usage*) serta fungsi tombol-tom
     *   *Ikon Keranjang (Header):* Membuka panel sidebar keranjang di kanan layar untuk penyesuaian kuantitas.
     *   *Tombol "Checkout":* Mengagregasi harga total belanja dan meneruskan pengguna ke form isian pesanan.
 *   **Tampilan Mockup:**
-    ![Halaman Katalog](LENTERA/Catalog.png)
+    ![Halaman Katalog](../prototipe/Catalog.png)
  
 ##### 3. Halaman Detail Produk (UI-PUB-01-DET)
 *   **Fungsi Utama:** Menyajikan informasi deskripsi lengkap produk UMKM, galeri foto, bintang ulasan rating, serta ulasan spesifik dari pembeli terdahulu.
@@ -588,7 +588,7 @@ Berikut adalah deskripsi kegunaan layar (*screen usage*) serta fungsi tombol-tom
     *   *Tombol "Beli Sekarang":* Memasukkan produk ke keranjang belanja dan langsung mengalihkan ke halaman checkout.
     *   *Tombol "Kembali":* Mengarahkan kembali pengguna ke katalog produk utama.
 *   **Tampilan Mockup:**
-    ![Halaman Detail Produk (LENTERA/Product-Detail.html)](LENTERA/Product-Detail.png)
+    ![Halaman Detail Produk (../prototipe/Product-Detail.html)](../prototipe/Product-Detail.png)
  
 ##### 4. Halaman Formulir Checkout (UI-PUB-01-CHK)
 *   **Fungsi Utama:** Halaman bagi pengunjung untuk mengisi informasi data pengiriman produk dan data kontak.
@@ -597,7 +597,7 @@ Berikut adalah deskripsi kegunaan layar (*screen usage*) serta fungsi tombol-tom
     *   *Pilihan Ekspedisi:* Memilih opsi ambil di tempat (Desa Kucur) atau menggunakan kurir lokal.
     *   *Tombol "Buat Pesanan":* Mengirimkan data pembelian ke database dan secara otomatis memunculkan proksi pesan WhatsApp berisi invoice pesanan ke admin/penjual.
 *   **Tampilan Mockup:**
-    ![Halaman Checkout (LENTERA/Checkout.html)](LENTERA/Checkout.png)
+    ![Halaman Checkout (../prototipe/Checkout.html)](../prototipe/Checkout.png)
  
 ##### 5. Halaman Peta Spasial (UI-PUB-02-A)
 *   **Fungsi Utama:** Menyajikan peta interaktif Desa Kucur dengan titik marker berwarna sesuai kategori, membantu navigasi pengunjung, serta memberikan kontak bantuan darurat.
@@ -606,7 +606,7 @@ Berikut adalah deskripsi kegunaan layar (*screen usage*) serta fungsi tombol-tom
     *   *Klik Marker:* Menampilkan pop-up informasi singkat tempat dan tombol kalkulasi navigasi.
     *   *Floating Button WhatsApp (Kedaruratan):* Tombol melayang untuk membuka chat WhatsApp langsung ke Karang Taruna selaku pengelola darurat lapangan.
 *   **Tampilan Mockup:**
-    ![Halaman Peta Spasial (LENTERA/Location.html)](LENTERA/Location.png)
+    ![Halaman Peta Spasial (../prototipe/Location.html)](../prototipe/Location.png)
  
 ##### 6. Halaman Sistem Navigasi (UI-PUB-02-B)
 *   **Fungsi Utama:** Menampilkan rute perjalanan dinamis antara posisi GPS wisatawan dan titik lokasi tujuan di atas Leaflet.js.
@@ -614,28 +614,28 @@ Berikut adalah deskripsi kegunaan layar (*screen usage*) serta fungsi tombol-tom
     *   *Tombol "Navigasi Rute" (Pop-up):* Menampilkan rute jalan dan estimasi jarak tempuh dari koordinat GPS wisatawan saat itu.
     *   *Tombol "Kembali ke Peta":* Menutup penunjuk rute jalan dan kembali ke peta utama.
 *   **Tampilan Mockup:**
-    ![Halaman Navigasi](LENTERA/Navigation.png)
+    ![Halaman Navigasi](../prototipe/Navigation.png)
  
 ##### 7. Halaman Edukasi Agrowisata (UI-PUB-03-A)
 *   **Fungsi Utama:** Menyajikan portal e-resource artikel edukasi perkebunan jeruk dan kopi Desa Kucur bagi wisatawan.
 *   **Aksi Antarmuka:**
     *   *Klik Kartu Artikel:* Membuka halaman detail konten edukasi pertanian.
 *   **Tampilan Mockup:**
-    ![Halaman Edukasi (LENTERA/Education.html)](LENTERA/Education.png)
+    ![Halaman Edukasi (../prototipe/Education.html)](../prototipe/Education.png)
  
 ##### 8. Halaman E-Resource & Testimoni (UI-PUB-03-B)
 *   **Fungsi Utama:** Menyajikan ulasan wisatawan ter-moderasi serta modul pengisian ulasan publik.
 *   **Aksi Antarmuka:**
     *   *Form Tulis Ulasan:* Input nama, teks komentar, rating bintang 1-5, dan tombol upload gambar pendukung (maksimal 5MB).
 *   **Tampilan Mockup:**
-    ![Halaman E-Resource](LENTERA/E-resource.png)
+    ![Halaman E-Resource](../prototipe/E-resource.png)
  
 ##### 9. Portal Sponsorship (UI-PUB-04)
 *   **Fungsi Utama:** Menyajikan transparansi penggalangan dana sponsor kemitraan B2B dan pendaftaran bagi investor baru.
 *   **Aksi Antarmuka:**
     *   *Formulir Pengajuan:* Pengisian nama institusi, nominal pendanaan, form upload proposal PDF (max 5MB), dan tombol kirim dengan status awal proposal `PENDING`.
 *   **Tampilan Mockup:**
-    ![Portal Sponsorship (LENTERA/Sponsor.html)](LENTERA/Sponsor.png)
+    ![Portal Sponsorship (../prototipe/Sponsor.html)](../prototipe/Sponsor.png)
  
 ##### 10. Halaman Profil Pengguna (UI-PUB-05)
 *   **Fungsi Utama:** Menyajikan data profil diri pembeli/wisatawan serta rekam jejak riwayat transaksi pemesanan produk yang telah dilakukan.
@@ -643,7 +643,7 @@ Berikut adalah deskripsi kegunaan layar (*screen usage*) serta fungsi tombol-tom
     *   *Tombol "Edit Profil":* Mengubah informasi nama lengkap dan kontak telepon.
     *   *Tabel Riwayat:* Menampilkan nomor invoice, total pembayaran, status pengiriman produk, dan tombol cetak bukti pesanan.
 *   **Tampilan Mockup:**
-    ![Halaman Profil (LENTERA/Profile.html)](LENTERA/Profile.png)
+    ![Halaman Profil (../prototipe/Profile.html)](../prototipe/Profile.png)
  
 ---
  
@@ -656,7 +656,7 @@ Berikut adalah deskripsi kegunaan layar (*screen usage*) serta fungsi tombol-tom
     *   *Tombol "Masuk":* Melakukan pengiriman data ke server API.
     *   *Notifikasi Peringatan:* Menampilkan alert pop-up merah jika kredensial salah atau token kedaluwarsa.
 *   **Tampilan Mockup:**
-    ![Layar Login Dasbor (LENTERA/Login.html)](LENTERA/Login.png)
+    ![Layar Login Dasbor (../prototipe/Login.html)](../prototipe/Login.png)
  
 ##### 12. Dasbor Perangkat Desa - Ringkasan (UI-ADM-02-A)
 *   **Fungsi Utama:** Halaman pemantau KPI operasional dan keuangan bagi Kepala Desa selaku pengawas tertinggi.
@@ -665,7 +665,7 @@ Berikut adalah deskripsi kegunaan layar (*screen usage*) serta fungsi tombol-tom
     *   *Widget KPI:* Menampilkan total nominal transaksi e-commerce, total data UMKM aktif, dan total sponsor.
     *   *Filter Grafik:* Mengubah visualisasi diagram pemantau grafik batang/garis per bulan.
 *   **Tampilan Mockup:**
-    ![Dasbor Overview & Statistik (LENTERA/DashboardPerangkatDesa/index.html)](LENTERA/DashboardPerangkatDesa_index.png)
+    ![Dasbor Overview & Statistik (../prototipe/DashboardPerangkatDesa/index.html)](../prototipe/DashboardPerangkatDesa_index.png)
  
 ##### 13. Dasbor Perangkat Desa - Kelola E-Resource (UI-ADM-02-B)
 *   **Fungsi Utama:** Modul Content Management System bagi pengelola untuk mengunggah pengumuman, buletin, dan pratinjau media.
@@ -673,7 +673,7 @@ Berikut adalah deskripsi kegunaan layar (*screen usage*) serta fungsi tombol-tom
     *   *Form Artikel:* Input judul, jenis (Text/Foto/Video/PDF), isi tulisan, dan status publikasi.
     *   *Daftar & Edit:* Tombol preview, ubah, nonaktifkan, dan hapus.
 *   **Tampilan Mockup:**
-    ![Dasbor Perangkat Desa - Kelola E-Resource](LENTERA/DashboardPerangkatDesa_EResource.png)
+    ![Dasbor Perangkat Desa - Kelola E-Resource](../prototipe/DashboardPerangkatDesa_EResource.png)
  
 ##### 14. Dasbor Perangkat Desa - Setting Akun (UI-ADM-02-C)
 *   **Fungsi Utama:** Panel pengelolaan data identitas dan pembuatan akun admin Karang Taruna operasional baru.
@@ -681,14 +681,14 @@ Berikut adalah deskripsi kegunaan layar (*screen usage*) serta fungsi tombol-tom
     *   *Form Admin:* Input Nama, Email, Pilihan Role, dan status aktif.
     *   *Daftar Akun:* Tabel list pencarian akun admin desa.
 *   **Tampilan Mockup:**
-    ![Dasbor Perangkat Desa - Setting Akun](LENTERA/DashboardPerangkatDesa_Accounts.png)
+    ![Dasbor Perangkat Desa - Setting Akun](../prototipe/DashboardPerangkatDesa_Accounts.png)
  
 ##### 15. Dasbor Perangkat Desa - Approval Sponsorship (UI-ADM-02-D)
 *   **Fungsi Utama:** Halaman tata kelola dan persetujuan status kelayakan proposal sponsor kemitraan B2B.
 *   **Aksi Antarmuka:**
     *   *Tombol "Approve/Reject":* Mengubah status proposal kemitraan investor dari `PENDING` menjadi `APPROVED` atau `REJECTED`.
 *   **Tampilan Mockup:**
-    ![Dasbor Perangkat Desa - Approval Sponsorship](LENTERA/DashboardPerangkatDesa_Sponsor.png)
+    ![Dasbor Perangkat Desa - Approval Sponsorship](../prototipe/DashboardPerangkatDesa_Sponsor.png)
  
 ##### 16. Dasbor Perangkat Desa - Pengaturan Desa (UI-ADM-02-E)
 *   **Fungsi Utama:** Panel pengaturan penetapan wewenang pelaksana Karang Taruna dan pembersihan basis data lokal.
@@ -696,14 +696,14 @@ Berikut adalah deskripsi kegunaan layar (*screen usage*) serta fungsi tombol-tom
     *   *Dropdown Pemilihan:* Menetapkan admin pelaksana aktif.
     *   *Tombol Aksi:* Sinkronisasi data demo, serta tombol Reset Storage.
 *   **Tampilan Mockup:**
-    ![Dasbor Perangkat Desa - Pengaturan Desa](LENTERA/DashboardPerangkatDesa_Settings.png)
+    ![Dasbor Perangkat Desa - Pengaturan Desa](../prototipe/DashboardPerangkatDesa_Settings.png)
  
 ##### 17. Dasbor Mitra UMKM - Ringkasan (UI-ADM-03-A)
 *   **Fungsi Utama:** Panel ringkasan keuangan UMKM, status pesanan baru, dan total produk yang terbit secara dinamis.
 *   **Aksi Antarmuka:**
     *   *Statistik KPI:* Omset penjualan, jumlah produk, dan lencana pesanan masuk.
 *   **Tampilan Mockup:**
-    ![Dasbor Mitra UMKM - Ringkasan](LENTERA/DashboardUMKM_Ringkasan.png)
+    ![Dasbor Mitra UMKM - Ringkasan](../prototipe/DashboardUMKM_Ringkasan.png)
  
 ##### 18. Dasbor Mitra UMKM - Produk Saya (UI-ADM-03-B)
 *   **Fungsi Utama:** Panel pengelolaan data CRUD produk etalase UMKM (tambah, edit, hapus barang).
@@ -711,14 +711,14 @@ Berikut adalah deskripsi kegunaan layar (*screen usage*) serta fungsi tombol-tom
     *   *Form Produk:* Menginput nama, harga, deskripsi, dan upload foto produk (maksimal 2MB).
     *   *Aksi Etalase:* Tombol edit dan hapus produk.
 *   **Tampilan Mockup:**
-    ![Dasbor Mitra UMKM - Produk Saya](LENTERA/DashboardUMKM_Produk.png)
+    ![Dasbor Mitra UMKM - Produk Saya](../prototipe/DashboardUMKM_Produk.png)
  
 ##### 19. Dasbor Mitra UMKM - Pesanan Masuk (UI-ADM-03-C)
 *   **Fungsi Utama:** Mengelola riwayat pesanan belanja wisatawan yang masuk ke toko.
 *   **Aksi Antarmuka:**
     *   *Tabel Pesanan:* Informasi invoice belanja, nama pelanggan, kontak, rincian barang, dan tombol konfirmasi pengiriman resi.
 *   **Tampilan Mockup:**
-    ![Dasbor Mitra UMKM - Pesanan Masuk](LENTERA/DashboardUMKM_Pesanan.png)
+    ![Dasbor Mitra UMKM - Pesanan Masuk](../prototipe/DashboardUMKM_Pesanan.png)
  
 ##### 20. Dasbor Mitra UMKM - Penarikan Dana (UI-ADM-03-D)
 *   **Fungsi Utama:** Pengajuan pencairan dana profit ke rekening bank penjual.
@@ -726,14 +726,14 @@ Berikut adalah deskripsi kegunaan layar (*screen usage*) serta fungsi tombol-tom
     *   *Form Penarikan:* Input nominal dana penarikan (minimal Rp 50.000) dan pilihan bank rekening.
     *   *Tabel Riwayat:* Status pencairan saldo (Success/Pending/Rejected).
 *   **Tampilan Mockup:**
-    ![Dasbor Mitra UMKM - Penarikan Dana](LENTERA/DashboardUMKM_Penarikan.png)
+    ![Dasbor Mitra UMKM - Penarikan Dana](../prototipe/DashboardUMKM_Penarikan.png)
  
 ##### 21. Dasbor Mitra UMKM - Profil Toko (UI-ADM-03-E)
 *   **Fungsi Utama:** Pengaturan data profil wirausaha UMKM dan akun bank transfer.
 *   **Aksi Antarmuka:**
     *   *Formulir Profil:* Deskripsi ringkas toko, nama pemilik, nomor telepon, dan data rekening.
 *   **Tampilan Mockup:**
-    ![Dasbor Mitra UMKM - Profil Toko](LENTERA/DashboardUMKM_Profil.png)
+    ![Dasbor Mitra UMKM - Profil Toko](../prototipe/DashboardUMKM_Profil.png)
 
 ---
 

@@ -593,96 +593,96 @@ graph TD
 ```
 
 #### 5.1.3 Panduan & Spesifikasi Tata Letak Halaman (Screen Layouts & Guidelines)
-Sistem memiliki 10 antarmuka utama yang dirancang fungsional dan responsif. Pengguna dapat merujuk ke berkas kode HTML dan demonstrasi visualnya di dalam sub-direktori [LENTERA/](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/LENTERA):
+Sistem memiliki 10 antarmuka utama yang dirancang fungsional dan responsif. Pengguna dapat merujuk ke berkas kode HTML dan demonstrasi visualnya di dalam sub-direktori [docs/prototipe/](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/prototipe):
 
 1.  **Halaman Beranda**: 
     *   *Spesifikasi Layout*: Bilah navigasi lengket (*sticky navigation bar*) di bagian atas, dilanjutkan dengan hero section bertema petani kopi Jawa yang menampilkan video profil desa via YouTube embed modal.
     *   *Komponen & Widget*: Navbar menu utama, banner info desa wisata, tombol CTA video modal ("Tonton Video"), dan etalase berita desa/E-Resource terbaru (**Kabar Desa**). Blok Kabar Desa ini menampilkan 1 Berita Utama (Headline) dan 3 Update Terbaru yang disinkronkan langsung dari data administratif di dasbor admin (tersimpan di *local storage*).
-    *   *Mockup File*: `LENTERA/Home.png`
+    *   *Mockup File*: `../prototipe/Home.png`
 2.  **Halaman Katalog Produk**: 
     *   *Spesifikasi Layout*: Grid responsif (3 kolom pada desktop, 1 kolom pada mobile) yang menampilkan daftar dagangan lokal.
     *   *Komponen & Widget*: Kartu produk yang memuat foto produk (rasio 1:1), judul, nama penjual, harga dalam Rupiah, rating bintang (1-5), tombol "Beli Sekarang", dan tombol "+ Keranjang". Di sudut kanan bawah terdapat Tombol Melayang Keranjang (*Floating Cart Button*) dengan lencana angka dinamis penunjuk jumlah barang belanjaan. Mengklik tombol ini memicu laci keranjang belanja (*shopping cart drawer*) bergeser keluar dari tepi kanan layar.
-    *   *Mockup File*: `LENTERA/Catalog.png`
+    *   *Mockup File*: `../prototipe/Catalog.png`
 3.  **Halaman Peta Spasial (Location)**:
     *   *Spesifikasi Layout*: Tampilan layar penuh (*full-screen canvas map*) terintegrasi Leaflet.js yang menyajikan sebaran titik destinasi desa.
     *   *Komponen & Widget*: Panel checkbox filter melayang di sudut kiri atas untuk menyaring jenis marker: [x] Agrowisata Perkebunan (Marker Hijau), [x] Sentra UMKM (Marker Kuning), [x] Kuliner Lokal (Marker Jingga), [x] Pos Kedaruratan & Fasum (Marker Merah). Di sudut kanan bawah terdapat Tombol Melayang Kontak Darurat (*Emergency SOS FAB*) berwarna merah terang. Mengetuk marker membuka popup geospasial yang berisi foto destinasi, nama lokasi, dan tombol info.
-    *   *Mockup File*: `LENTERA/Location.png`
+    *   *Mockup File*: `../prototipe/Location.png`
 4.  **Halaman Sistem Navigasi (Navigation)**:
     *   *Spesifikasi Layout*: Rendering rute jalan dan navigasi rujukan langsung di atas peta interaktif.
     *   *Komponen & Widget*: Informasi jarak aktual dalam meter/kilometer dari posisi GPS wisatawan ke titik destinasi, penggambaran rute garis jalan dari Leaflet Routing Machine, dan tombol "Hubungi WhatsApp" untuk kontak darurat.
-    *   *Mockup File*: `LENTERA/Navigation.png`
+    *   *Mockup File*: `../prototipe/Navigation.png`
 5.  **Halaman Detail Produk**:
     *   *Spesifikasi Layout*: Pembagian dua kolom simetris pada desktop (kiri: penampil galeri gambar komoditas; kanan: informasi spesifikasi & pembelian).
     *   *Komponen & Widget*: Label harga tebal, deskripsi detail produk komoditas jeruk/kopi, penunjuk sisa stok, panel kuantitas belanja (`-` [ Input Jumlah ] `+`), tombol CTA primer "Pesan Sekarang via WhatsApp", dan tab bagian bawah untuk ulasan wisatawan yang memuat rating rata-rata, ulasan teks tertulis, serta lampiran foto dari pembeli sebelumnya.
-    *   *Mockup File*: `LENTERA/Product-Detail.png`
+    *   *Mockup File*: `../prototipe/Product-Detail.png`
 6.  **Halaman Formulir Checkout**:
     *   *Spesifikasi Layout*: Kolom entri formulir di sebelah kiri dan ringkasan keranjang belanja (*order summary card*) di sebelah kanan pada desktop.
     *   *Komponen & Widget*: Field wajib (Nama Pemesan, Alamat Lengkap Pengiriman, Nomor WhatsApp Aktif dengan kode placeholder `08...`, dan kolom catatan). Ringkasan belanja memuat total sub-total barang, estimasi biaya logistik, dan total tagihan. Di bagian bawah terdapat tombol besar "Kirim Invoice ke WhatsApp Penjual".
-    *   *Mockup File*: `LENTERA/Checkout.png`
+    *   *Mockup File*: `../prototipe/Checkout.png`
 7.  **Portal Sponsorship**:
     *   *Spesifikasi Layout*: Header portal menampilkan visualisasi garis kemajuan (*progress bar*) real-time dari total penggalangan dana sponsorship desa wisata yang telah disetujui, berdampingan dengan bagan lingkaran (*Pie Chart*) kontribusi sektor investasi.
     *   *Komponen & Widget*: Formulir input investor (Nama Perusahaan/Investor, Kontak WhatsApp, Nominal Rencana Investasi, Deskripsi Program Kerja Sama, dan Drag-and-Drop file uploader untuk berkas proposal PDF kemitraan dengan batas file 5 MB). Di bagian bawah terdapat tabel daftar investor yang berpartisipasi (nama samaran/anonim diperbolehkan).
-    *   *Mockup File*: `LENTERA/Sponsor.png`
+    *   *Mockup File*: `../prototipe/Sponsor.png`
 8.  **Halaman Edukasi Agrowisata (Education)**:
     *   *Spesifikasi Layout*: Carousel materi edukasi utama di bagian atas, diikuti dengan grid modul/katalog edukasi interaktif, section **Paket Wisata & Edukasi Unggulan** yang menampilkan paket penawaran, serta section Sorotan Edukasi.
     *   *Komponen & Widget*: Carousel slide informasi, kartu modul literasi kopi/tani (dengan popup pembaca materi HTML), kartu paket wisata (seperti "Live in Desa Kucur" dan "Tani Cilik") yang mengambil data dinamis dari penyimpanan lokal, serta tombol booking "Hubungi Admin" yang secara otomatis mengalihkan pengguna ke WhatsApp admin dengan pesan reservasi terformat otomatis.
-    *   *Mockup File*: `LENTERA/Education.png`
+    *   *Mockup File*: `../prototipe/Education.png`
 9.  **Halaman E-Resource & Testimoni (E-resource)**:
     *   *Spesifikasi Layout*: Kolom atas menyajikan senarai ulasan wisatawan ter-moderasi, sedangkan bagian bawah menyajikan form pengisian ulasan publik.
     *   *Komponen & Widget*: Form ulasan terdiri dari pilihan bintang 1 s/d 5 yang responsif saat disentuh kursor, area ketik bebas ulasan, dropzone pengunggahan foto liburan (maks. 5 MB), dan tombol "Kirim Ulasan" (status default tersembunyi hingga disetujui admin).
-    *   *Mockup File*: `LENTERA/E-resource.png`
+    *   *Mockup File*: `../prototipe/E-resource.png`
 10. **Halaman Profil Pengguna**:
     *   *Spesifikasi Layout*: Modul profil dan riwayat belanja pengguna/wisatawan di sebelah kanan, dengan kolom data profil di sebelah kiri.
     *   *Komponen & Widget*: Tombol edit profil, riwayat invoice pemesanan, status pengiriman produk, dan tombol cetak bukti pesanan.
-    *   *Mockup File*: `LENTERA/Profile.png`
+    *   *Mockup File*: `../prototipe/Profile.png`
 11. **Layar Login Dasbor**:
     *   *Spesifikasi Layout*: Kartu masuk terpusat simetris (*Centered Card Layout*) di tengah layar browser desktop maupun mobile dengan latar belakang visual bernuansa hijau pudar.
     *   *Komponen & Widget*: Input teks "Username", input password dengan ikon toggle berbentuk mata untuk melihat password, tombol masuk "Login", serta Alert Box notifikasi galat jika kredensial salah atau token JWT kedaluwarsa.
-    *   *Mockup File*: `LENTERA/Login.png`
+    *   *Mockup File*: `../prototipe/Login.png`
 12. **Dasbor Perangkat Desa - Ringkasan**:
     *   *Spesifikasi Layout*: Menu navigasi samping (sidebar) aktif pada tab Dashboard, dengan panel visualisasi ringkasan kinerja global di bagian kanan.
     *   *Komponen & Widget*: 4 buah kartu widget KPI (SDA Kategori, UMKM Pelaku Aktif, Transaksi Masuk Hari Ini, Sponsor Pending), grafik garis tren sumber daya, dan status approval ringkas.
-    *   *Mockup File*: `LENTERA/DashboardPerangkatDesa_index.png`
+    *   *Mockup File*: `../prototipe/DashboardPerangkatDesa_index.png`
 13. **Dasbor Perangkat Desa - Kelola E-Resource**:
     *   *Spesifikasi Layout*: Panel CMS untuk mengunggah artikel edukasi, buletin desa, dan melihat ulasan.
     *   *Komponen & Widget*: Form tambah informasi desa (Judul, Tipe Media URL/PDF/Text/Foto, status Aktif/Nonaktif), list daftar E-Resource terdata dengan fitur pencarian, dan area pratinjau (*preview panel*) isi postingan.
-    *   *Mockup File*: `LENTERA/DashboardPerangkatDesa_EResource.png`
+    *   *Mockup File*: `../prototipe/DashboardPerangkatDesa_EResource.png`
 13.B **Dasbor Perangkat Desa - Kelola Edukasi**:
     *   *Spesifikasi Layout*: Panel CMS untuk pengelolaan modul pembelajaran dan paket wisata unggulan.
     *   *Komponen & Widget*: Formulir input modul edukasi (Slug, Judul, Kategori, Meta teks, Material icon, tautan gambar, deskripsi, dan isi artikel HTML) serta formulir input paket wisata (Judul, Tag kategori, Harga, Satuan, tautan gambar, nomor telepon admin, list fitur, dan deskripsi). Menyajikan tabel daftar modul dan paket terdata beserta aksi Edit dan Hapus.
-    *   *Mockup File*: `LENTERA/DashboardPerangkatDesa_Education.png`
+    *   *Mockup File*: `../prototipe/DashboardPerangkatDesa_Education.png`
 14. **Dasbor Perangkat Desa - Setting Akun**:
     *   *Spesifikasi Layout*: Antarmuka pembuatan dan pengelolaan akun pelaksana operasional sistem.
     *   *Komponen & Widget*: Form registrasi akun admin (Nama, Email, Pilihan Role Admin Desa/Karang Taruna, Status), serta tabel/list detail seluruh akun admin aktif beserta opsi edit/nonaktifkan.
-    *   *Mockup File*: `LENTERA/DashboardPerangkatDesa_Accounts.png`
+    *   *Mockup File*: `../prototipe/DashboardPerangkatDesa_Accounts.png`
 15. **Dasbor Perangkat Desa - Approval Sponsorship**:
     *   *Spesifikasi Layout*: Panel monitoring proposal pendanaan dan persetujuan kemitraan B2B.
     *   *Komponen & Widget*: List permohonan sponsor masuk dengan tombol aksi verifikasi status (Approved/Rejected), penayang file PDF proposal kemitraan, serta widget rekapitulasi jumlah nominal donasi berdasarkan status.
-    *   *Mockup File*: `LENTERA/DashboardPerangkatDesa_Sponsor.png`
+    *   *Mockup File*: `../prototipe/DashboardPerangkatDesa_Sponsor.png`
 16. **Dasbor Perangkat Desa - Pengaturan Desa**:
     *   *Spesifikasi Layout*: Tab konfigurasi kontrol sistem dan penetapan penanggung jawab operasional desa.
     *   *Komponen & Widget*: Dropdown penetapan Admin Karang Taruna aktif, tombol manual sinkronisasi data local demo, dan tombol reset storage untuk pembersihan database demo.
-    *   *Mockup File*: `LENTERA/DashboardPerangkatDesa_Settings.png`
+    *   *Mockup File*: `../prototipe/DashboardPerangkatDesa_Settings.png`
 17. **Dasbor Mitra UMKM - Ringkasan**:
     *   *Spesifikasi Layout*: Tampilan ikhtisar toko online yang memuat status pesanan baru dan KPI total nominal transaksi bulanan.
     *   *Komponen & Widget*: Widget saldo aktif, kartu KPI Pesanan Baru, Total Produk, dan total Penjualan Bulan Ini.
-    *   *Mockup File*: `LENTERA/DashboardUMKM_Ringkasan.png`
+    *   *Mockup File*: `../prototipe/DashboardUMKM_Ringkasan.png`
 18. **Dasbor Mitra UMKM - Produk Saya**:
     *   *Spesifikasi Layout*: Kolom sebelah kiri untuk modul penambahan produk baru, dan kolom sebelah kanan untuk tabel daftar produk terdaftar.
     *   *Komponen & Widget*: Form input produk (Nama, Harga, Stok, Deskripsi, Uploader Foto Gambar Produk max 2MB), list etalase toko, tombol Edit, dan tombol Delete.
-    *   *Mockup File*: `LENTERA/DashboardUMKM_Produk.png`
+    *   *Mockup File*: `../prototipe/DashboardUMKM_Produk.png`
 19. **Dasbor Mitra UMKM - Pesanan Masuk**:
     *   *Spesifikasi Layout*: Tabel pengelolaan daftar pesanan masuk dari pelanggan untuk ditindaklanjuti.
     *   *Komponen & Widget*: Detail list pesanan masuk (ID Pesanan, nama pembeli, total harga belanja, nomor WhatsApp), indikator status pengiriman, dan tombol konfirmasi pengiriman resi.
-    *   *Mockup File*: `LENTERA/DashboardUMKM_Pesanan.png`
+    *   *Mockup File*: `../prototipe/DashboardUMKM_Pesanan.png`
 20. **Dasbor Mitra UMKM - Penarikan Dana**:
     *   *Spesifikasi Layout*: Kolom sebelah kiri untuk form pengajuan penarikan dana berjalan, dan kolom sebelah kanan untuk riwayat log penarikan dana.
     *   *Komponen & Widget*: Widget saldo dapat ditarik, form nominal penarikan dana (minimal Rp 50.000), pilihan dropdown rekening tujuan, riwayat mutasi status penarikan dana (Selesai/Pending/Ditolak).
-    *   *Mockup File*: `LENTERA/DashboardUMKM_Penarikan.png`
+    *   *Mockup File*: `../prototipe/DashboardUMKM_Penarikan.png`
 21. **Dasbor Mitra UMKM - Profil Toko**:
     *   *Spesifikasi Layout*: Panel konfigurasi informasi detail toko dan info bank.
     *   *Komponen & Widget*: Kolom deskripsi toko, upload logo toko, input bank penerima, nama pemilik, dan tombol simpan profil.
-    *   *Mockup File*: `LENTERA/DashboardUMKM_Profil.png`
+    *   *Mockup File*: `../prototipe/DashboardUMKM_Profil.png`
 
 #### 5.1.4 Antarmuka Baris Perintah (Command-Line Usage)
 Meskipun pengguna akhir sistem (wisatawan, pedagang UMKM, aparatur desa) tidak berinteraksi menggunakan baris perintah karena sistem diakses melalui GUI peramban web, tim pengembang (*developers*) dan administrator jaringan menggunakan antarmuka baris perintah (CLI) untuk daur hidup operasional peladen berikut:
@@ -713,7 +713,7 @@ Meskipun pengguna akhir sistem (wisatawan, pedagang UMKM, aparatur desa) tidak b
 Sistem LENTERA tidak memerlukan rancangan perangkat keras khusus (*custom hardware layout*), melainkan berinteraksi secara standar dengan perangkat keras bawaan gawai pengguna dan server melalui perantara sistem operasi dan mesin peramban web:
 
 1.  **Sensor Penerima Geolokasi (GPS - Global Positioning System)**:
-    *   Modul navigasi rute ([REQ-NAV](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/SRS_SDD_LENTERA.md#L358)) dan visualisasi pin peta spasial ([REQ-LOC](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/SRS_SDD_LENTERA.md#L338)) memanfaatkan data koordinat bujur dan lintang (*latitude & longitude*) yang dipancarkan oleh modul penerima GPS fisik dari gawai pintar wisatawan.
+    *   Modul navigasi rute ([REQ-NAV](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/spesifikasi/SRS_SDD_LENTERA.md#L358)) dan visualisasi pin peta spasial ([REQ-LOC](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/spesifikasi/SRS_SDD_LENTERA.md#L338)) memanfaatkan data koordinat bujur dan lintang (*latitude & longitude*) yang dipancarkan oleh modul penerima GPS fisik dari gawai pintar wisatawan.
     *   *Akses Perangkat Keras*: Sistem mengakses sensor GPS melalui antarmuka standardisasi *W3C Geolocation API* yang didukung peramban.
     *   *Batasan & Syarat Akurasi*: Sistem mensyaratkan toleransi akurasi pembacaan GPS horizontal di bawah radius **15 meter** (akurasi optimal < 5 meter). Apabila tingkat akurasi di atas batasan tersebut (akibat sinyal terhalang rimbun pohon kopi/jeruk Desa Kucur), sistem akan menampilkan pesan konfirmasi pop-up yang menyarankan wisatawan untuk mengaktifkan opsi "Lokasi Akurasi Tinggi" pada pengaturan GPS gawai mereka.
 2.  **Layar Sentuh & Tampilan Layar (Display Canvas & Screen Resolution)**:
@@ -739,7 +739,7 @@ Sistem LENTERA menjalin integrasi terstruktur dengan berbagai perangkat lunak si
     *   *Jembatan Integrasi*: Logika backend berinteraksi dengan tabel database menggunakan pustaka ORM seperti Prisma ORM, Sequelize (pada runtime Node.js), atau Eloquent (pada runtime PHP). ORM bertindak sebagai lapis abstraksi penanganan kueri SQL. Seluruh manipulasi database relasional dilangsungkan melalui kueri terparameterisasi (*prepared statements*) bawaan ORM guna menutup celah kerentanan injeksi SQL (*SQL Injection*).
 3.  **API Pihak Ketiga & Protokol Tautan (Third-Party APIs & Connectors)**:
     *   *Mapping Service (Leaflet.js API)*: Pustaka Leaflet.js (v1.7.0+) digunakan untuk memuat aset tiles gambar peta dari server OpenStreetMap (OSM). Data penanda koordinat spasial dipertukarkan dalam format file terstruktur **GeoJSON** yang memuat spesifikasi koordinat spasial `POINT` lintang-bujur dan deskripsi pop-up visual.
-    *   *WhatsApp Click-to-Chat Link Protocol*: Logika penyelesaian belanja katalog ([REQ-CAT](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/SRS_SDD_LENTERA.md#L251)) dan tombol pertolongan darurat ([REQ-NAV](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/SRS_SDD_LENTERA.md#L358)) berinteraksi dengan aplikasi WhatsApp Web/Mobile menggunakan URL tautan skema `https://wa.me/` diikuti nomor tujuan dalam format internasional (contoh: `628123456789`) dan diakhiri dengan parameter query string `?text=` yang membawa pesan string ter-url-encode.
+    *   *WhatsApp Click-to-Chat Link Protocol*: Logika penyelesaian belanja katalog ([REQ-CAT](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/spesifikasi/SRS_SDD_LENTERA.md#L251)) dan tombol pertolongan darurat ([REQ-NAV](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/spesifikasi/SRS_SDD_LENTERA.md#L358)) berinteraksi dengan aplikasi WhatsApp Web/Mobile menggunakan URL tautan skema `https://wa.me/` diikuti nomor tujuan dalam format internasional (contoh: `628123456789`) dan diakhiri dengan parameter query string `?text=` yang membawa pesan string ter-url-encode.
     *   *Object Storage Interface*: Pengunggahan berkas media ulasan wisatawan dan PDF proposal sponsorship (maks. 5 MB) berkomunikasi dengan sistem penyimpanan berbasis AWS S3 SDK (untuk penyimpanan awan) atau menggunakan antarmuka manipulasi berkas bawaan OS (seperti modul `fs` pada Node.js atau file-uploader runtime PHP) dengan penegakan izin berkas (*file permissions*) bernilai `0755` untuk direktori penyimpanan dan `0644` untuk file biner gambar/PDF guna mencegah eksekusi skrip ilegal di server.
 4.  **Standar Pertukaran Data JSON (JSON Exchange Format & Standards)**:
     *   *Konvensi Penulisan*: Seluruh kunci atribut JSON (*JSON keys*) yang dikirimkan antara frontend dan API backend wajib menggunakan penulisan huruf camelCase (contoh: `productId`, `withdrawalAmount`, `investorEmail`).
@@ -810,7 +810,7 @@ Sistem LENTERA dikembangkan dengan komitmen kepatuhan penuh terhadap standar huk
 4.  **WCAG 2.1 Level AA (Web Content Accessibility Guidelines)**: Menjamin agar antarmuka web LENTERA dapat diakses dengan mudah oleh para aparatur desa yang berusia lanjut (lansia) serta wisatawan dengan keterbatasan fisik minor.
 
 #### 6.1.2 Metode Penjaminan Kepatuhan (Assuring Compliance)
-*   **Persetujuan Pengguna Konkrit (Explicit Consent)**: Formulir pengiriman ulasan wisatawan ([E-resource.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/LENTERA/E-resource.html)) dan formulir registrasi sponsorship ([Sponsor.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/LENTERA/Sponsor.html)) wajib menyertakan kotak centang (*explicit consent checkbox*) yang tidak tercentang secara default. Pengguna harus mencentang kotak tersebut untuk menyetujui bahwa data mereka akan disimpan demi kelancaran administrasi sesuai kebijakan privasi (*Privacy Policy*).
+*   **Persetujuan Pengguna Konkrit (Explicit Consent)**: Formulir pengiriman ulasan wisatawan ([E-resource.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/prototipe/E-resource.html)) dan formulir registrasi sponsorship ([Sponsor.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/prototipe/Sponsor.html)) wajib menyertakan kotak centang (*explicit consent checkbox*) yang tidak tercentang secara default. Pengguna harus mencentang kotak tersebut untuk menyetujui bahwa data mereka akan disimpan demi kelancaran administrasi sesuai kebijakan privasi (*Privacy Policy*).
 *   **Enkripsi Data Sensitif**: Seluruh informasi sensitif seperti nomor WhatsApp dan alamat surat elektronik (email) wajib disimpan dalam kondisi terenkripsi di basis data menggunakan standar enkripsi simetris AES-256 di sisi server. Data tersebut dienkripsi saat transit menggunakan protokol HTTPS TLS v1.2/v1.3.
 *   **Implementasi Hak Dihapus (Soft-Delete Audit)**: Hak pengguna untuk menghapus datanya diakomodasi menggunakan penegakan logika *Soft-Delete*. Ketika admin atau penjual memilih menghapus katalog atau akun, stempel waktu `deleted_at` terisi, dan sistem secara otomatis menyaring data tersebut dari kueri halaman publik. Data fisik di dalam database hanya akan dimusnahkan secara permanen setelah melewati batas masa retensi yang ditetapkan hukum.
 *   **Audit Logging**: Setiap aktivitas administratif yang menyangkut modifikasi data sensitif (misalnya persetujuan pembayaran penarikan dana, moderasi ulasan, dan penolakan proposal) dicatat secara otomatis ke dalam tabel database audit log (`Audit_Logs`) yang memuat data pengenal pelaku tindakan (*Actor ID*), jenis aksi, stempel waktu, dan detail perubahan data.
@@ -1016,10 +1016,10 @@ Matriks berikut memetakan setiap kode kebutuhan fungsional dan non-fungsional ke
 
 | Kode Persyaratan | Nama Modul / Fitur | Metode Verifikasi | Prosedur Verifikasi | Parameter Keberhasilan |
 | :--- | :--- | :---: | :--- | :--- |
-| **REQ-CAT** | Katalog UMKM & Keranjang Belanja | **T, D** | 1. Membuka halaman [Home.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/LENTERA/Home.html) dan menambahkan 3 produk ke keranjang.<br>2. Melakukan checkout dan memeriksa pesan struk belanja.<br>3. Mengklik checkout untuk dialihkan ke WhatsApp. | 1. Item di keranjang tersimpan di session storage.<br>2. Kalkulasi sub-total belanja akurat.<br>3. URL pengalihan terkompresi url-encode menuju nomor WhatsApp penjual yang benar. |
+| **REQ-CAT** | Katalog UMKM & Keranjang Belanja | **T, D** | 1. Membuka halaman [Home.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/prototipe/Home.html) dan menambahkan 3 produk ke keranjang.<br>2. Melakukan checkout dan memeriksa pesan struk belanja.<br>3. Mengklik checkout untuk dialihkan ke WhatsApp. | 1. Item di keranjang tersimpan di session storage.<br>2. Kalkulasi sub-total belanja akurat.<br>3. URL pengalihan terkompresi url-encode menuju nomor WhatsApp penjual yang benar. |
 | **REQ-RES** | CMS Artikel & Testimoni Wisatawan | **T, I** | 1. Memasukkan teks komentar berisi tag `<script>` ke form ulasan.<br>2. Mengunggah gambar berukuran 6 MB pada form testimoni.<br>3. Memeriksa basis data status visibilitas ulasan baru. | 1. Script berbahaya disanitasi total (mencegah XSS).<br>2. Unggahan file 6 MB ditolak dengan respon HTTP 413.<br>3. Rekaman ulasan baru terdeteksi dengan status awal `is_hidden = 1` (menunggu moderasi). |
-| **REQ-AUTH** | Otentikasi Login & Otorisasi RBAC | **T, A** | 1. Memasukkan kredensial login salah pada [Login.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/LENTERA/Login.html).<br>2. Login sukses dan mencoba mengakses rute admin `/api/desa` menggunakan token penjual.<br>3. Membiarkan dasbor tidak aktif selama 125 menit. | 1. Login salah diblokir dengan respon HTTP 401 Unauthorized.<br>2. Bypass rute diblokir dengan respon HTTP 403 Forbidden.<br>3. Token JWT hangus otomatis setelah 120 menit tidak aktif. |
-| **REQ-SPO** | Registrasi & Progress Sponsorship | **D, I** | 1. Memasukkan data proposal sponsor pada [Sponsor.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/LENTERA/Sponsor.html) beserta lampiran berkas PDF.<br>2. Admin melakukan verifikasi awal dan Kades menyetujui.<br>3. Memeriksa progress bar pendanaan. | 1. Berkas proposal PDF terekam di server.<br>2. Status proposal di DB berubah menjadi `APPROVED`.<br>3. Progress bar visual meningkat secara akurat sesuai perhitungan total dana. |
+| **REQ-AUTH** | Otentikasi Login & Otorisasi RBAC | **T, A** | 1. Memasukkan kredensial login salah pada [Login.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/prototipe/Login.html).<br>2. Login sukses dan mencoba mengakses rute admin `/api/desa` menggunakan token penjual.<br>3. Membiarkan dasbor tidak aktif selama 125 menit. | 1. Login salah diblokir dengan respon HTTP 401 Unauthorized.<br>2. Bypass rute diblokir dengan respon HTTP 403 Forbidden.<br>3. Token JWT hangus otomatis setelah 120 menit tidak aktif. |
+| **REQ-SPO** | Registrasi & Progress Sponsorship | **D, I** | 1. Memasukkan data proposal sponsor pada [Sponsor.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/prototipe/Sponsor.html) beserta lampiran berkas PDF.<br>2. Admin melakukan verifikasi awal dan Kades menyetujui.<br>3. Memeriksa progress bar pendanaan. | 1. Berkas proposal PDF terekam di server.<br>2. Status proposal di DB berubah menjadi `APPROVED`.<br>3. Progress bar visual meningkat secara akurat sesuai perhitungan total dana. |
 | **REQ-LOC** | Pemetaan Spasial Tempat Wisata | **T, D** | 1. Mengklik penanda checkbox filter kategori peta.<br>2. Menambahkan titik koordinat desimal baru di form admin.<br>3. Mengklik pin marker yang ter-render di peta Leaflet. | 1. Pin peta memfilter lokasi dinamis di bawah 500ms.<br>2. Koordinat tersimpan di tipe data spasial `POINT` database.<br>3. Info popup ter-render memuat nama tempat dan tautan CRUD yang tepat. |
 | **REQ-NAV** | Jarak Navigasi & SOS Darurat | **A, T** | 1. Membandingkan perhitungan jarak spasial sistem dengan alat ukur standar.<br>2. Menolak izin akses lokasi browser dan memuat peta.<br>3. Mengetuk tombol SOS melayang merah. | 1. Akurasi perhitungan rumus Haversine memiliki margin error < 5 meter.<br>2. Peta memuat koordinat fallback pusat desa wisata.<br>3. Dialihkan ke WhatsApp darurat berisi draf data GPS terakhir. |
 | **REQ-FIN** | Manajemen Keuangan & Withdrawal | **T, A** | 1. Mengajukan penarikan Rp 40.000 pada akun penjual.<br>2. Mengetuk tombol tarik saldo nominal Rp 60.000 secara berturut-turut (simultan).<br>3. Kades melakukan approval dengan mengunggah bukti struk. | 1. Pengajuan ditolak sistem karena di bawah batas minimum Rp 50.000.<br>2. Database locks (`SELECT FOR UPDATE`) berhasil membatalkan double-spend.<br>3. Tiket sukses terbuat dan saldo berkurang pasca-approval. |
@@ -1221,13 +1221,13 @@ Matriks penelusuran silang (*Traceability Matrix*) memetakan hubungan antara set
 
 | Kode Kebutuhan (SRS) | Modul Fungsional | Antarmuka Klien (Front-End) | Komponen Logika Bisnis (Back-End) | Skema Tabel Basis Data (Data Tier) | Metode Verifikasi (Bab 7.1) | Kriteria Penerimaan (Bab 7.2) |
 | :--- | :--- | :--- | :--- | :--- | :---: | :--- |
-| **REQ-CAT-01 s/d 04** | Katalog Produk & Cart | [Home.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/LENTERA/Home.html), [Checkout.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/LENTERA/Checkout.html), [Product-Detail.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/LENTERA/Product-Detail.html) | Komponen A1 (Katalog Etalase & Cart Controller) | `Products`, `Users` | **T, D** | Halaman responsif, Session storage persisten, invoice ter-encode dikirim sukses ke nomor WhatsApp penjual. |
-| **REQ-RES-01 s/d 03** | CMS Berita & Testimoni | [Education.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/LENTERA/Education.html), [E-resource.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/LENTERA/E-resource.html) | Komponen A3 (Buletin CMS, XSS Sanitizer Middleware) | `E_Resources` | **T, I** | HTML Sanitization aktif menghapus skrip tag, unggahan foto ulasan > 5 MB diblokir, status awal ulasan `is_hidden = 1`. |
-| **REQ-AUTH-01 s/d 03**| Otentikasi & Otorisasi | [Login.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/LENTERA/Login.html), Dasbor Sidebars | Komponen B1 (Middleware Auth Security, JWT Generator) | `Users` | **T, A** | Sandi terenkripsi Bcrypt, token JWT kedaluwarsa 120 menit, endpoint admin mengembalikan HTTP 401/403 untuk bypass role. |
-| **REQ-SPO-01 s/d 03** | Proposal Sponsorship | [Sponsor.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/LENTERA/Sponsor.html), Dasbor Approval | Komponen B3 (Sponsorship Manager, PDF Uploader) | `Sponsorships`, `Users` | **D, I** | Verifikasi upload proposal PDF, perubahan status di database hanya oleh Kades, visual progress bar terbarui otomatis. |
-| **REQ-LOC-01 s/d 03** | Pemetaan Spasial Tempat | [Location.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/LENTERA/Location.html), Dasbor Admin | Komponen A2 (Peta Leaflet, Spasial Query) | `Locations`, `Products` | **T, D** | Query peta < 500ms, data koordinat berformat `POINT`, filter marker warna dinamis bekerja tanpa refresh layar. |
-| **REQ-NAV-01 s/d 02** | Navigasi GPS & SOS | [Navigation.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/LENTERA/Navigation.html), Tombol SOS melayang | Komponen A2 (GPS API, Haversine Calculator) | `Locations` | **A, T** | Margin error jarak rute Haversine < 5 meter, fallback peta memuat pusat desa jika izin GPS ditolak, rute render sukses. |
-| **REQ-FIN-01 s/d 03** | Manajemen Saldo & Withdrawal | [DashboardUMKM.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/LENTERA/DashboardUMKM.html), Dasbor Approval | Komponen B3 (Withdrawal ACID Engine, SELECT FOR UPDATE) | `Withdrawals`, `Users` | **T, A** | Penarikan dana minimal Rp 50.000, saldo tidak boleh menjadi minus (< Rp 0), row locks database mencegah double-spend. |
+| **REQ-CAT-01 s/d 04** | Katalog Produk & Cart | [Home.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/prototipe/Home.html), [Checkout.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/prototipe/Checkout.html), [Product-Detail.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/prototipe/Product-Detail.html) | Komponen A1 (Katalog Etalase & Cart Controller) | `Products`, `Users` | **T, D** | Halaman responsif, Session storage persisten, invoice ter-encode dikirim sukses ke nomor WhatsApp penjual. |
+| **REQ-RES-01 s/d 03** | CMS Berita & Testimoni | [Education.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/prototipe/Education.html), [E-resource.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/prototipe/E-resource.html) | Komponen A3 (Buletin CMS, XSS Sanitizer Middleware) | `E_Resources` | **T, I** | HTML Sanitization aktif menghapus skrip tag, unggahan foto ulasan > 5 MB diblokir, status awal ulasan `is_hidden = 1`. |
+| **REQ-AUTH-01 s/d 03**| Otentikasi & Otorisasi | [Login.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/prototipe/Login.html), Dasbor Sidebars | Komponen B1 (Middleware Auth Security, JWT Generator) | `Users` | **T, A** | Sandi terenkripsi Bcrypt, token JWT kedaluwarsa 120 menit, endpoint admin mengembalikan HTTP 401/403 untuk bypass role. |
+| **REQ-SPO-01 s/d 03** | Proposal Sponsorship | [Sponsor.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/prototipe/Sponsor.html), Dasbor Approval | Komponen B3 (Sponsorship Manager, PDF Uploader) | `Sponsorships`, `Users` | **D, I** | Verifikasi upload proposal PDF, perubahan status di database hanya oleh Kades, visual progress bar terbarui otomatis. |
+| **REQ-LOC-01 s/d 03** | Pemetaan Spasial Tempat | [Location.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/prototipe/Location.html), Dasbor Admin | Komponen A2 (Peta Leaflet, Spasial Query) | `Locations`, `Products` | **T, D** | Query peta < 500ms, data koordinat berformat `POINT`, filter marker warna dinamis bekerja tanpa refresh layar. |
+| **REQ-NAV-01 s/d 02** | Navigasi GPS & SOS | [Navigation.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/prototipe/Navigation.html), Tombol SOS melayang | Komponen A2 (GPS API, Haversine Calculator) | `Locations` | **A, T** | Margin error jarak rute Haversine < 5 meter, fallback peta memuat pusat desa jika izin GPS ditolak, rute render sukses. |
+| **REQ-FIN-01 s/d 03** | Manajemen Saldo & Withdrawal | [DashboardUMKM.html](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/prototipe/DashboardUMKM.html), Dasbor Approval | Komponen B3 (Withdrawal ACID Engine, SELECT FOR UPDATE) | `Withdrawals`, `Users` | **T, A** | Penarikan dana minimal Rp 50.000, saldo tidak boleh menjadi minus (< Rp 0), row locks database mencegah double-spend. |
 
 ---
 

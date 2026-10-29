@@ -1,5 +1,5 @@
 # DRAFT ARTIKEL JURNAL SMARTICS (WEB-GIS & HARVEST FORECASTING VERSION)
-**TEMPLATE REFERENCED:** [Smartics Template 2024.docx](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/Smartics%20Template%202024.docx)  
+**TEMPLATE REFERENCED:** [Smartics Template 2024.docx](file:///d:/Perkuliahan/KEPENTINGAN%20PKL/lentera/docs/template/Smartics%20Template%202024.docx)  
 **FIRST AUTHOR:** Alan Assidiqqi Pratama (NIM: 322310022)  
 
 ---

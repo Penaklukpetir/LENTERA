@@ -13,8 +13,8 @@ const __dirname = path.dirname(__filename);
 
 // Gambar sample yang ada di project
 const SAMPLE_IMAGES = [
-    { label: 'DAUN SEHAT',    file: path.join(__dirname, '..', 'healthy_coffee_leaf.jpg') },
-    { label: 'DAUN KARAT',    file: path.join(__dirname, '..', 'rust_infected_coffee_leaf.jpg') },
+    { label: 'DAUN SEHAT',    file: path.join(__dirname, '..', 'ml', 'sample_images', 'healthy_coffee_leaf.jpg') },
+    { label: 'DAUN KARAT',    file: path.join(__dirname, '..', 'ml', 'sample_images', 'rust_infected_coffee_leaf.jpg') },
 ];
 
 console.log('\n' + '='.repeat(90));
