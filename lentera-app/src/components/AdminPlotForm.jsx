@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { fetchElevation } from '../lib/elevation';
 
 export default function AdminPlotForm({
   newPlotCoords,
@@ -25,11 +26,55 @@ export default function AdminPlotForm({
   const [pasteInput, setPasteInput] = useState('');
   const [parseNotice, setParseNotice] = useState('');
   const [manualFarmer, setManualFarmer] = useState(false);
+  const [elevationStatus, setElevationStatus] = useState('idle');
+  const elevationEditRef = useRef(0);
 
   // Reset the farmer picker back to "choose from registry" each time the form is closed
   useEffect(() => {
     if (!showAddForm) setManualFarmer(false);
   }, [showAddForm]);
+
+  // Fill elevation from the map coordinates whenever the pin is clicked, dragged, or typed
+  useEffect(() => {
+    if (!showAddForm) return;
+
+    const lat = Number(newPlotCoords?.lat);
+    const lng = Number(newPlotCoords?.lng);
+    const coordsReady = newPlotCoords
+      && newPlotCoords.lat !== ''
+      && newPlotCoords.lng !== ''
+      && Number.isFinite(lat)
+      && Number.isFinite(lng)
+      && Math.abs(lat) <= 90
+      && Math.abs(lng) <= 180;
+
+    if (!coordsReady) {
+      setElevationStatus('idle');
+      return;
+    }
+
+    const controller = new AbortController();
+    const editVersion = elevationEditRef.current;
+    setElevationStatus('loading');
+
+    const timer = setTimeout(async () => {
+      try {
+        const value = await fetchElevation(lat, lng, controller.signal);
+        if (elevationEditRef.current !== editVersion) return;
+        setFormElevation(String(value));
+        setElevationStatus('auto');
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+        if (elevationEditRef.current !== editVersion) return;
+        setElevationStatus('failed');
+      }
+    }, 600);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [showAddForm, newPlotCoords, setFormElevation]);
 
   // Default to Desa Kucur center if no coordinates selected yet
   useEffect(() => {
@@ -80,6 +125,18 @@ export default function AdminPlotForm({
     && !isNaN(Number(newPlotCoords.lat))
     && !isNaN(Number(newPlotCoords.lng));
 
+  const elevationHint = {
+    loading: 'Mendeteksi elevasi dari titik peta…',
+    auto: 'Terisi otomatis dari peta — boleh diubah.',
+    failed: 'Elevasi tidak terdeteksi — isi manual.',
+  }[elevationStatus] || '';
+
+  const elevationHintClass = elevationStatus === 'failed'
+    ? 'text-amber-500'
+    : elevationStatus === 'auto'
+      ? 'text-emerald-500'
+      : 'text-slate-400';
+
   const trimmedFarmer = (formFarmer || '').trim();
   const matchedFarmer = farmerOptions.find(
     (farmer) => (farmer.name || '').trim().toLowerCase() === trimmedFarmer.toLowerCase()
@@ -94,7 +151,7 @@ export default function AdminPlotForm({
           <span className="material-symbols-outlined text-primary text-lg shrink-0">add_location_alt</span>
           <div className="min-w-0">
             <h3 className="text-sm font-extrabold text-slate-900 dark:text-white truncate">Registrasi Plot Kopi Baru</h3>
-            <span className="text-[10px] text-slate-400 font-medium block truncate">Koordinat manual, klik peta, atau geser pin</span>
+            <span className="text-[10px] text-slate-400 font-medium block truncate">Klik peta, geser pin, atau tempel koordinat</span>
           </div>
         </div>
         <button
@@ -331,8 +388,17 @@ export default function AdminPlotForm({
                 min="0"
                 className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl font-semibold text-slate-900 dark:text-white outline-none focus:border-primary box-border"
                 value={formElevation}
-                onChange={(e) => setFormElevation(e.target.value)}
+                onChange={(e) => {
+                  elevationEditRef.current += 1;
+                  setElevationStatus('manual');
+                  setFormElevation(e.target.value);
+                }}
               />
+              {elevationHint && (
+                <span className={`block text-[9px] mt-1 font-semibold ${elevationHintClass}`}>
+                  {elevationHint}
+                </span>
+              )}
             </div>
           </div>
 
