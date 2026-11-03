@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Pagination from './Pagination';
 import { getPredictionRange } from '../lib/mlr';
+import { excelFileName, exportRowsToExcel } from '../lib/excel';
 
 const PAGE_SIZE = 10;
 const CURRENT_YEAR = new Date().getFullYear();
@@ -11,11 +12,12 @@ const formatKg = (value) =>
 const formatPct = (value) =>
   `${Number(value).toLocaleString('id-ID', { maximumFractionDigits: 1 })}%`;
 
-export default function PlotDirectory({ plots = [], accuracy = null, onOpenPlot }) {
+export default function PlotDirectory({ plots = [], accuracy = null, onOpenPlot, canExport = false }) {
   const [search, setSearch] = useState('');
   const [variety, setVariety] = useState('All');
   const [onlyHarvested, setOnlyHarvested] = useState(false);
   const [page, setPage] = useState(1);
+  const [exporting, setExporting] = useState(false);
 
   const harvestByPlot = useMemo(() => {
     const map = new Map();
@@ -81,6 +83,41 @@ export default function PlotDirectory({ plots = [], accuracy = null, onOpenPlot 
 
   const withinTolerance = accuracy?.tolerance_pct ?? 25;
 
+  const handleExport = async () => {
+    if (!canExport || exporting || rows.length === 0) return;
+    setExporting(true);
+    try {
+      await exportRowsToExcel({
+        fileName: excelFileName('daftar-lahan'),
+        sheetName: 'Daftar Lahan',
+        columns: [
+          { header: 'Petani', value: (plot) => plot.farmer_name || '', minWidth: 24 },
+          { header: 'Varietas', value: (plot) => plot.coffee_type || '', minWidth: 12 },
+          { header: 'Status', value: (plot) => plot.status || '', minWidth: 12 },
+          { header: 'Luas (m2)', value: (plot) => Number(plot.land_area || 0) },
+          { header: 'Jumlah Pohon', value: (plot) => Number(plot.tree_count || 0) },
+          { header: 'Elevasi (mdpl)', value: (plot) => Number(plot.elevation || 0) },
+          { header: 'Tahun Tanam', value: (plot) => plot.planting_year || '' },
+          { header: 'Umur (tahun)', value: (plot) => (plot.age === null ? '' : plot.age) },
+          { header: 'Perkiraan (kg)', value: (plot) => Math.round(plot.predictedKg * 10) / 10 },
+          { header: 'Batas Bawah (kg)', value: (plot) => Math.round(plot.rangeLow * 10) / 10 },
+          { header: 'Batas Atas (kg)', value: (plot) => Math.round(plot.rangeHigh * 10) / 10 },
+          { header: 'Panen Riil (kg)', value: (plot) => Math.round(plot.harvestedKg * 10) / 10 },
+          { header: 'Musim Panen', value: (plot) => plot.season || '', minWidth: 12 },
+          { header: 'Selisih (%)', value: (plot) => (plot.errorPct === null ? '' : Math.round(plot.errorPct * 10) / 10) },
+          { header: 'Disesuaikan dari Musim', value: (plot) => plot.calibrationSeasons, minWidth: 18 },
+          { header: 'Rasio Penyesuaian', value: (plot) => Math.round(plot.calibrationRatio * 100) / 100, minWidth: 14 },
+        ],
+        rows,
+      });
+    } catch (err) {
+      console.error('Ekspor daftar lahan gagal:', err);
+      alert('Ekspor gagal. Coba lagi.');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
     <div className="p-4 sm:p-6 space-y-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -91,14 +128,29 @@ export default function PlotDirectory({ plots = [], accuracy = null, onOpenPlot 
             Perkiraan panen musim berikutnya dibandingkan dengan panen musim terakhir; angkanya disesuaikan dari hasil panen musim-musim sebelumnya.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => onOpenPlot?.(null)}
-          className="self-start inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary text-slate-900 text-xs font-extrabold shadow-sm hover:bg-primary/90 transition-all cursor-pointer border-none"
-        >
-          <span className="material-symbols-outlined text-base">map</span>
-          Buka Peta Lahan
-        </button>
+        <div className="flex flex-wrap items-center gap-2 self-start">
+          {canExport && (
+            <button
+              type="button"
+              onClick={handleExport}
+              disabled={exporting || rows.length === 0}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-extrabold hover:border-emerald-500 hover:text-emerald-600 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className={`material-symbols-outlined text-base ${exporting ? 'animate-spin' : ''}`}>
+                {exporting ? 'sync' : 'download'}
+              </span>
+              {exporting ? 'Menyiapkan...' : 'Ekspor Excel'}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => onOpenPlot?.(null)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary text-slate-900 text-xs font-extrabold shadow-sm hover:bg-primary/90 transition-all cursor-pointer border-none"
+          >
+            <span className="material-symbols-outlined text-base">map</span>
+            Buka Peta Lahan
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">

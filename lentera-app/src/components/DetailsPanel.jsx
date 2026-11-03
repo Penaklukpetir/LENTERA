@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { calculateMLRYield, getPredictionRange } from '../lib/mlr';
 import { API_BASE_URL } from '../lib/api';
+import { dateCell, excelFileName, exportRowsToExcel } from '../lib/excel';
 
 export default function DetailsPanel({ 
   selectedPlot, 
@@ -26,6 +27,7 @@ export default function DetailsPanel({
   const [harvestSummary, setHarvestSummary] = useState(null);
   const [mlrHistory, setMlrHistory] = useState([]);
   const [showAddHarvestModal, setShowAddHarvestModal] = useState(false);
+  const [exportingHarvest, setExportingHarvest] = useState(false);
   const [newHarvest, setNewHarvest] = useState({
     weight_kg: '',
     harvest_date: ''
@@ -193,6 +195,30 @@ export default function DetailsPanel({
         console.error('Gagal menghapus plot:', err);
         alert('Koneksi terputus. Plot belum dinonaktifkan.');
       }
+    }
+  };
+
+  // Ekspor riwayat panen lahan ini ke Excel (admin & kades)
+  const handleExportHarvest = async () => {
+    if (!selectedPlot || plotBatches.length === 0 || exportingHarvest) return;
+    setExportingHarvest(true);
+    try {
+      await exportRowsToExcel({
+        fileName: excelFileName(`riwayat-panen-plot-${selectedPlot.id}`),
+        sheetName: 'Riwayat Panen',
+        columns: [
+          { header: 'Kode Batch', value: (batch) => batch.batch_code || '', minWidth: 18 },
+          { header: 'Tanggal Panen', value: (batch) => dateCell(batch.harvest_date), minWidth: 14 },
+          { header: 'Berat (kg)', value: (batch) => Math.round(Number(batch.weight_kg || 0) * 100) / 100 },
+          { header: 'Dicatat Pada', value: (batch) => dateCell(batch.created_at), minWidth: 14 },
+        ],
+        rows: plotBatches,
+      });
+    } catch (err) {
+      console.error('Ekspor riwayat panen gagal:', err);
+      alert('Ekspor gagal. Coba lagi.');
+    } finally {
+      setExportingHarvest(false);
     }
   };
 
@@ -527,24 +553,50 @@ export default function DetailsPanel({
                     </span>
                   </div>
                   {(role === 'admin' || role === 'village') && (
-                    <button
-                      onClick={() => setShowAddHarvestModal(true)}
-                      style={{
-                        background: '#38BDF8',
-                        color: '#0F172A',
-                        border: 'none',
-                        borderRadius: '8px',
-                        padding: '4px 10px',
-                        fontSize: '11px',
-                        fontWeight: 800,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
-                    >
-                      <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>add</span> Catat Panen
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <button
+                        onClick={handleExportHarvest}
+                        disabled={plotBatches.length === 0 || exportingHarvest}
+                        title={plotBatches.length === 0 ? 'Belum ada catatan panen untuk diekspor' : 'Ekspor riwayat panen ke Excel'}
+                        style={{
+                          background: 'rgba(148, 163, 184, 0.15)',
+                          color: '#CBD5E1',
+                          border: '1px solid rgba(148, 163, 184, 0.3)',
+                          borderRadius: '8px',
+                          padding: '4px 8px',
+                          fontSize: '11px',
+                          fontWeight: 800,
+                          cursor: plotBatches.length === 0 || exportingHarvest ? 'not-allowed' : 'pointer',
+                          opacity: plotBatches.length === 0 || exportingHarvest ? 0.55 : 1,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '3px'
+                        }}
+                      >
+                        <span className={`material-symbols-outlined ${exportingHarvest ? 'animate-spin' : ''}`} style={{ fontSize: '14px' }}>
+                          {exportingHarvest ? 'sync' : 'download'}
+                        </span>
+                        Ekspor
+                      </button>
+                      <button
+                        onClick={() => setShowAddHarvestModal(true)}
+                        style={{
+                          background: '#38BDF8',
+                          color: '#0F172A',
+                          border: 'none',
+                          borderRadius: '8px',
+                          padding: '4px 10px',
+                          fontSize: '11px',
+                          fontWeight: 800,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}
+                      >
+                        <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>add</span> Catat Panen
+                      </button>
+                    </div>
                   )}
                 </div>
 

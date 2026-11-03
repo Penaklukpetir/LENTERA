@@ -6,6 +6,7 @@ import Pagination from './Pagination';
 import PlotDirectory from './PlotDirectory';
 import { getPredictionRange } from '../lib/mlr';
 import { API_BASE_URL, resolveServerUrl } from '../lib/api';
+import { excelFileName, exportRowsToExcel, dateCell } from '../lib/excel';
 
 const CoffeeMap = React.lazy(() => import('./CoffeeMap'));
 const Profile = React.lazy(() => import('./Profile'));
@@ -115,6 +116,7 @@ export default function DashboardView({
   const [accuracy, setAccuracy] = useState(null);
   const [accuracyLoading, setAccuracyLoading] = useState(true);
   const [accuracyError, setAccuracyError] = useState('');
+  const [accuracyExporting, setAccuracyExporting] = useState(false);
   const [toastMsg, setToastMsg] = useState(null);
 
   // Free up horizontal space for the registration panel (which docks next to the map)
@@ -168,6 +170,7 @@ export default function DashboardView({
   });
   const [farmersLoading, setFarmersLoading] = useState(true);
   const [farmersError, setFarmersError] = useState('');
+  const [farmerExporting, setFarmerExporting] = useState(false);
   const [farmerOptions, setFarmerOptions] = useState([]);
   const [showFarmerForm, setShowFarmerForm] = useState(false);
   const [editingFarmerId, setEditingFarmerId] = useState(null);
@@ -443,6 +446,64 @@ export default function DashboardView({
     return () => clearTimeout(timer);
   }, [fetchFarmers, token]);
 
+  const handleExportFarmers = async () => {
+    if (role !== 'admin' && role !== 'village') return;
+    if (farmerExporting || !token) return;
+    setFarmerExporting(true);
+    try {
+      const rows = [];
+      let page = 1;
+      let total = 0;
+      do {
+        const params = new URLSearchParams({ page: String(page), pageSize: '100' });
+        if (farmerSearch.trim()) params.set('search', farmerSearch.trim());
+        const res = await fetch(`${API_BASE_URL}/farmers?${params.toString()}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error || 'Gagal memuat data petani.');
+        const batch = Array.isArray(data.data) ? data.data : [];
+        rows.push(...batch);
+        total = Number(data.pagination?.total ?? rows.length);
+        if (batch.length === 0) break;
+        page += 1;
+      } while (rows.length < total && page <= 200);
+
+      if (rows.length === 0) {
+        alert('Tidak ada data petani untuk diekspor.');
+        return;
+      }
+
+      await exportRowsToExcel({
+        fileName: excelFileName('daftar-petani'),
+        sheetName: 'Daftar Petani',
+        columns: [
+          { header: 'Nama Petani', value: (farmer) => farmer.farmer_name || '', minWidth: 24 },
+          { header: 'No. HP / WhatsApp', value: (farmer) => farmer.phone || '', minWidth: 18 },
+          { header: 'Alamat / Dusun', value: (farmer) => farmer.address || '', minWidth: 22 },
+          { header: 'Catatan', value: (farmer) => farmer.notes || '', minWidth: 22 },
+          { header: 'Status Pendaftaran', value: (farmer) => (farmer.registered ? 'Terdaftar' : 'Belum terdaftar'), minWidth: 16 },
+          { header: 'Varietas Kopi', value: (farmer) => farmer.coffee_types || '', minWidth: 16 },
+          { header: 'Jumlah Lahan', value: (farmer) => Number(farmer.plot_count || 0) },
+          { header: 'Luas Lahan (m2)', value: (farmer) => Number(farmer.total_land_area || 0) },
+          { header: 'Elevasi Min (mdpl)', value: (farmer) => (farmer.min_elevation === null ? '' : farmer.min_elevation), minWidth: 15 },
+          { header: 'Elevasi Maks (mdpl)', value: (farmer) => (farmer.max_elevation === null ? '' : farmer.max_elevation), minWidth: 15 },
+          { header: 'Jumlah Pohon', value: (farmer) => Number(farmer.total_trees || 0) },
+          { header: 'Perkiraan Panen (kg)', value: (farmer) => Math.round(Number(farmer.predicted_yield || 0)), minWidth: 16 },
+          { header: 'Panen Tercatat (kg)', value: (farmer) => Math.round(Number(farmer.harvest_kg || 0)), minWidth: 16 },
+          { header: 'Jumlah Catatan Panen', value: (farmer) => Number(farmer.batch_count || 0), minWidth: 16 },
+          { header: 'Panen Terakhir', value: (farmer) => dateCell(farmer.last_harvest_date), minWidth: 14 },
+        ],
+        rows,
+      });
+    } catch (err) {
+      console.error('Ekspor daftar petani gagal:', err);
+      alert('Ekspor gagal. Coba lagi.');
+    } finally {
+      setFarmerExporting(false);
+    }
+  };
+
   const fetchFarmerOptions = useCallback(async () => {
     if (!token) return;
     try {
@@ -687,6 +748,43 @@ export default function DashboardView({
       : accuracyScorePct >= 50
         ? 'text-amber-500'
         : 'text-rose-500';
+
+  const canExport = role === 'admin' || role === 'village';
+
+  const handleExportAccuracy = async () => {
+    if (!canExport || accuracyExporting) return;
+    const rows = Array.isArray(accuracy?.plots) ? accuracy.plots : [];
+    if (rows.length === 0) {
+      alert('Belum ada lahan terukur untuk diekspor.');
+      return;
+    }
+    setAccuracyExporting(true);
+    try {
+      const tolerance = Number(accuracy?.tolerance_pct ?? 25);
+      await exportRowsToExcel({
+        fileName: excelFileName('akurasi-perkiraan'),
+        sheetName: 'Akurasi Perkiraan',
+        columns: [
+          { header: 'Petani', value: (row) => row.farmer_name || '', minWidth: 24 },
+          { header: 'Varietas', value: (row) => row.coffee_type || '', minWidth: 12 },
+          { header: 'Tahun Tanam', value: (row) => row.planting_year || '' },
+          { header: 'Musim Dinilai', value: (row) => row.season || '', minWidth: 12 },
+          { header: 'Perkiraan Musim (kg)', value: (row) => Math.round(Number(row.predicted_kg || 0) * 10) / 10, minWidth: 16 },
+          { header: 'Panen Riil (kg)', value: (row) => Math.round(Number(row.harvested_kg || 0) * 10) / 10, minWidth: 14 },
+          { header: 'Selisih (%)', value: (row) => Math.round(Number(row.error_pct || 0) * 10) / 10 },
+          { header: 'Dalam Toleransi', value: (row) => (Number(row.error_pct) <= tolerance ? 'Ya' : 'Tidak'), minWidth: 14 },
+          { header: 'Disesuaikan dari Musim', value: (row) => Number(row.calibration_seasons || 0), minWidth: 18 },
+          { header: 'Rasio Penyesuaian', value: (row) => Math.round(Number(row.calibration_ratio || 1) * 100) / 100, minWidth: 14 },
+        ],
+        rows,
+      });
+    } catch (err) {
+      console.error('Ekspor akurasi perkiraan gagal:', err);
+      alert('Ekspor gagal. Coba lagi.');
+    } finally {
+      setAccuracyExporting(false);
+    }
+  };
 
   const farmerRows = Array.isArray(farmerList) ? farmerList : [];
   const farmerTotal = farmerPagination.total;
@@ -1447,10 +1545,24 @@ export default function DashboardView({
                       Perkiraan panen dibandingkan dengan hasil panen tercatat — dinilai pada panen musim terakhir; perkiraan musim itu hanya disesuaikan dari musim sebelumnya.
                     </p>
                   </div>
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold border border-primary/25 bg-primary/10 text-primary">
-                    <span className="material-symbols-outlined text-xs">target</span>
-                    Toleransi ±{accuracy?.tolerance_pct ?? 25}%
-                  </span>
+                  <div className="flex items-center gap-2">
+                    {canExport && !accuracyLoading && !accuracyError && accuracyMeasured > 0 && (
+                      <button
+                        onClick={handleExportAccuracy}
+                        disabled={accuracyExporting}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-extrabold hover:border-emerald-500 hover:text-emerald-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <span className={`material-symbols-outlined text-sm ${accuracyExporting ? 'animate-spin' : ''}`}>
+                          {accuracyExporting ? 'sync' : 'download'}
+                        </span>
+                        {accuracyExporting ? 'Menyiapkan...' : 'Ekspor Excel'}
+                      </button>
+                    )}
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-extrabold border border-primary/25 bg-primary/10 text-primary">
+                      <span className="material-symbols-outlined text-xs">target</span>
+                      Toleransi ±{accuracy?.tolerance_pct ?? 25}%
+                    </span>
+                  </div>
                 </div>
 
                 {accuracyLoading && (
@@ -1619,6 +1731,18 @@ export default function DashboardView({
                     >
                       <span className="material-symbols-outlined text-sm">{showFarmerForm ? 'close' : 'person_add'}</span>
                       {showFarmerForm ? 'Batal' : 'Tambah Petani'}
+                    </button>
+                  )}
+                  {canExport && (
+                    <button
+                      onClick={handleExportFarmers}
+                      disabled={farmerExporting || farmersLoading}
+                      className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-4 py-2.5 rounded-xl font-extrabold text-xs flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <span className={`material-symbols-outlined text-sm ${farmerExporting ? 'animate-spin' : ''}`}>
+                        {farmerExporting ? 'sync' : 'download'}
+                      </span>
+                      {farmerExporting ? 'Menyiapkan...' : 'Ekspor Excel'}
                     </button>
                   )}
                   <button
@@ -1883,6 +2007,7 @@ export default function DashboardView({
             <PlotDirectory
               plots={plots}
               accuracy={accuracy}
+              canExport={canExport}
               onOpenPlot={(plot) => {
                 if (plot) setSelectedPlot(plot);
                 setActiveTab('gis');
