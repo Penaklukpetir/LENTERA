@@ -1,13 +1,152 @@
 import React, { useState, useEffect } from 'react';
 import Pagination from './Pagination';
 import { API_BASE_URL } from '../lib/api';
+import { waLink } from '../lib/wa';
 const DESTINATION_PAGE_SIZE = 6;
+
+function DestinationCard({ dest, fallbackPhone, onBook }) {
+  const images = Array.isArray(dest.images) && dest.images.length > 0
+    ? dest.images
+    : (dest.img ? [dest.img] : []);
+  const [index, setIndex] = useState(0);
+  const total = images.length || 1;
+  const current = images[index] || dest.img;
+  const goPrev = (e) => {
+    e.stopPropagation();
+    setIndex(i => (i - 1 + total) % total);
+  };
+  const goNext = (e) => {
+    e.stopPropagation();
+    setIndex(i => (i + 1) % total);
+  };
+
+  const guidePhone = dest.guide_phone || fallbackPhone;
+  const guideWaHref = waLink(
+    guidePhone,
+    `Halo Pemandu Wisata Desa Kucur, saya tertarik mengunjungi ${dest.name}. Boleh dibantu informasi kunjungannya?`
+  );
+
+  return (
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg card-hover transition-all duration-300 flex flex-col group">
+      <div className="relative h-48 overflow-hidden bg-slate-800">
+        {current ? (
+          <img
+            src={current}
+            alt={dest.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-slate-500">
+            <span className="material-symbols-outlined text-3xl">image</span>
+          </div>
+        )}
+
+        {total > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={goPrev}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-900/70 text-white flex items-center justify-center border border-white/20 hover:bg-slate-900 transition-colors cursor-pointer"
+              title="Foto sebelumnya"
+            >
+              <span className="material-symbols-outlined text-base">chevron_left</span>
+            </button>
+            <button
+              type="button"
+              onClick={goNext}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-900/70 text-white flex items-center justify-center border border-white/20 hover:bg-slate-900 transition-colors cursor-pointer"
+              title="Foto berikutnya"
+            >
+              <span className="material-symbols-outlined text-base">chevron_right</span>
+            </button>
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1">
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setIndex(i); }}
+                  className={`w-1.5 h-1.5 rounded-full border-none cursor-pointer transition-all ${i === index ? 'bg-white w-4' : 'bg-white/50'}`}
+                  title={`Foto ${i + 1}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
+        <div className="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-extrabold px-3 py-1 rounded-full border border-white/20">
+          {dest.tag}
+        </div>
+        <div className="absolute bottom-3 right-3 bg-emerald-500 text-slate-950 font-black text-[11px] px-3 py-1 rounded-xl shadow-lg">
+          {dest.elevation}
+        </div>
+      </div>
+
+      <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+        <div className="space-y-2">
+          <h3 className="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-emerald-500 transition-colors">
+            {dest.name}
+          </h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+            {dest.desc}
+          </p>
+
+          <div className="pt-2 flex flex-wrap gap-1.5">
+            {dest.highlights?.map((hl, idx) => (
+              <span key={idx} className="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded-md">
+                ✓ {hl}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-3">
+          <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
+            <span className="flex items-center gap-1">
+              <span className="material-symbols-outlined text-sm">payments</span>
+              {dest.price}
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="material-symbols-outlined text-sm">schedule</span>
+              {dest.hours}
+            </span>
+          </div>
+
+          {guideWaHref ? (
+            <a
+              href={guideWaHref}
+              target="_blank"
+              rel="noreferrer"
+              className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer no-underline"
+            >
+              <span className="material-symbols-outlined text-base">chat</span>
+              <span>Hubungi Pemandu Lahan (WhatsApp)</span>
+            </a>
+          ) : (
+            <div className="w-full bg-slate-200 dark:bg-slate-800 text-slate-500 font-extrabold py-2.5 rounded-xl text-xs flex items-center justify-center gap-2">
+              <span className="material-symbols-outlined text-base">phone_disabled</span>
+              <span>Nomor pemandu belum diatur</span>
+            </div>
+          )}
+
+          <button
+            onClick={onBook}
+            className="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-extrabold py-2 rounded-xl text-[11px] transition-all flex items-center justify-center gap-2 cursor-pointer border border-slate-200 dark:border-slate-700"
+          >
+            <span className="material-symbols-outlined text-sm">event_available</span>
+            <span>Ajukan Jadwal Kunjungan</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Navigation({ destinations = [] }) {
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [selectedDest, setSelectedDest] = useState(null);
   const [destPage, setDestPage] = useState(1);
   const [guides, setGuides] = useState([]);
+  const [publicSettings, setPublicSettings] = useState(null);
   const [selectedGuideId, setSelectedGuideId] = useState('');
   const [bookingState, setBookingState] = useState({ loading: false, error: '', success: '' });
   const [guideForm, setGuideForm] = useState({
@@ -23,6 +162,11 @@ export default function Navigation({ destinations = [] }) {
       .then((res) => (res.ok ? res.json() : { data: [] }))
       .then((data) => setGuides(data.data || []))
       .catch(() => setGuides([]));
+
+    fetch(`${API_BASE_URL}/settings/public`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setPublicSettings(data?.data || null))
+      .catch(() => setPublicSettings(null));
   }, []);
 
   const handleOpenGuideModal = (dest) => {    setSelectedDest(dest);
@@ -59,12 +203,18 @@ export default function Navigation({ destinations = [] }) {
 
       const message = `Halo Pemandu Wisata Desa Kucur!\n\nSaya ingin memesan pendampingan wisata:\n• *Nama Pemesan*: ${guideForm.name}\n• *Destinasi Target*: ${destName}\n• *Tanggal Kunjungan*: ${guideForm.date}\n• *Jumlah Rombongan*: ${guideForm.guests} Orang\n• *No HP/WA*: ${guideForm.phone}\n• *Catatan Tambahan*: ${guideForm.notes || '-'}\n\nMohon konfirmasi ketersediaan pemandu lokal. Terima kasih!`;
 
+      const chosenGuide = guides.find((guide) => String(guide.id) === String(selectedGuideId));
+      const targetPhone = chosenGuide?.phone_number || selectedDest?.guide_phone || publicSettings?.guide_phone;
+      const waHref = waLink(targetPhone, message);
+
       setBookingState({
         loading: false,
         error: '',
-        success: 'Permintaan pemandu sudah kami terima. Lanjutkan konfirmasi via WhatsApp bila diperlukan.'
+        success: waHref
+          ? 'Permintaan pemandu sudah kami terima. Lanjutkan konfirmasi via WhatsApp.'
+          : 'Permintaan pemandu sudah kami terima. Nomor WhatsApp pemandu belum diatur, silakan hubungi perangkat desa.'
       });
-      window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(message)}`, '_blank');
+      if (waHref) window.open(waHref, '_blank');
       setGuideForm({ name: '', phone: '', date: '', guests: 2, notes: '' });
       setSelectedGuideId('');
     } catch (err) {
@@ -110,64 +260,12 @@ export default function Navigation({ destinations = [] }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {pagedDestinations.map((dest) => (
-            <div
+            <DestinationCard
               key={dest.id}
-              className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-lg card-hover transition-all duration-300 flex flex-col group"
-            >
-              <div className="relative h-48 overflow-hidden">
-                <img
-                  src={dest.img}
-                  alt={dest.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-extrabold px-3 py-1 rounded-full border border-white/20">
-                  {dest.tag}
-                </div>
-                <div className="absolute bottom-3 right-3 bg-emerald-500 text-slate-950 font-black text-[11px] px-3 py-1 rounded-xl shadow-lg">
-                  {dest.elevation}
-                </div>
-              </div>
-
-              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <h3 className="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-emerald-500 transition-colors">
-                    {dest.name}
-                  </h3>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                    {dest.desc}
-                  </p>
-
-                  <div className="pt-2 flex flex-wrap gap-1.5">
-                    {dest.highlights?.map((hl, idx) => (
-                      <span key={idx} className="text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded-md">
-                        ✓ {hl}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-3">
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-500 dark:text-slate-400">
-                    <span className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-sm">payments</span>
-                      {dest.price}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-sm">schedule</span>
-                      {dest.hours}
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={() => handleOpenGuideModal(dest)}
-                    className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <span className="material-symbols-outlined text-base">support_agent</span>
-                    <span>Pesan Pemandu Wisata (WhatsApp)</span>
-                  </button>
-                </div>
-              </div>
-            </div>
+              dest={dest}
+              fallbackPhone={publicSettings?.guide_phone}
+              onBook={() => handleOpenGuideModal(dest)}
+            />
           ))}
         </div>
 

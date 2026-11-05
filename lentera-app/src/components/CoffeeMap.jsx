@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polygon, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
+import { publicPlotCode } from '../lib/publicPlot';
 
 // Basemap Layer Providers
 const BASEMAP_PROVIDERS = {
@@ -240,6 +241,7 @@ export default function CoffeeMap({
   onOpenAddPlot
 }) {
   const defaultCenter = [-7.9152, 112.5201];
+  const isStaff = role === 'admin' || role === 'village';
   const [mapCenterCoords, setMapCenterCoords] = useState({ lat: defaultCenter[0], lng: defaultCenter[1] });
   
   const [userLocation, setUserLocation] = useState(defaultCenter);
@@ -292,6 +294,7 @@ export default function CoffeeMap({
     ? Math.round(filteredPlots.reduce((acc, p) => acc + (parseFloat(p.elevation) || 0), 0) / filteredPlots.length) 
     : 0;
   const totalYield = filteredPlots.reduce((acc, p) => acc + (parseFloat(p.calibrated_yield ?? p.predicted_yield) || 0), 0);
+  const totalTrees = filteredPlots.reduce((acc, p) => acc + (parseInt(p.tree_count) || 0), 0);
 
   const currentProvider = BASEMAP_PROVIDERS[activeBasemap];
 
@@ -312,18 +315,27 @@ export default function CoffeeMap({
           </div>
 
           <div className={`${showAddForm ? 'hidden' : 'hidden xl:flex'} items-center gap-3 pl-3 border-l border-slate-700 text-[11px] font-semibold text-slate-300`}>
-            <div className="whitespace-nowrap">
-              <span className="text-slate-400 text-[9px] block leading-tight">LUAS POLIGON</span>
-              <span className="text-emerald-400 font-extrabold">{totalLandArea.toLocaleString()} m²</span>
-            </div>
+            {isStaff && (
+              <div className="whitespace-nowrap">
+                <span className="text-slate-400 text-[9px] block leading-tight">LUAS POLIGON</span>
+                <span className="text-emerald-400 font-extrabold">{totalLandArea.toLocaleString()} m²</span>
+              </div>
+            )}
             <div className="whitespace-nowrap">
               <span className="text-slate-400 text-[9px] block leading-tight">RATA2 ELEVASI</span>
               <span className="text-sky-400 font-extrabold">{avgElevation} MDPL</span>
             </div>
-            <div className="hidden xl:block whitespace-nowrap">
-              <span className="text-slate-400 text-[9px] block leading-tight">PERKIRAAN PANEN</span>
-              <span className="text-amber-400 font-extrabold">{totalYield.toFixed(1)} kg</span>
-            </div>
+            {isStaff ? (
+              <div className="hidden xl:block whitespace-nowrap">
+                <span className="text-slate-400 text-[9px] block leading-tight">PERKIRAAN PANEN</span>
+                <span className="text-amber-400 font-extrabold">{totalYield.toFixed(1)} kg</span>
+              </div>
+            ) : (
+              <div className="hidden xl:block whitespace-nowrap">
+                <span className="text-slate-400 text-[9px] block leading-tight">JUMLAH POHON</span>
+                <span className="text-emerald-400 font-extrabold">{totalTrees.toLocaleString()} Pohon</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -512,7 +524,9 @@ export default function CoffeeMap({
             >
               <Tooltip sticky permanent={false}>
                 <div style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '11px', fontWeight: '700' }}>
-                  🏰 Poligon Lahan: {plot.farmer_name} ({plot.land_area || 1200} m²)
+                  {isStaff
+                    ? `🏰 Poligon Lahan: ${plot.farmer_name} (${plot.land_area || 1200} m²)`
+                    : `🏰 Poligon Lahan: ${publicPlotCode(plot)} • ${plot.coffee_type}`}
                 </div>
               </Tooltip>
             </Polygon>
@@ -533,22 +547,32 @@ export default function CoffeeMap({
           >
             <Popup>
               <div style={{ fontFamily: 'Plus Jakarta Sans', padding: '2px' }}>
-                <h4 style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: '800', color: '#0f172a' }}>{plot.farmer_name}</h4>
+                <h4 style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: '800', color: '#0f172a' }}>
+                  {isStaff ? plot.farmer_name : publicPlotCode(plot)}
+                </h4>
                 <p style={{ margin: '0 0 2px 0', fontSize: '11px', color: '#64748b' }}>
                   Varietas: <strong>{plot.coffee_type}</strong>
                 </p>
-                <p style={{ margin: '0 0 2px 0', fontSize: '11px', color: '#64748b' }}>
-                  Luas Poligon: <strong>{plot.land_area || 1200} m²</strong>
-                </p>
+                {isStaff && (
+                  <p style={{ margin: '0 0 2px 0', fontSize: '11px', color: '#64748b' }}>
+                    Luas Poligon: <strong>{plot.land_area || 1200} m²</strong>
+                  </p>
+                )}
                 <p style={{ margin: '0 0 2px 0', fontSize: '11px', color: '#64748b' }}>
                   Ketinggian: <strong>{plot.elevation} MDPL</strong>
                 </p>
-                <p style={{ margin: 0, fontSize: '11px', color: '#64748b' }}>
-                  Perkiraan panen: <strong style={{ color: '#10b981' }}>{plot.calibrated_yield ?? plot.predicted_yield ?? '—'} kg</strong>
-                  {plot.range_low !== undefined && plot.range_high !== undefined && (
-                    <span style={{ color: '#94a3b8' }}> ({plot.range_low}–{plot.range_high} kg)</span>
-                  )}
-                </p>
+                {isStaff ? (
+                  <p style={{ margin: 0, fontSize: '11px', color: '#64748b' }}>
+                    Perkiraan panen: <strong style={{ color: '#10b981' }}>{plot.calibrated_yield ?? plot.predicted_yield ?? '—'} kg</strong>
+                    {plot.range_low !== undefined && plot.range_high !== undefined && (
+                      <span style={{ color: '#94a3b8' }}> ({plot.range_low}–{plot.range_high} kg)</span>
+                    )}
+                  </p>
+                ) : (
+                  <p style={{ margin: 0, fontSize: '11px', color: '#64748b' }}>
+                    Jumlah pohon: <strong>{Number(plot.tree_count || 0).toLocaleString('id-ID')} pohon</strong>
+                  </p>
+                )}
               </div>
             </Popup>
           </Marker>

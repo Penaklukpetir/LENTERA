@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { API_BASE_URL } from '../lib/api';
+import { waLink } from '../lib/wa';
 
 export default function SosButton() {
   const [showSosModal, setShowSosModal] = useState(false);
@@ -8,6 +9,14 @@ export default function SosButton() {
   const [geoStatus, setGeoStatus] = useState('idle'); // idle | loading | ready | error
   const [geoError, setGeoError] = useState('');
   const [submitState, setSubmitState] = useState({ loading: false, error: '', success: '' });
+  const [sosPhone, setSosPhone] = useState('');
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/settings/public`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setSosPhone(data?.data?.sos_phone || ''))
+      .catch(() => setSosPhone(''));
+  }, []);
 
   const requestLocation = () => {
     if (!navigator.geolocation) {
@@ -80,12 +89,15 @@ export default function SosButton() {
 
       const message = `PANGGILAN KEDARURATAN WISATAWAN LENTERA!\n\nTolong bantu saya!\n• *Lokasi*: Kucur Agrowisata Area\n• *Koordinat*: LAT: ${coords.lat.toFixed(6)} / LONG: ${coords.lng.toFixed(6)} (akurasi ±${coords.accuracy} m)\n• *Keterangan Darurat*: ${sosNotes || 'Tersesat/Membutuhkan Bantuan Medis Lapangan'}`;
 
+      const waHref = waLink(sosPhone, message);
       setSubmitState({
         loading: false,
         error: '',
-        success: 'Sinyal SOS tercatat di sistem. Petugas darurat akan menerima laporan ini.'
+        success: waHref
+          ? 'Sinyal SOS tercatat di sistem dan diteruskan ke WhatsApp petugas darurat.'
+          : 'Sinyal SOS tercatat di sistem. Nomor darurat belum diatur, petugas desa akan menindaklanjuti.'
       });
-      window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(message)}`, '_blank');
+      if (waHref) window.open(waHref, '_blank');
     } catch (err) {
       setSubmitState({ loading: false, error: 'Koneksi terputus. Sinyal SOS belum terkirim.', success: '' });
     }

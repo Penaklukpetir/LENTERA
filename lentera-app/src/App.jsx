@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { API_BASE_URL } from './lib/api';
+import { publicPlotCode } from './lib/publicPlot';
 import Header from './components/Header';
 import Home from './components/Home';
 import Sidebar from './components/Sidebar';
@@ -271,9 +272,12 @@ export default function App() {
   const floatingUiHidden = showSponsorModal || showLoginModal || showAdminLoginModal || (mustChangePassword && token);
 
   // Filter logic
+  const isStaff = role === 'admin' || role === 'village';
   const filteredPlots = plots.filter(plot => {
-    const matchesSearch = plot.farmer_name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          (plot.description || '').toLowerCase().includes(searchQuery.toLowerCase());
+    const term = searchQuery.toLowerCase();
+    const label = isStaff ? (plot.farmer_name || '') : publicPlotCode(plot);
+    const matchesSearch = label.toLowerCase().includes(term) ||
+                          (plot.description || '').toLowerCase().includes(term);
     const matchesType = filterType === 'All' || plot.coffee_type === filterType;
     return matchesSearch && matchesType;
   });
@@ -416,6 +420,7 @@ export default function App() {
       {showSponsorModal && (
         <SponsorModal 
           plots={plots}
+          isStaff={isStaff}
           newSponsorName={newSponsorName}
           setNewSponsorName={setNewSponsorName}
           sponsorContact={sponsorContact}

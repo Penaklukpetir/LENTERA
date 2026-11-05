@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { calculateMLRYield, getPredictionRange } from '../lib/mlr';
 import { API_BASE_URL } from '../lib/api';
 import { dateCell, excelFileName, exportRowsToExcel } from '../lib/excel';
+import { publicPlotCode } from '../lib/publicPlot';
+import { waLink } from '../lib/wa';
 
 export default function DetailsPanel({ 
   selectedPlot, 
@@ -32,6 +34,15 @@ export default function DetailsPanel({
     weight_kg: '',
     harvest_date: ''
   });
+  const [publicSettings, setPublicSettings] = useState(null);
+  const isStaff = role === 'admin' || role === 'village';
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/settings/public`)
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => setPublicSettings(data?.data || null))
+      .catch(() => setPublicSettings(null));
+  }, []);
 
   useEffect(() => {
     if (selectedPlot) {
@@ -45,6 +56,13 @@ export default function DetailsPanel({
         description: selectedPlot.description || ''
       });
       setIsEditing(false);
+
+      if (!isStaff) {
+        setPlotBatches([]);
+        setHarvestSummary(null);
+        setMlrHistory([]);
+        return;
+      }
 
       // Fetch real harvest records for this plot
       fetch(`${API_BASE_URL}/plots/${selectedPlot.id}/harvests`)
@@ -63,7 +81,7 @@ export default function DetailsPanel({
         .then(data => setMlrHistory(Array.isArray(data) ? data : []))
         .catch(() => setMlrHistory([]));
     }
-  }, [selectedPlot]);
+  }, [selectedPlot, isStaff]);
 
   // Prediksi yang tampil tergantung panen tercatat, jadi segarkan lahan + ringkasan musim
   // setiap kali input berubah; panel akurasi juga membaca data yang sama.
@@ -235,6 +253,11 @@ export default function DetailsPanel({
   const calibrationRatio = Number(selectedPlot?.calibration_ratio || 1);
   const predictionRange = getPredictionRange(calibratedYield);
 
+  const guideContactMessage = isStaff
+    ? `Halo Admin Karang Taruna, saya tertarik mengunjungi lahan kopi ${selectedPlot?.farmer_name || ''} di Kucur.`
+    : `Halo Pemandu, saya tertarik mengunjungi lahan kopi ${publicPlotCode(selectedPlot)} di Kucur.`;
+  const guideWaHref = waLink(publicSettings?.guide_phone, guideContactMessage);
+
   // Total Recorded Real Harvest Weight for this Plot
   const totalRecordedHarvestKg = plotBatches.reduce((acc, b) => acc + (parseFloat(b.weight_kg) || 0), 0);
   const latestSeason = harvestSummary?.latest_season ?? null;
@@ -255,7 +278,9 @@ export default function DetailsPanel({
         <div className="details-content">
           {/* Header Title & Tag */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '800' }}>{selectedPlot.farmer_name}</h2>
+            <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '800' }}>
+              {isStaff ? selectedPlot.farmer_name : publicPlotCode(selectedPlot)}
+            </h2>
             <span className={`plot-tag ${selectedPlot.coffee_type.toLowerCase()}`}>
               {selectedPlot.coffee_type}
             </span>
@@ -426,11 +451,14 @@ export default function DetailsPanel({
             </form>
           ) : (
             <>
-              <p style={{ fontSize: '13px', lineHeight: '1.5', color: 'var(--text-muted)', margin: '12px 0 0 0' }}>
-                {selectedPlot.description || 'Tidak ada deskripsi tambahan untuk lahan ini.'}
-              </p>
+              {isStaff && (
+                <p style={{ fontSize: '13px', lineHeight: '1.5', color: 'var(--text-muted)', margin: '12px 0 0 0' }}>
+                  {selectedPlot.description || 'Tidak ada deskripsi tambahan untuk lahan ini.'}
+                </p>
+              )}
 
               {/* 1. KARTU PERKIRAAN HASIL PANEN */}
+              {isStaff && (
               <div style={{
                 background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.1) 100%)',
                 border: '1px solid rgba(52, 211, 153, 0.3)',
@@ -490,8 +518,10 @@ export default function DetailsPanel({
                   Perkiraan dihitung dari luas lahan, jumlah pohon, dan jenis kopi. Hasil panen dari musim-musim sebelumnya dipakai untuk menyesuaikan angka agar makin dekat dengan kondisi kebun ini.
                 </div>
               </div>
+              )}
 
               {/* RIWAYAT PERKIRAAN PANEN */}
+              {isStaff && (
               <div style={{
                 background: 'rgba(15, 23, 42, 0.5)',
                 border: '1px solid rgba(255, 255, 255, 0.08)',
@@ -536,8 +566,10 @@ export default function DetailsPanel({
                   </div>
                 )}
               </div>
+              )}
 
               {/* 2. KARTU PENCATATAN HASIL PANEN REALISASI */}
+              {isStaff && (
               <div style={{
                 background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(14, 165, 233, 0.1) 100%)',
                 border: '1px solid rgba(56, 189, 248, 0.3)',
@@ -653,18 +685,33 @@ export default function DetailsPanel({
                   )}
                 </div>
               </div>
+              )}
 
               {/* 2. RINCIAN LAHAN SPASIAL */}
               <div className="details-info-section" style={{ marginTop: '16px' }}>
-                <div className="info-item">
-                  <div className="info-icon-container">
-                    <span className="material-symbols-outlined">aspect_ratio</span>
+                {isStaff && (
+                  <div className="info-item">
+                    <div className="info-icon-container">
+                      <span className="material-symbols-outlined">aspect_ratio</span>
+                    </div>
+                    <div className="info-details">
+                      <span className="info-label">Luas Lahan (m²)</span>
+                      <span className="info-value">{currentArea.toLocaleString()} m²</span>
+                    </div>
                   </div>
-                  <div className="info-details">
-                    <span className="info-label">Luas Lahan (m²)</span>
-                    <span className="info-value">{currentArea.toLocaleString()} m²</span>
+                )}
+
+                {!isStaff && (
+                  <div className="info-item">
+                    <div className="info-icon-container">
+                      <span className="material-symbols-outlined">eco</span>
+                    </div>
+                    <div className="info-details">
+                      <span className="info-label">Jenis Kopi</span>
+                      <span className="info-value">{selectedPlot.coffee_type}</span>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="info-item">
                   <div className="info-icon-container">
@@ -686,45 +733,55 @@ export default function DetailsPanel({
                   </div>
                 </div>
 
-                <div className="info-item">
-                  <div className="info-icon-container">
-                    <span className="material-symbols-outlined">calendar_month</span>
-                  </div>
-                  <div className="info-details">
-                    <span className="info-label">Tahun Tanam</span>
-                    <span className="info-value">
-                      {selectedPlot.planting_year
-                        ? `${selectedPlot.planting_year} (± ${new Date().getFullYear() - Number(selectedPlot.planting_year)} tahun)`
-                        : 'Belum dicatat'}
-                    </span>
-                  </div>
-                </div>
+                {isStaff && (
+                  <>
+                    <div className="info-item">
+                      <div className="info-icon-container">
+                        <span className="material-symbols-outlined">calendar_month</span>
+                      </div>
+                      <div className="info-details">
+                        <span className="info-label">Tahun Tanam</span>
+                        <span className="info-value">
+                          {selectedPlot.planting_year
+                            ? `${selectedPlot.planting_year} (± ${new Date().getFullYear() - Number(selectedPlot.planting_year)} tahun)`
+                            : 'Belum dicatat'}
+                        </span>
+                      </div>
+                    </div>
 
-                <div className="info-item">
-                  <div className="info-icon-container">
-                    <span className="material-symbols-outlined">pin_drop</span>
-                  </div>
-                  <div className="info-details">
-                    <span className="info-label">Koordinat Spasial (Titik)</span>
-                    <span className="info-value" style={{ fontSize: '11px' }}>
-                      Lat: {Number(selectedPlot.lat).toFixed(6)}<br />
-                      Lng: {Number(selectedPlot.lng).toFixed(6)}
-                    </span>
-                  </div>
-                </div>
+                    <div className="info-item">
+                      <div className="info-icon-container">
+                        <span className="material-symbols-outlined">pin_drop</span>
+                      </div>
+                      <div className="info-details">
+                        <span className="info-label">Koordinat Spasial (Titik)</span>
+                        <span className="info-value" style={{ fontSize: '11px' }}>
+                          Lat: {Number(selectedPlot.lat).toFixed(6)}<br />
+                          Lng: {Number(selectedPlot.lng).toFixed(6)}
+                        </span>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* WhatsApp Coordination Navigation */}
-              <a 
-                href={`https://wa.me/6281234567890?text=Halo%20Admin%20Karang%20Taruna%2C%20saya%20tertarik%20mengunjungi%20lahan%20kopi%20${encodeURIComponent(selectedPlot.farmer_name)}%20di%20Kucur.`}
-                target="_blank"
-                rel="noreferrer"
-                className="nav-action-btn"
-                style={{ textDecoration: 'none', marginTop: '16px', border: '1px solid rgba(255, 255, 255, 0.1)' }}
-              >
-                <span className="material-symbols-outlined">chat</span>
-                Hubungi Pemandu Lahan (WhatsApp)
-              </a>
+              {guideWaHref ? (
+                <a 
+                  href={guideWaHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="nav-action-btn"
+                  style={{ textDecoration: 'none', marginTop: '16px', border: '1px solid rgba(255, 255, 255, 0.1)' }}
+                >
+                  <span className="material-symbols-outlined">chat</span>
+                  Hubungi Pemandu Lahan (WhatsApp)
+                </a>
+              ) : (
+                <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '16px' }}>
+                  Nomor pemandu belum diatur oleh perangkat desa.
+                </p>
+              )}
             </>
           )}
         </div>

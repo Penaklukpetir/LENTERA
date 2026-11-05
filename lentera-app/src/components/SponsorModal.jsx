@@ -1,7 +1,9 @@
 import React from 'react';
+import { publicPlotCode } from '../lib/publicPlot';
 
 export default function SponsorModal({
   plots,
+  isStaff = false,
   newSponsorName,
   setNewSponsorName,
   sponsorContact,
@@ -58,7 +60,7 @@ export default function SponsorModal({
             >
               {plots.map(plot => (
                 <option key={plot.id} value={plot.id}>
-                  {plot.farmer_name} ({plot.coffee_type} - {plot.elevation} MDPL)
+                  {isStaff ? `${plot.farmer_name} (${plot.coffee_type} - ${plot.elevation} MDPL)` : `${publicPlotCode(plot)} (${plot.coffee_type} - ${plot.elevation} MDPL)`}
                 </option>
               ))}
             </select>

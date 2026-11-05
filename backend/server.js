@@ -35,6 +35,7 @@ import { getAdminUsers, createAdminUser, deleteAdminUser } from './userControlle
 import { getReviews, createReview, toggleApproveReview, deleteReview } from './reviewController.js';
 
 import { getDestinations, createDestination, updateDestination, deleteDestination } from './destinationController.js';
+import { getPublicSettings, getVillageSettings, updateVillageSettings } from './settingsController.js';
 import { getTourGuides, createGuideBooking, getGuideBookings, updateGuideBookingStatus } from './guideController.js';
 import { createSosAlert, getSosAlerts, updateSosStatus } from './sosController.js';
 import { getDashboardSummary } from './dashboardController.js';
@@ -178,6 +179,11 @@ app.get('/api/guides', getTourGuides);
 app.post('/api/guides', createGuideBooking);
 app.get('/api/guides/bookings', authenticateToken, requireRole(['admin', 'village']), getGuideBookings);
 app.put('/api/guides/bookings/:id', authenticateToken, requireRole(['admin', 'village']), updateGuideBookingStatus);
+
+// Village Contact Settings (SOS & guide WhatsApp numbers)
+app.get('/api/settings/public', getPublicSettings);
+app.get('/api/settings', authenticateToken, requireRole(['admin', 'village']), getVillageSettings);
+app.put('/api/settings', authenticateToken, requireRole(['admin', 'village']), updateVillageSettings);
 
 // Emergency SOS Routes
 app.post('/api/sos', createSosAlert);

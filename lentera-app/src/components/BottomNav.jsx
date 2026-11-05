@@ -7,6 +7,7 @@ export default function BottomNav({ activeView, setActiveView, role }) {
   const navItems = [
     { id: 'home', label: 'Home', icon: 'home' },
     { id: 'location', label: 'Peta', icon: 'map' },
+    { id: 'navigation', label: 'Wisata', icon: 'explore' },
     { id: 'education', label: 'Edukasi', icon: 'school' },
     { id: 'eresource', label: 'E-Resource', icon: 'library_books' },
     { id: 'sponsor', label: 'Sponsor', icon: 'handshake' },
@@ -18,7 +19,7 @@ export default function BottomNav({ activeView, setActiveView, role }) {
       style={{ bottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
     >
       <div className="flex items-center justify-around">
-        {navItems.slice(0, 5).map((item) => {
+        {navItems.map((item) => {
           const isActive = activeView === item.id;
           return (
             <button

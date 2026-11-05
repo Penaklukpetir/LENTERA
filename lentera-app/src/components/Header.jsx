@@ -192,25 +192,35 @@ export default function Header({
                   </button>
                 </>
               ) : (
-                <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-primary/10">
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-base text-primary">
-                      {role === 'village' ? 'shield_person' : 'admin_panel_settings'}
-                    </span>
-                    <div>
-                      <div className="text-xs font-extrabold text-slate-900 dark:text-white capitalize">
-                        {role === 'village' ? 'Kepala Desa' : 'Admin Sistem'}
+                <>
+                  <div className="flex items-center justify-between bg-slate-50 dark:bg-slate-800 p-3 rounded-xl border border-primary/10">
+                    <div className="flex items-center gap-2">
+                      <span className="material-symbols-outlined text-base text-primary">
+                        {role === 'village' ? 'shield_person' : 'admin_panel_settings'}
+                      </span>
+                      <div>
+                        <div className="text-xs font-extrabold text-slate-900 dark:text-white capitalize">
+                          {role === 'village' ? 'Kepala Desa' : 'Admin Sistem'}
+                        </div>
+                        <div className="text-[10px] text-slate-400">Terautentikasi</div>
                       </div>
-                      <div className="text-[10px] text-slate-400">Terautentikasi</div>
                     </div>
+                    <button
+                      onClick={() => { setMenuOpen(false); handleLogout(); }}
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-colors"
+                    >
+                      <span className="material-symbols-outlined text-base">logout</span>
+                    </button>
                   </div>
+
                   <button
-                    onClick={() => { setMenuOpen(false); handleLogout(); }}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-colors"
+                    onClick={() => handleNav('dashboard')}
+                    className="w-full bg-slate-900 text-white border border-primary/30 py-2.5 px-4 rounded-xl text-xs font-extrabold flex items-center justify-center gap-2 shadow-sm"
                   >
-                    <span className="material-symbols-outlined text-base">logout</span>
+                    <span className="material-symbols-outlined text-sm text-primary">space_dashboard</span>
+                    <span>Buka Dasbor {role === 'village' ? 'Kades' : 'Admin'}</span>
                   </button>
-                </div>
+                </>
               )}
             </div>
 

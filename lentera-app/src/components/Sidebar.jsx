@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { publicPlotCode } from '../lib/publicPlot';
 
 export default function Sidebar({
   searchQuery,
@@ -15,6 +16,7 @@ export default function Sidebar({
   onToggleCollapse
 }) {
   const [mobileExpanded, setMobileExpanded] = useState(false);
+  const isStaff = role === 'admin' || role === 'village';
 
   const sidebarContent = (
     <>
@@ -58,7 +60,7 @@ export default function Sidebar({
           <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
           <input 
             type="text" 
-            placeholder="Cari lahan, petani..."
+            placeholder={isStaff ? 'Cari lahan, petani...' : 'Cari kode anggota...'}
             className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-semibold focus:ring-1 focus:ring-primary focus:border-primary"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -136,7 +138,7 @@ export default function Sidebar({
             >
               <div className="flex justify-between items-start">
                 <h4 className="font-bold text-xs truncate max-w-[140px] text-slate-900 dark:text-white">
-                  {plot.farmer_name}
+                  {isStaff ? plot.farmer_name : publicPlotCode(plot)}
                 </h4>
                 <span className={`inline-block px-1.5 py-0.5 text-[9px] font-extrabold rounded uppercase ${
                   plot.coffee_type === 'Arabica' ? 'bg-emerald-100 text-emerald-800' : 'bg-orange-100 text-orange-800'

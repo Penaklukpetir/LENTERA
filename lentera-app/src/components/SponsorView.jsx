@@ -14,6 +14,7 @@ const STATUS_LABELS = {
 export default function SponsorView({ role, sponsorships = [], setShowSponsorModal, approveSponsorship, inDashboard = false }) {
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [page, setPage] = useState(1);
+  const isStaff = role === 'admin' || role === 'village';
 
   const filtered = filterStatus === 'ALL' ? sponsorships : sponsorships.filter(s => s.status === filterStatus);
 
@@ -53,7 +54,9 @@ export default function SponsorView({ role, sponsorships = [], setShowSponsorMod
                 Sponsorship &amp; Kemitraan Petani
               </h1>
               <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
-                Platform pengelolaan kemitraan bisnis antara perusahaan mitra dengan petani kopi Desa Kucur. Investasikan dana Anda untuk masa depan pertanian berkelanjutan.
+                {isStaff
+                  ? 'Platform pengelolaan kemitraan bisnis antara perusahaan mitra dengan petani kopi Desa Kucur.'
+                  : 'Daftarkan perusahaan Anda sebagai calon mitra petani kopi Desa Kucur. Tim desa akan meninjau setiap pendaftaran.'}
               </p>
             </div>
             <button
@@ -66,7 +69,8 @@ export default function SponsorView({ role, sponsorships = [], setShowSponsorMod
           </div>
         </div>
 
-        {/* KPI Stats */}
+        {/* KPI Stats (internal only) */}
+        {isStaff && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-5 shadow-sm card-hover">
             <div className="flex items-center justify-between">
@@ -101,8 +105,10 @@ export default function SponsorView({ role, sponsorships = [], setShowSponsorMod
             <div className="mt-1 text-xs text-amber-500 font-semibold">Proposal Masuk</div>
           </div>
         </div>
+        )}
 
-        {/* Proposals Table */}
+        {/* Proposals Table (internal only) */}
+        {isStaff && (
         <div className="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl shadow-sm overflow-hidden">
           <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
@@ -199,6 +205,7 @@ export default function SponsorView({ role, sponsorships = [], setShowSponsorMod
             className="border-t border-slate-100 dark:border-slate-800"
           />
         </div>
+        )}
 
         {/* Info Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

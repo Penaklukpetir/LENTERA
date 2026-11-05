@@ -194,8 +194,16 @@ export default function DashboardView({
   const [destPrice, setDestPrice] = useState('Rp 15.000 / orang');
   const [destHours, setDestHours] = useState('08:00 - 18:00 WIB');
   const [destImg, setDestImg] = useState('https://images.unsplash.com/photo-1578507065211-17b2d564c20f?w=600');
+  const [destImages, setDestImages] = useState([]);
+  const [destGuideName, setDestGuideName] = useState('');
+  const [destGuidePhone, setDestGuidePhone] = useState('');
   const [destDesc, setDestDesc] = useState('');
   const [destHighlights, setDestHighlights] = useState('Spot Foto, Udara Segar, Parkir');
+
+  // Pengaturan Desa (nomor SOS & pemandu)
+  const [villageSettings, setVillageSettings] = useState({ sos_phone: '', guide_phone: '', updated_at: null });
+  const [settingsForm, setSettingsForm] = useState({ sos_phone: '', guide_phone: '' });
+  const [settingsSaving, setSettingsSaving] = useState(false);
 
   const refreshDestinations = async () => {
     try {
@@ -218,13 +226,17 @@ export default function DashboardView({
     }
 
     const hlArray = destHighlights.split(',').map(s => s.trim()).filter(Boolean);
+    const gallery = destImages.length > 0 ? destImages : (destImg ? [destImg] : []);
     const payload = {
       name: destName,
       tag: destTag,
       elevation: destElevation,
       price: destPrice,
       hours: destHours,
-      img_url: destImg,
+      img_url: gallery[0],
+      images: gallery,
+      guide_name: destGuideName.trim(),
+      guide_phone: destGuidePhone.trim(),
       description: destDesc || destName,
       highlights: hlArray.length > 0 ? hlArray : ['Wisata Desa Kucur']
     };
@@ -251,6 +263,9 @@ export default function DashboardView({
       setEditingDestId(null);
       setDestName('');
       setDestDesc('');
+      setDestImages([]);
+      setDestGuideName('');
+      setDestGuidePhone('');
       await refreshDestinations();
     } catch (err) {
       showToast('⚠️ Koneksi terputus. Coba lagi.');
@@ -265,6 +280,11 @@ export default function DashboardView({
     setDestPrice(dest.price || 'Rp 15.000 / orang');
     setDestHours(dest.hours || '08:00 - 18:00 WIB');
     setDestImg(dest.img || 'https://images.unsplash.com/photo-1578507065211-17b2d564c20f?w=600');
+    setDestImages(Array.isArray(dest.images) && dest.images.length > 0
+      ? dest.images
+      : (dest.img ? [dest.img] : []));
+    setDestGuideName(dest.guide_name || '');
+    setDestGuidePhone(dest.guide_phone || '');
     setDestDesc(dest.desc || '');
     setDestHighlights(Array.isArray(dest.highlights) ? dest.highlights.join(', ') : 'Spot Foto');
   };
@@ -293,12 +313,63 @@ export default function DashboardView({
     }
   };
 
+  const fetchVillageSettings = async () => {
+    if (!token) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/settings`, { headers: authHeaders });
+      const data = await res.json();
+      if (!res.ok) {
+        showToast(`⚠️ ${data.error || 'Gagal memuat pengaturan desa.'}`);
+        return;
+      }
+      setVillageSettings(data.data || {});
+      setSettingsForm({
+        sos_phone: data.data?.sos_phone || '',
+        guide_phone: data.data?.guide_phone || ''
+      });
+    } catch (err) {
+      console.error('Fetch village settings failed:', err);
+    }
+  };
+
+  const handleSaveVillageSettings = async (e) => {
+    e.preventDefault();
+    if (!token) {
+      showToast('⚠️ Sesi login tidak tersedia. Silakan masuk kembali.');
+      return;
+    }
+    setSettingsSaving(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/settings`, {
+        method: 'PUT',
+        headers: { ...authHeaders, 'Content-Type': 'application/json' },
+        body: JSON.stringify(settingsForm)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showToast(`⚠️ ${data.error || 'Gagal menyimpan pengaturan desa.'}`);
+        return;
+      }
+      setVillageSettings(data.data || {});
+      setSettingsForm({
+        sos_phone: data.data?.sos_phone || '',
+        guide_phone: data.data?.guide_phone || ''
+      });
+      showToast('✓ Nomor darurat dan pemandu tersimpan.');
+    } catch (err) {
+      showToast('⚠️ Koneksi terputus. Pengaturan belum tersimpan.');
+    } finally {
+      setSettingsSaving(false);
+    }
+  };
+
   // Fetch initial data from PostgreSQL Backend
   useEffect(() => {
     fetchEResources();
     fetchEducationModules();
     fetchAdminUsers();
     fetchReviews();
+    fetchVillageSettings();
   }, [token]);
 
   useEffect(() => {
@@ -2097,30 +2168,39 @@ export default function DashboardView({
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">UNGGAH FOTO DESTINASI (FILE GAMBAR)</label>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">FOTO DESTINASI (BISA LEBIH DARI SATU)</label>
                     <div className="flex items-center gap-3">
                       <input 
                         type="file" 
                         accept="image/*"
+                        multiple
                         id="dest-file-input"
                         className="hidden"
                         onChange={async (e) => {
-                          const file = e.target.files[0];
-                          if (!file) return;
-                          const localUrl = URL.createObjectURL(file);
-                          setDestImg(localUrl);
-
-                          const formData = new FormData();
-                          formData.append('file', file);
-                          try {
-                            const res = await fetch(`${API_BASE_URL}/upload`, { method: 'POST', headers: authHeaders, body: formData });
-                            if (res.ok) {
-                              const data = await res.json();
-                              setDestImg(data.url);
+                          const files = Array.from(e.target.files || []);
+                          if (files.length === 0) return;
+                          const uploaded = [];
+                          for (const file of files) {
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            try {
+                              const res = await fetch(`${API_BASE_URL}/upload`, { method: 'POST', headers: authHeaders, body: formData });
+                              if (res.ok) {
+                                const data = await res.json();
+                                if (data.url) uploaded.push(data.url);
+                              } else {
+                                const data = await res.json().catch(() => ({}));
+                                showToast(`⚠️ ${data.error || 'Gagal mengunggah foto.'}`);
+                              }
+                            } catch {
+                              showToast('⚠️ Koneksi terputus saat mengunggah foto.');
                             }
-                          } catch(err) {
-                            console.warn('Upload API fallback to local URL preview');
                           }
+                          if (uploaded.length > 0) {
+                            setDestImages(prev => [...prev, ...uploaded]);
+                            setDestImg(uploaded[0]);
+                          }
+                          e.target.value = '';
                         }}
                       />
                       <label 
@@ -2128,14 +2208,51 @@ export default function DashboardView({
                         className="flex-1 px-4 py-2.5 bg-slate-100 dark:bg-slate-900 hover:bg-primary/20 border border-slate-200 dark:border-slate-800 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-colors"
                       >
                         <span className="material-symbols-outlined text-primary text-base">cloud_upload</span>
-                        <span>{destImg ? 'Ganti Foto Destinasi' : 'Unggah File Foto (.jpg / .png)'}</span>
+                        <span>{destImages.length > 0 ? 'Tambah Foto Lagi' : 'Unggah File Foto (.jpg / .png)'}</span>
                       </label>
                     </div>
-                    {destImg && (
-                      <div className="mt-2 relative w-full h-24 rounded-xl overflow-hidden border border-slate-700">
-                        <img src={destImg} alt="Preview" className="w-full h-full object-cover" />
+                    {destImages.length > 0 && (
+                      <div className="mt-2 grid grid-cols-3 gap-2">
+                        {destImages.map((url, idx) => (
+                          <div key={`${url}-${idx}`} className="relative h-20 rounded-xl overflow-hidden border border-slate-700">
+                            <img src={url} alt={`Foto ${idx + 1}`} className="w-full h-full object-cover" />
+                            <button
+                              type="button"
+                              onClick={() => setDestImages(prev => prev.filter((_, i) => i !== idx))}
+                              className="absolute top-1 right-1 w-6 h-6 rounded-full bg-slate-900/80 text-white flex items-center justify-center border-none cursor-pointer"
+                              title="Hapus foto"
+                            >
+                              <span className="material-symbols-outlined text-xs">close</span>
+                            </button>
+                          </div>
+                        ))}
                       </div>
                     )}
+                    <p className="text-[10px] text-slate-400 font-semibold mt-1">Foto pertama menjadi sampul. Foto lainnya dapat digeser pengunjung.</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">NAMA PEMANDU</label>
+                      <input 
+                        type="text" 
+                        placeholder="Contoh: Pak Slamet" 
+                        value={destGuideName} 
+                        onChange={e => setDestGuideName(e.target.value)} 
+                        className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl font-semibold" 
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">NOMOR WHATSAPP PEMANDU</label>
+                      <input 
+                        type="tel" 
+                        placeholder="0812xxxxxxx" 
+                        value={destGuidePhone} 
+                        onChange={e => setDestGuidePhone(e.target.value)} 
+                        className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl font-semibold" 
+                      />
+                    </div>
                   </div>
 
                   <div>
@@ -2167,7 +2284,7 @@ export default function DashboardView({
                     {editingDestId && (
                       <button 
                         type="button" 
-                        onClick={() => { setEditingDestId(null); setDestName(''); setDestDesc(''); }}
+                        onClick={() => { setEditingDestId(null); setDestName(''); setDestDesc(''); setDestImages([]); setDestGuideName(''); setDestGuidePhone(''); }}
                         className="px-4 bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold py-3 rounded-xl"
                       >
                         Batal
@@ -2196,7 +2313,8 @@ export default function DashboardView({
                           <h4 className="text-sm font-extrabold text-slate-900 dark:text-white truncate">{dest.name}</h4>
                           <span className="px-2 py-0.5 rounded text-[9px] font-extrabold bg-primary/10 text-primary">{dest.tag}</span>
                         </div>
-                        <p className="text-[11px] text-slate-400 font-medium truncate">{dest.price} • {dest.elevation}</p>
+                        <p className="text-[11px] text-slate-400 font-medium truncate">{dest.price} • {dest.elevation} • {dest.images?.length || 1} foto</p>
+                        <p className="text-[11px] text-slate-400 font-medium truncate">Pemandu: {dest.guide_name || 'belum diisi'} {dest.guide_phone ? `• ${dest.guide_phone}` : ''}</p>
                         <p className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">{dest.desc}</p>
                       </div>
 
@@ -2926,6 +3044,59 @@ export default function DashboardView({
                     Muat Ulang
                   </button>
                 </div>
+              </div>
+
+              <div className="bg-white dark:bg-slate-950 border border-primary/10 rounded-2xl p-6 shadow-sm space-y-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">NOMOR PENTING</span>
+                    <h3 className="text-lg font-extrabold text-slate-900 dark:text-white mt-0.5">Nomor Darurat &amp; Pemandu</h3>
+                  </div>
+                  <span className="material-symbols-outlined text-primary">contact_phone</span>
+                </div>
+                <p className="text-[11px] text-slate-500">
+                  Nomor ini dipakai tombol SOS dan tombol hubungi pemandu di portal publik. Gunakan format 08xx atau 62xx.
+                </p>
+
+                <form onSubmit={handleSaveVillageSettings} className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">NOMOR WHATSAPP SOS / DARURAT</label>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="0812xxxxxxx"
+                      value={settingsForm.sos_phone}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, sos_phone: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl font-semibold"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">NOMOR WHATSAPP PEMANDU</label>
+                    <input
+                      type="tel"
+                      placeholder="0812xxxxxxx"
+                      value={settingsForm.guide_phone}
+                      onChange={(e) => setSettingsForm({ ...settingsForm, guide_phone: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl font-semibold"
+                    />
+                  </div>
+
+                  <div className="md:col-span-2 flex items-center justify-between gap-3 pt-1">
+                    <span className="text-[10px] text-slate-400 font-semibold">
+                      Terakhir diubah: {villageSettings?.updated_at
+                        ? new Date(villageSettings.updated_at).toLocaleString('id-ID')
+                        : 'belum pernah'}
+                    </span>
+                    <button
+                      type="submit"
+                      disabled={settingsSaving}
+                      className="px-4 py-2 bg-primary text-slate-900 font-extrabold text-xs rounded-xl shadow-md shadow-primary/20 hover:bg-primary/90 transition-all disabled:opacity-60"
+                    >
+                      {settingsSaving ? 'Menyimpan...' : 'Simpan Nomor'}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           )}
